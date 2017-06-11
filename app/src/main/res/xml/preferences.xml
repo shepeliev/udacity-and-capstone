@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.familycircleapp.ui.settings.UsernamePreference
+        android:key="@string/pref_username"
+        android:singleLine="true"
+        android:title="@string/settings_username" />
+
+    <com.familycircleapp.ui.settings.UpdateIntervalPreference
+        android:defaultValue="@integer/default_update_interval_minutes"
+        android:key="@string/pref_update_interval"
+        android:title="@string/settings_update_interval" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_share_location"
+        android:title="@string/settings_share_location" />
+
+    <Preference
+        android:key="@string/pref_logout"
+        android:persistent="false"
+        android:title="@string/settings_logout" />
+
+    <Preference
+        android:key="@string/pref_delete_account"
+        android:persistent="false"
+        android:title="@string/settings_delete_account" />
+
+</PreferenceScreen>

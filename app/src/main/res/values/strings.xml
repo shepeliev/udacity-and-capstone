@@ -1,3 +1,75 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/tools">
     <string name="app_name">Family Circle</string>
+
+    <string name="family_circle_name">Family</string>
+    <string name="friends_circle_name">Friends</string>
+    <string name="colleague_circle_name">Сolleagues</string>
+
+
+    <string name="error_login_no_internet_connection">Login failed: no internet connection</string>
+    <string name="error_login_unknown_error">Login failed: unknown error</string>
+    <string name="btn_login">Login</string>
+    <string name="battery_level" translatable="false"><xliff:g example="87" id="battery_percents">%1$d</xliff:g> %%</string>
+    <string name="invite_user_to_circle">Invite new members</string>
+    <string name="hint_enter_your_name">Enter your name</string>
+    <string name="btn_next">Next</string>
+    <string name="btn_create_first_circle">Create your first circle</string>
+    <string name="error_join_to_circle">Join to the circle failed: <xliff:g example="network error" id="error_message">%1$s</xliff:g></string>
+    <string name="error_create_new_circle">Crating new circle failed: <xliff:g example="network error" id="error_message">%1$s</xliff:g></string>
+    <string name="error_loading_data">Loading data has been failed: <xliff:g example="network error" id="errorMessage">%1$s</xliff:g></string>
+    <string name="na">N/A</string>
+    <string name="error_google_services_connection_suspended">Connection to Google Services suspended: <xliff:g example="connection lost" id="cause">%1$s</xliff:g></string>
+    <string name="error_google_services_connection_lost">connection lost</string>
+    <string name="error_google_services_service_disconnected">service disconnected</string>
+    <string name="error_google_services_unknown">unknown reason</string>
+    <string name="error_google_services_connection_failed">Connecting to Google Services failed: <xliff:g example="network error" id="error">%1$s</xliff:g></string>
+    <string name="error_geocoder_no_address">Address has not been found for this location</string>
+    <string name="error_geocoder_service_not_available">Geocoder service is not available</string>
+    <string name="error_geocoder_invalid_location">Location coordinates are invalid</string>
+    <string name="error_location_permission_not_granted">Access location permission has not been granted</string>
+    <string name="user_status_near">Near: <xliff:g example="555 Broad str." id="address">%1$s</xliff:g></string>
+    <string name="invite_description">Give the code below to somebody who you want to see in circle <strong>\"<xliff:g example="Family" id="circle_name">%1$s</xliff:g>\"</strong>.</string>
+    <string name="btn_send_code">Send code</string>
+    <string name="invite_expiration">This code is valid for <xliff:g example="7" id="days">%1$d</xliff:g> days.</string>
+    <string name="error_create_invite_code">Creating an invite code failed: <xliff:g example="network error" id="error_message">%1$s</xliff:g>.</string>
+    <string name="share_invite_code_message">Family Circle invite code: <xliff:g expample="XYZX-YVYT" id="code">%1$s</xliff:g></string>
+    <string name="join_circle_description">For joining into existing circle enter the invite code below:</string>
+    <string name="hint_enter_invite_code">Invite code</string>
+    <string name="join_circle_description_or">or</string>
+    <string name="btn_join_to_circle">Join into circle</string>
+    <string name="error_invite_code_expired">invite code is expired</string>
+    <string name="error_invite_code_not_found">invite code is incorrect</string>
+    <string name="hint_enter_circle_name">Enter a new circle name (ex. Friends)</string>
+    <string name="btn_create_new_circle">Create new circle</string>
+    <string name="action_create_circle">Create new circle</string>
+    <string name="action_join_circle">Join into circle</string>
+    <string name="action_switch_circle">Switch circle</string>
+    <string name="switch_circle_dialog_title">Select the circle.</string>
+    <string name="action_leave_circle">Leave this circle</string>
+    <string name="error_cannot_leave_current_circle">You can\'t leave this circle</string>
+    <string name="leave_current_circle_dialog_message">Are you sure to leave this circle?</string>
+    <string name="leave_current_circle_dialog_title">Leaving the current circle</string>
+    <string name="settings_username">Your name</string>
+    <string name="settings_update_interval">Location update interval</string>
+    <string name="settings_share_location">Share my location</string>
+    <string name="settings_logout">Logout</string>
+    <string name="settings_delete_account">Delete account</string>
+    <string name="action_settings">Settings</string>
+    <string name="settings_update_interval_summary">At least once per <xliff:g example="15 minutes" id="interval">%1$s</xliff:g>.</string>
+    <string name="settings_interval_minutes"><xliff:g example="15" id="minutes">%1$d</xliff:g> minutes</string>
+    <plurals name="hour_plurals">
+        <item quantity="one"><xliff:g example="1" id="hour">%1$d</xliff:g> hour</item>
+        <item quantity="other"><xliff:g example="6" id="hours">%1$d</xliff:g> hours</item>
+    </plurals>
+    <string name="settings_interval_hours"><xliff:g example="1" id="minutes">%1$d</xliff:g> hour</string>
+    <string name="alert_delete_account">Please enter your password before deleting the account:</string>
+    <string name="error_deleting_account_failed">Deleting the account failed: <xliff:g example="error message" id="error_message">%1$s</xliff:g></string>
+    <string name="error_deleting_account_incorrect_password">Password is incorrect.</string>
+    <string name="today">Today</string>
+    <string name="update_time">Updated <xliff:g example="15 minutes ago" id="time_span">%1$s</xliff:g></string>
+    <string name="error_name_is_empty">Name must not be empty</string>
+    <string name="empty_view_text">No data to show</string>
+    <string name="content_description_avatar">Avatar</string>
+    <string name="content_description_battery_status">Battery is <xliff:g id="status" example="discharging">%1$s</xliff:g></string>
+    <string name="content_description_invite_button">Invite user into circle</string>
 </resources>

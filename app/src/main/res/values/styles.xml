@@ -8,4 +8,22 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="Clickable" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
+
+    <style name="WizardButton" parent="Base.Widget.AppCompat.Button">
+        <item name="android:background">?attr/colorAccent</item>
+    </style>
+
+    <style name="LoaderScreen">
+        <item name="android:background">@color/transparentBlackBackground</item>
+    </style>
+
+    <style name="sectionHeader">
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
+    <style name="TestProgressBarHack">
+    </style>
 </resources>
