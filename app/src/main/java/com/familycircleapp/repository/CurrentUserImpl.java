@@ -1,13 +1,34 @@
 package com.familycircleapp.repository;
 
-import com.google.firebase.auth.UserInfo;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-import java.util.function.Consumer;
+import android.support.annotation.Nullable;
 
-class CurrentUserImpl implements CurrentUser {
+final class CurrentUserImpl implements CurrentUser {
+
+  private final FirebaseAuth mFirebaseAuth;
+
+  public CurrentUserImpl(final FirebaseAuth firebaseAuth) {
+    mFirebaseAuth = firebaseAuth;
+  }
 
   @Override
   public boolean isAuthenticated() {
-    return false;
+    return mFirebaseAuth.getCurrentUser() != null;
+  }
+
+  @Nullable
+  @Override
+  public String getId() {
+    final FirebaseUser firebaseUser = mFirebaseAuth.getCurrentUser();
+    return firebaseUser != null ? firebaseUser.getUid() : null;
+  }
+
+  @Nullable
+  @Override
+  public String getDisplayName() {
+    final FirebaseUser firebaseUser = mFirebaseAuth.getCurrentUser();
+    return firebaseUser != null ? firebaseUser.getDisplayName() : null;
   }
 }

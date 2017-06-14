@@ -1,6 +1,5 @@
 package com.familycircleapp.mocks;
 
-
 import com.familycircleapp.repository.CurrentUser;
 
 import javax.inject.Singleton;
