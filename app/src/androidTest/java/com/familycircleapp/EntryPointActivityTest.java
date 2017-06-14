@@ -51,6 +51,9 @@ public class EntryPointActivityTest {
           intending(hasComponent(KickoffActivity.class.getName())).respondWith(
               new Instrumentation.ActivityResult(mLoginResultCode, mLoginResultIntent)
           );
+          intending(hasComponent(MainActivity.class.getName())).respondWith(
+              new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, null)
+          );
         }
 
         @Override

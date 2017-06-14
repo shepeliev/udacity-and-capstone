@@ -24,7 +24,7 @@ public class CircleRepositoryImplTest {
     final CircleRepository repository = new CircleRepositoryImpl(mockFirebaseDatabase);
 
     final LiveData<Circle> circleLiveData = repository.getCircle("circle_1");
-   
+
     assertNotNull(circleLiveData);
     verify(mockFirebaseDatabase).getReference("circles");
     verify(mockCirclesReference).child("circle_1");
