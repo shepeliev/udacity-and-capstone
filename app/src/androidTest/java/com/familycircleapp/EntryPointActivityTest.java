@@ -10,7 +10,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.familycircleapp.matchers.ToastMatcher;
 import com.familycircleapp.mocks.TestApp;
 import com.familycircleapp.repository.CurrentUser;
-import com.familycircleapp.ui.MainActivity;
+import com.familycircleapp.ui.main.MainActivity;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.KickoffActivity;
