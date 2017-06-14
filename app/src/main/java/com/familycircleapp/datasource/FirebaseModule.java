@@ -1,4 +1,4 @@
-package com.familycircleapp;
+package com.familycircleapp.datasource;
 
 import com.google.firebase.auth.FirebaseAuth;
 

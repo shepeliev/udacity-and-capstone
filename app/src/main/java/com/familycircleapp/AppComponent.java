@@ -1,5 +1,6 @@
 package com.familycircleapp;
 
+import com.familycircleapp.datasource.FirebaseModule;
 import com.familycircleapp.repository.RepositoryModule;
 import com.familycircleapp.ui.ViewModelModule;
 
