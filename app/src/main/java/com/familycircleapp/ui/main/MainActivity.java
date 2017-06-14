@@ -11,7 +11,7 @@ import android.view.View;
 import com.familycircleapp.App;
 import com.familycircleapp.EntryPointActivity;
 import com.familycircleapp.R;
-import com.familycircleapp.Utils;
+import com.familycircleapp.utils.Utils;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.main.adapter.CircleUserAdapter;
 

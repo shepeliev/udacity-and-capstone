@@ -1,4 +1,4 @@
-package com.familycircleapp;
+package com.familycircleapp.utils;
 
 import android.arch.core.util.Function;
 import android.support.annotation.NonNull;

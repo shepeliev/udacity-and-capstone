@@ -1,5 +1,7 @@
 package com.familycircleapp;
 
+import com.familycircleapp.utils.FuncUtils;
+
 import org.junit.Test;
 
 import java.util.HashMap;

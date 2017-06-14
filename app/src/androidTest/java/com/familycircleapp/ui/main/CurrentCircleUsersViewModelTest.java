@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.test.rule.UiThreadTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.familycircleapp.FuncUtils;
+import com.familycircleapp.utils.FuncUtils;
 import com.familycircleapp.LiveDataTestUtil;
 import com.familycircleapp.R;
 import com.familycircleapp.repository.Circle;

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.main.MainActivity;
+import com.familycircleapp.utils.Utils;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;

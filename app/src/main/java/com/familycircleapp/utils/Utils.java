@@ -1,4 +1,4 @@
-package com.familycircleapp;
+package com.familycircleapp.utils;
 
 import android.content.Context;
 import android.content.Intent;
