@@ -1,6 +1,7 @@
 package com.familycircleapp.datasource;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import javax.inject.Singleton;
 
@@ -14,5 +15,11 @@ public final class FirebaseModule {
   @Singleton
   public FirebaseAuth provideFirebaseAuth() {
     return FirebaseAuth.getInstance();
+  }
+
+  @Provides
+  @Singleton
+  public FirebaseDatabase provideFirebaseDatabase() {
+    return FirebaseDatabase.getInstance();
   }
 }

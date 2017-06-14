@@ -1,6 +1,7 @@
 package com.familycircleapp.repository;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import javax.inject.Singleton;
 
@@ -24,7 +25,7 @@ public final class RepositoryModule {
 
   @Provides
   @Singleton
-  CircleRepository provideCircleRepository() {
-    return new CircleRepositoryImpl();
+  CircleRepository provideCircleRepository(final FirebaseDatabase firebaseDatabase) {
+    return new CircleRepositoryImpl(firebaseDatabase);
   }
 }
