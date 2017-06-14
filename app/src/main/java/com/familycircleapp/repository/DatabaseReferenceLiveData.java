@@ -6,13 +6,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import android.arch.lifecycle.LiveData;
+import android.support.annotation.VisibleForTesting;
 
 import timber.log.Timber;
 
 final class DatabaseReferenceLiveData<T> extends LiveData<T>
     implements ValueEventListener {
 
-  private final DatabaseReference mDatabaseReference;
+  @VisibleForTesting final DatabaseReference mDatabaseReference;
   private final Class<T> mClass;
 
   DatabaseReferenceLiveData(

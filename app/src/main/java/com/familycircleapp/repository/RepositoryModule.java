@@ -19,8 +19,8 @@ public final class RepositoryModule {
 
   @Provides
   @Singleton
-  UserRepository provideUserRepository() {
-    return new UserRepositoryImpl();
+  UserRepository provideUserRepository(final FirebaseDatabase firebaseDatabase) {
+    return new UserRepositoryImpl(firebaseDatabase);
   }
 
   @Provides
