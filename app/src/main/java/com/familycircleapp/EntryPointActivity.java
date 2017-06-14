@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.main.MainActivity;
-import com.familycircleapp.utils.Utils;
+import com.familycircleapp.utils.Ctx;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -29,7 +29,7 @@ public class EntryPointActivity extends AppCompatActivity {
       final Intent intent = AuthUI.getInstance().createSignInIntentBuilder().build();
       startActivityForResult(intent, RC_LOGIN);
     } else {
-      Utils.startActivity(this, MainActivity.class);
+      Ctx.startActivity(this, MainActivity.class);
       finish();
     }
   }
@@ -53,13 +53,13 @@ public class EntryPointActivity extends AppCompatActivity {
 
     switch (response.getErrorCode()) {
       case ErrorCodes.NO_NETWORK:
-        Utils.toast(this, R.string.error_login_no_internet_connection);
+        Ctx.toast(this, R.string.error_login_no_internet_connection);
         break;
       case ErrorCodes.UNKNOWN_ERROR:
-        Utils.toast(this, R.string.error_login_unknown_error);
+        Ctx.toast(this, R.string.error_login_unknown_error);
         break;
       default:
-        Utils.startActivity(this, MainActivity.class);
+        Ctx.startActivity(this, MainActivity.class);
         finish();
     }
   }

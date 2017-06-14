@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class FuncUtils {
+public final class F {
 
-  private FuncUtils() {
+  private F() {
     throw new UnsupportedOperationException();
   }
 

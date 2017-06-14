@@ -11,7 +11,7 @@ import android.view.View;
 import com.familycircleapp.App;
 import com.familycircleapp.EntryPointActivity;
 import com.familycircleapp.R;
-import com.familycircleapp.utils.Utils;
+import com.familycircleapp.utils.Ctx;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.main.adapter.CircleUserAdapter;
 
@@ -48,7 +48,7 @@ public class MainActivity extends LifecycleActivity {
           .getUsers()
           .observe(this, this::onUsersLoaded);
     } else {
-      Utils.startActivity(this, EntryPointActivity.class);
+      Ctx.startActivity(this, EntryPointActivity.class);
       finish();
     }
   }

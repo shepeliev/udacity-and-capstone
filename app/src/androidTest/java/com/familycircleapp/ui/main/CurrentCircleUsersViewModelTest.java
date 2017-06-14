@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.test.rule.UiThreadTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.familycircleapp.utils.FuncUtils;
+import com.familycircleapp.utils.F;
 import com.familycircleapp.LiveDataTestUtil;
 import com.familycircleapp.R;
 import com.familycircleapp.repository.Circle;
@@ -46,8 +46,8 @@ public class CurrentCircleUsersViewModelTest {
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
 
-    final Map<String, Boolean> members = FuncUtils.mapOf(Collections.singletonList(
-        FuncUtils.mapEntry("user_1", true)
+    final Map<String, Boolean> members = F.mapOf(Collections.singletonList(
+        F.mapEntry("user_1", true)
     ));
     mCircleLiveData = new MutableLiveData<>();
     mCircleLiveData.postValue(getCircle("circle_1", members));

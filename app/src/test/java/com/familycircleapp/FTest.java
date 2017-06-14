@@ -1,6 +1,6 @@
 package com.familycircleapp;
 
-import com.familycircleapp.utils.FuncUtils;
+import com.familycircleapp.utils.F;
 
 import org.junit.Test;
 
@@ -10,19 +10,19 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
-public class FuncUtilsTest {
+public class FTest {
 
   @Test
   public void testMap() throws Exception {
     assertEquals(
         asList("1", "2", "3"),
-        FuncUtils.map(asList(1, 2, 3), Object::toString)
+        F.map(asList(1, 2, 3), Object::toString)
     );
   }
 
   @Test
   public void testReduce() throws Exception {
-    final int reduced = FuncUtils.fold(asList(1, 5, 4), 0, (acc, el) -> acc + el);
+    final int reduced = F.fold(asList(1, 5, 4), 0, (acc, el) -> acc + el);
     assertEquals(10, reduced);
   }
 
@@ -34,10 +34,10 @@ public class FuncUtilsTest {
       put("3", 3);
     }};
 
-    assertEquals(expectedMap, FuncUtils.mapOf(asList(
-        FuncUtils.mapEntry("1", 1),
-        FuncUtils.mapEntry("2", 2),
-        FuncUtils.mapEntry("3", 3)
+    assertEquals(expectedMap, F.mapOf(asList(
+        F.mapEntry("1", 1),
+        F.mapEntry("2", 2),
+        F.mapEntry("3", 3)
     )));
   }
 }

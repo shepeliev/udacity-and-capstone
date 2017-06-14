@@ -5,7 +5,7 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
-import com.familycircleapp.utils.FuncUtils;
+import com.familycircleapp.utils.F;
 import com.familycircleapp.repository.Circle;
 import com.familycircleapp.repository.CircleRepository;
 import com.familycircleapp.repository.CurrentUser;
@@ -44,7 +44,7 @@ public class CurrentCircleUsersViewModel extends ViewModel {
 
     return Transformations.map(
         circleLiveData,
-        circle -> FuncUtils.map(
+        circle -> F.map(
             circle.getMembers().keySet(),
             id -> Transformations.map(mUserRepository.getUser(id), CircleUser::fromUser
             )

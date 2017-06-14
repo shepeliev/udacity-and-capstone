@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.support.annotation.StringRes;
 import android.widget.Toast;
 
-public final class Utils {
+public final class Ctx {
 
-  private Utils() {
+  private Ctx() {
     throw new UnsupportedOperationException();
   }
 
