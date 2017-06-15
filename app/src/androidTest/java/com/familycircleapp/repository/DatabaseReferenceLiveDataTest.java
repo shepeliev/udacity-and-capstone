@@ -6,7 +6,7 @@ import com.google.firebase.database.DatabaseReference;
 import android.support.test.rule.UiThreadTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.familycircleapp.LiveDataTestUtil;
+import com.familycircleapp.testutils.LiveDataUtil;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,7 +58,7 @@ public class DatabaseReferenceLiveDataTest {
     final String[] actualValue = {null};
     uiThreadRule.runOnUiThread(() -> {
       liveData.onDataChange(mockDataSnapshot);
-      actualValue[0] = LiveDataTestUtil.getValue(liveData);
+      actualValue[0] = LiveDataUtil.getValue(liveData);
     });
 
     assertEquals("value", actualValue[0]);

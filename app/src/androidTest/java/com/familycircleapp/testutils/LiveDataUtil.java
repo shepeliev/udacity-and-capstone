@@ -1,4 +1,4 @@
-package com.familycircleapp;
+package com.familycircleapp.testutils;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
@@ -7,9 +7,9 @@ import android.support.annotation.Nullable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public final class LiveDataTestUtil {
+public final class LiveDataUtil {
 
-  private LiveDataTestUtil() {
+  private LiveDataUtil() {
     throw new UnsupportedOperationException();
   }
 

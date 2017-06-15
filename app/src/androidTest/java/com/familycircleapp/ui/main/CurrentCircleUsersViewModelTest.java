@@ -6,7 +6,7 @@ import android.support.test.rule.UiThreadTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.familycircleapp.utils.F;
-import com.familycircleapp.LiveDataTestUtil;
+import com.familycircleapp.testutils.LiveDataUtil;
 import com.familycircleapp.R;
 import com.familycircleapp.repository.Circle;
 import com.familycircleapp.repository.CircleRepository;
@@ -75,11 +75,11 @@ public class CurrentCircleUsersViewModelTest {
 
     uiThread.runOnUiThread(() -> {
       final LiveData<List<LiveData<CircleUser>>> users = mCurrentCircleUsersViewModel.getUsers();
-      final List<LiveData<CircleUser>> list = LiveDataTestUtil.getValue(users);
+      final List<LiveData<CircleUser>> list = LiveDataUtil.getValue(users);
       testResultListSize[0] = list.size();
 
       final int[] i = {0};
-      list.forEach(ld -> testResultListItems[i[0]++] = LiveDataTestUtil.getValue(ld));
+      list.forEach(ld -> testResultListItems[i[0]++] = LiveDataUtil.getValue(ld));
     });
 
     assertEquals(1, testResultListSize[0]);

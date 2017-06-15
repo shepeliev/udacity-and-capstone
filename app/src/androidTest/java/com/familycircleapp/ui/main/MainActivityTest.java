@@ -2,6 +2,7 @@ package com.familycircleapp.ui.main;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProvider;
@@ -13,8 +14,10 @@ import android.view.View;
 import com.familycircleapp.EntryPointActivity;
 import com.familycircleapp.R;
 import com.familycircleapp.battery.BatteryInfoListener;
+import com.familycircleapp.location.LocationServiceManager;
 import com.familycircleapp.mocks.TestApp;
 import com.familycircleapp.repository.CurrentUser;
+import com.familycircleapp.testutils.PermissionUtils;
 import com.firebase.ui.auth.KickoffActivity;
 
 import org.junit.Before;
@@ -39,6 +42,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -67,6 +72,7 @@ public class MainActivityTest {
   @Inject ViewModelProvider.Factory mockFactory;
   @Inject CurrentUser mockCurrentUser;
   @Inject BatteryInfoListener mockBatteryInfoListener;
+  @Inject LocationServiceManager mockLocationServiceManager;
   @Mock CurrentCircleUsersViewModel mockCurrentCircleUsersViewModel;
 
   private MutableLiveData<List<LiveData<CircleUser>>> mUsersLiveData;
@@ -86,14 +92,14 @@ public class MainActivityTest {
 
   @Test
   public void shouldShowLoaderScreen_whileDataIsLoading() throws Exception {
-    rule.launchActivity(null);
+    launchActivity();
 
     onView(withId(R.id.loader_screen)).check(matches(isDisplayed()));
   }
 
   @Test
   public void shouldHideLoaderScreen_whenDataIsLoaded() throws Exception {
-    rule.launchActivity(null);
+    launchActivity();
 
     mUsersLiveData.postValue(Collections.emptyList());
 
@@ -104,7 +110,7 @@ public class MainActivityTest {
   public void shouldStartEntryPointActivityAndFinish_ifUserNotAuthenticated() throws Exception {
     when(mockCurrentUser.isAuthenticated()).thenReturn(false);
 
-    rule.launchActivity(null);
+    launchActivity();
 
     intended(hasComponent(EntryPointActivity.class.getName()));
     assertTrue(rule.getActivity().isFinishing());
@@ -122,7 +128,7 @@ public class MainActivityTest {
     final MutableLiveData<CircleUser> userLiveData = new MutableLiveData<>();
     userLiveData.postValue(user);
     final List<LiveData<CircleUser>> users = Collections.singletonList(userLiveData);
-    rule.launchActivity(null);
+    launchActivity();
 
     mUsersLiveData.postValue(users);
 
@@ -133,8 +139,38 @@ public class MainActivityTest {
 
   @Test
   public void shouldStartBatteryInfoListener_ifUserAuthenticated() throws Exception {
-    rule.launchActivity(null);
+    launchActivity();
 
     verify(mockBatteryInfoListener).start(rule.getActivity().getLifecycle());
+  }
+
+  @Test
+  public void shouldNotStartBatteryInfoListener_ifUserNotAuthenticated() throws Exception {
+    when(mockCurrentUser.isAuthenticated()).thenReturn(false);
+
+    launchActivity();
+
+    verify(mockBatteryInfoListener, never()).start(any(Lifecycle.class));
+  }
+
+  @Test
+  public void shouldStartLocationUpdates_ifUserAuthenticated() throws Exception {
+    launchActivity();
+
+    verify(mockLocationServiceManager).startLocationUpdates(rule.getActivity());
+  }
+
+  @Test
+  public void shouldNotStartLocationUpdates_ifUserNotAuthenticated() throws Exception {
+    when(mockCurrentUser.isAuthenticated()).thenReturn(false);
+
+    launchActivity();
+
+    verify(mockLocationServiceManager, never()).startLocationUpdates(rule.getActivity());
+  }
+
+  private void launchActivity() {
+    rule.launchActivity(null);
+    PermissionUtils.allowPermissionsIfNeeded();
   }
 }
