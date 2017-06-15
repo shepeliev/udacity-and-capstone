@@ -11,9 +11,10 @@ import android.view.View;
 import com.familycircleapp.App;
 import com.familycircleapp.EntryPointActivity;
 import com.familycircleapp.R;
-import com.familycircleapp.utils.Ctx;
+import com.familycircleapp.battery.BatteryInfoListener;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.main.adapter.CircleUserAdapter;
+import com.familycircleapp.utils.Ctx;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class MainActivity extends LifecycleActivity {
 
   @Inject CurrentUser mCurrentUser;
   @Inject ViewModelProvider.Factory mViewModelFactory;
+  @Inject BatteryInfoListener mBatteryInfoListener;
 
   @BindView(R.id.loader_screen) View mLoaderScreen;
   @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
@@ -42,6 +44,9 @@ public class MainActivity extends LifecycleActivity {
     if (mCurrentUser.isAuthenticated()) {
       mCircleUserAdapter = new CircleUserAdapter(this);
       mRecyclerView.setAdapter(mCircleUserAdapter);
+
+      mBatteryInfoListener.start(getLifecycle());
+
       ViewModelProviders
           .of(this, mViewModelFactory)
           .get(CurrentCircleUsersViewModel.class)

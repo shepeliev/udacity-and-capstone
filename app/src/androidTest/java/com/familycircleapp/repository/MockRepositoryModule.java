@@ -1,6 +1,4 @@
-package com.familycircleapp.mocks;
-
-import com.familycircleapp.repository.CurrentUser;
+package com.familycircleapp.repository;
 
 import javax.inject.Singleton;
 
@@ -10,11 +8,17 @@ import dagger.Provides;
 import static org.mockito.Mockito.mock;
 
 @Module
-final class MockRepositoryModule {
+public final class MockRepositoryModule {
 
   @Provides
   @Singleton
   CurrentUser provideCurrentUser() {
     return mock(CurrentUser.class);
+  }
+
+  @Provides
+  @Singleton
+  UserRepository provideUserRepository() {
+    return mock(UserRepository.class);
   }
 }

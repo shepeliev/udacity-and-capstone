@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.familycircleapp.EntryPointActivity;
 import com.familycircleapp.R;
+import com.familycircleapp.battery.BatteryInfoListener;
 import com.familycircleapp.mocks.TestApp;
 import com.familycircleapp.repository.CurrentUser;
 import com.firebase.ui.auth.KickoffActivity;
@@ -38,6 +39,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -64,6 +66,7 @@ public class MainActivityTest {
 
   @Inject ViewModelProvider.Factory mockFactory;
   @Inject CurrentUser mockCurrentUser;
+  @Inject BatteryInfoListener mockBatteryInfoListener;
   @Mock CurrentCircleUsersViewModel mockCurrentCircleUsersViewModel;
 
   private MutableLiveData<List<LiveData<CircleUser>>> mUsersLiveData;
@@ -126,5 +129,12 @@ public class MainActivityTest {
     onView(withId(R.id.tw_user_displayed_name)).check(matches(withText("John")));
     onView(withId(R.id.tw_user_status)).check(matches(withText("Near: 1 Time Square")));
     onView(withId(R.id.tw_battery_level)).check(matches(withText("77 %")));
+  }
+
+  @Test
+  public void shouldStartBatteryInfoListener_ifUserAuthenticated() throws Exception {
+    rule.launchActivity(null);
+
+    verify(mockBatteryInfoListener).start(rule.getActivity().getLifecycle());
   }
 }

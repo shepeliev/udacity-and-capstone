@@ -1,5 +1,6 @@
 package com.familycircleapp;
 
+import com.familycircleapp.battery.BatteryModule;
 import com.familycircleapp.datasource.FirebaseModule;
 import com.familycircleapp.repository.RepositoryModule;
 import com.familycircleapp.ui.ViewModelModule;
@@ -11,8 +12,9 @@ import javax.inject.Singleton;
     AndroidModule.class,
     FirebaseModule.class,
     RepositoryModule.class,
-    ViewModelModule.class
+    ViewModelModule.class,
+    BatteryModule.class
 })
-public interface AppComponent extends Component {
+interface AppComponent extends Component {
 
 }
