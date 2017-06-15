@@ -4,6 +4,11 @@ import android.content.Intent;
 import android.os.BatteryManager;
 import android.support.annotation.NonNull;
 
+import com.familycircleapp.utils.F;
+
+import java.util.Arrays;
+import java.util.Map;
+
 public class BatteryInfo {
 
   private static final String STATUS_CHARGING = "charging";
@@ -12,12 +17,12 @@ public class BatteryInfo {
   private static final String STATUS_NOT_CHARGING = "not_charging";
   private static final String STATUS_UNKNOWN = "unknown";
 
-  private final double mBatteryLevel;
-  private final String mBatteryStatus;
+  private final double mLevel;
+  private final String mStatus;
 
-  BatteryInfo(final double batteryLevel, final String batteryStatus) {
-    mBatteryLevel = batteryLevel;
-    mBatteryStatus = batteryStatus;
+  public BatteryInfo(final double level, final String status) {
+    mLevel = level;
+    mStatus = status;
   }
 
   public static BatteryInfo fromIntent(@NonNull final Intent intent) {
@@ -52,12 +57,19 @@ public class BatteryInfo {
   }
 
 
-  public double getBatteryLevel() {
-    return mBatteryLevel;
+  public double getLevel() {
+    return mLevel;
   }
 
-  public String getBatteryStatus() {
-    return mBatteryStatus;
+  public String getStatus() {
+    return mStatus;
+  }
+
+  public Map<String, Object> asMap() {
+    return F.mapOf(Arrays.asList(
+        F.mapEntry("batteryLevel", mLevel),
+        F.mapEntry("batteryStatus", mStatus)
+    ));
   }
 
   @Override
@@ -67,25 +79,25 @@ public class BatteryInfo {
 
     final BatteryInfo that = (BatteryInfo) o;
 
-    if (Double.compare(that.mBatteryLevel, mBatteryLevel) != 0) return false;
-    return mBatteryStatus != null ? mBatteryStatus.equals(that.mBatteryStatus) : that.mBatteryStatus == null;
+    if (Double.compare(that.mLevel, mLevel) != 0) return false;
+    return mStatus != null ? mStatus.equals(that.mStatus) : that.mStatus == null;
   }
 
   @Override
   public int hashCode() {
     int result;
     long temp;
-    temp = Double.doubleToLongBits(mBatteryLevel);
+    temp = Double.doubleToLongBits(mLevel);
     result = (int) (temp ^ (temp >>> 32));
-    result = 31 * result + (mBatteryStatus != null ? mBatteryStatus.hashCode() : 0);
+    result = 31 * result + (mStatus != null ? mStatus.hashCode() : 0);
     return result;
   }
 
   @Override
   public String toString() {
     final StringBuffer sb = new StringBuffer("BatteryInfo{");
-    sb.append("mBatteryLevel=").append(mBatteryLevel);
-    sb.append(", mBatteryStatus='").append(mBatteryStatus).append('\'');
+    sb.append("mLevel=").append(mLevel);
+    sb.append(", mStatus='").append(mStatus).append('\'');
     sb.append('}');
     return sb.toString();
   }

@@ -24,7 +24,10 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public void saveBatteryInfo(@NonNull final String userId, @NonNull final BatteryInfo batteryInfo) {
-    throw new UnsupportedOperationException("not implemented yet");
+  public void saveBatteryInfo(
+      @NonNull final String userId, @NonNull final BatteryInfo batteryInfo
+  ) {
+    final DatabaseReference reference = mFirebaseDatabase.getReference(ENTITY_NAME).child(userId);
+    reference.updateChildren(batteryInfo.asMap());
   }
 }
