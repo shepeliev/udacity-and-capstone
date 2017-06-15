@@ -7,7 +7,7 @@ import android.view.WindowManager;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
-public final class ToastMatcher extends TypeSafeMatcher<Root> {
+final class ToastMatcher extends TypeSafeMatcher<Root> {
 
   @Override
   protected boolean matchesSafely(final Root root) {

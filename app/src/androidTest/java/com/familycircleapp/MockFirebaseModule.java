@@ -1,4 +1,4 @@
-package com.familycircleapp.mocks;
+package com.familycircleapp;
 
 import com.google.firebase.auth.FirebaseAuth;
 

@@ -1,7 +1,5 @@
-package com.familycircleapp.mocks;
+package com.familycircleapp;
 
-import com.familycircleapp.Component;
-import com.familycircleapp.EntryPointActivityTest;
 import com.familycircleapp.battery.BatteryInfoReceiverTest;
 import com.familycircleapp.battery.MockBatteryModule;
 import com.familycircleapp.location.MockLocationModule;
@@ -13,6 +11,7 @@ import javax.inject.Singleton;
 
 @Singleton
 @dagger.Component(modules = {
+    MockAndroidModule.class,
     MockFirebaseModule.class,
     MockRepositoryModule.class,
     MockViewModelModule.class,

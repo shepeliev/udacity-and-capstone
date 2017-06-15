@@ -1,30 +1,36 @@
 package com.familycircleapp.ui.main;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProvider;
+import android.content.pm.PackageManager;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
+import android.support.test.rule.UiThreadTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.familycircleapp.EntryPointActivity;
+import com.familycircleapp.PermissionManager;
 import com.familycircleapp.R;
+import com.familycircleapp.TestApp;
 import com.familycircleapp.battery.BatteryInfoListener;
-import com.familycircleapp.location.LocationServiceManager;
-import com.familycircleapp.mocks.TestApp;
+import com.familycircleapp.location.LocationUpdatesManager;
 import com.familycircleapp.repository.CurrentUser;
-import com.familycircleapp.testutils.PermissionUtils;
 import com.firebase.ui.auth.KickoffActivity;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
@@ -40,15 +46,20 @@ import static android.support.test.espresso.intent.matcher.IntentMatchers.hasCom
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.familycircleapp.matchers.CustomMatchers.toast;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {
+
+  @Rule
+  public UiThreadTestRule uiThreadRule = new UiThreadTestRule();
 
   @Rule
   public IntentsTestRule<MainActivity> rule =
@@ -69,10 +80,11 @@ public class MainActivityTest {
         }
       };
 
+  @Inject PermissionManager mockPermissionManager;
   @Inject ViewModelProvider.Factory mockFactory;
   @Inject CurrentUser mockCurrentUser;
   @Inject BatteryInfoListener mockBatteryInfoListener;
-  @Inject LocationServiceManager mockLocationServiceManager;
+  @Inject LocationUpdatesManager mockLocationUpdatesManager;
   @Mock CurrentCircleUsersViewModel mockCurrentCircleUsersViewModel;
 
   private MutableLiveData<List<LiveData<CircleUser>>> mUsersLiveData;
@@ -81,6 +93,8 @@ public class MainActivityTest {
   public void setUp() throws Exception {
     TestApp.getComponent().inject(this);
     MockitoAnnotations.initMocks(this);
+    Mockito.reset(mockPermissionManager, mockFactory, mockCurrentUser, mockBatteryInfoListener,
+        mockLocationUpdatesManager);
 
     mUsersLiveData = new MutableLiveData<>();
 
@@ -92,14 +106,14 @@ public class MainActivityTest {
 
   @Test
   public void shouldShowLoaderScreen_whileDataIsLoading() throws Exception {
-    launchActivity();
+    rule.launchActivity(null);
 
     onView(withId(R.id.loader_screen)).check(matches(isDisplayed()));
   }
 
   @Test
   public void shouldHideLoaderScreen_whenDataIsLoaded() throws Exception {
-    launchActivity();
+    rule.launchActivity(null);
 
     mUsersLiveData.postValue(Collections.emptyList());
 
@@ -110,14 +124,14 @@ public class MainActivityTest {
   public void shouldStartEntryPointActivityAndFinish_ifUserNotAuthenticated() throws Exception {
     when(mockCurrentUser.isAuthenticated()).thenReturn(false);
 
-    launchActivity();
+    rule.launchActivity(null);
 
     intended(hasComponent(EntryPointActivity.class.getName()));
     assertTrue(rule.getActivity().isFinishing());
   }
 
   @Test
-  public void shouldShowUser_inRecyclerView() throws Exception {
+  public void shouldShowUser_inRecyclerView() throws Throwable {
     final CircleUser user = new CircleUser(
         "John",
         77,
@@ -128,9 +142,9 @@ public class MainActivityTest {
     final MutableLiveData<CircleUser> userLiveData = new MutableLiveData<>();
     userLiveData.postValue(user);
     final List<LiveData<CircleUser>> users = Collections.singletonList(userLiveData);
-    launchActivity();
+    rule.launchActivity(null);
 
-    mUsersLiveData.postValue(users);
+    uiThreadRule.runOnUiThread(() -> mUsersLiveData.setValue(users));
 
     onView(withId(R.id.tw_user_displayed_name)).check(matches(withText("John")));
     onView(withId(R.id.tw_user_status)).check(matches(withText("Near: 1 Time Square")));
@@ -139,7 +153,7 @@ public class MainActivityTest {
 
   @Test
   public void shouldStartBatteryInfoListener_ifUserAuthenticated() throws Exception {
-    launchActivity();
+    rule.launchActivity(null);
 
     verify(mockBatteryInfoListener).start(rule.getActivity().getLifecycle());
   }
@@ -148,29 +162,76 @@ public class MainActivityTest {
   public void shouldNotStartBatteryInfoListener_ifUserNotAuthenticated() throws Exception {
     when(mockCurrentUser.isAuthenticated()).thenReturn(false);
 
-    launchActivity();
+    rule.launchActivity(null);
 
     verify(mockBatteryInfoListener, never()).start(any(Lifecycle.class));
   }
 
   @Test
-  public void shouldStartLocationUpdates_ifUserAuthenticated() throws Exception {
-    launchActivity();
+  public void shouldStartLocationUpdates_ifUserAuthenticated_andPermissionGranted() throws Exception {
+    rule.launchActivity(null);
 
-    verify(mockLocationServiceManager).startLocationUpdates(rule.getActivity());
+    //noinspection unchecked
+    final ArgumentCaptor<Runnable> argCaptor = ArgumentCaptor.forClass(Runnable.class);
+    verify(mockPermissionManager).requestPermission(
+        eq(rule.getActivity()),
+        eq(Manifest.permission.ACCESS_FINE_LOCATION),
+        eq(MainActivity.RC_LOCATION_PERMISSION),
+        argCaptor.capture()
+    );
+    argCaptor.getValue().run();
+    verify(mockLocationUpdatesManager).startLocationUpdates(rule.getActivity());
+  }
+
+  @Test
+  public void shouldNotStartLocationUpdates_ifUserAuthenticated_butPermissionNotGranted() throws Exception {
+    rule.launchActivity(null);
+
+    verify(mockPermissionManager).requestPermission(
+        eq(rule.getActivity()),
+        eq(Manifest.permission.ACCESS_FINE_LOCATION),
+        eq(MainActivity.RC_LOCATION_PERMISSION),
+        any(Runnable.class)
+    );
+
+    verify(mockLocationUpdatesManager, never()).startLocationUpdates(any(FragmentActivity.class));
+  }
+
+  @Test
+  public void onRequestPermissionResult_shouldStartLocationUpdates_ifPermissionGranted() throws Exception {
+    rule.launchActivity(null);
+
+    rule.getActivity().onRequestPermissionsResult(
+        MainActivity.RC_LOCATION_PERMISSION,
+        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+        new int[]{PackageManager.PERMISSION_GRANTED}
+    );
+
+    verify(mockLocationUpdatesManager).startLocationUpdates(rule.getActivity());
+  }
+
+  @Test
+  public void onRequestPermissionResult_shouldShowToast_ifPermissionNotGranted() throws Throwable {
+    rule.launchActivity(null);
+
+    uiThreadRule.runOnUiThread(() -> rule.getActivity().onRequestPermissionsResult(
+        MainActivity.RC_LOCATION_PERMISSION,
+        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+        new int[]{PackageManager.PERMISSION_DENIED}
+    ));
+
+    verify(mockLocationUpdatesManager, never()).startLocationUpdates(any(FragmentActivity.class));
+    onView(withText(R.string.error_location_permission_not_granted))
+        .inRoot(toast())
+        .check(matches(isDisplayed()));
   }
 
   @Test
   public void shouldNotStartLocationUpdates_ifUserNotAuthenticated() throws Exception {
     when(mockCurrentUser.isAuthenticated()).thenReturn(false);
 
-    launchActivity();
-
-    verify(mockLocationServiceManager, never()).startLocationUpdates(rule.getActivity());
-  }
-
-  private void launchActivity() {
     rule.launchActivity(null);
-    PermissionUtils.allowPermissionsIfNeeded();
+
+    verify(mockLocationUpdatesManager, never()).startLocationUpdates(any(FragmentActivity.class));
   }
 }

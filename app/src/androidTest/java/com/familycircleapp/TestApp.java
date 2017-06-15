@@ -1,6 +1,4 @@
-package com.familycircleapp.mocks;
-
-import com.familycircleapp.App;
+package com.familycircleapp;
 
 public class TestApp extends App {
 

@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.BatteryManager;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.familycircleapp.mocks.TestApp;
+import com.familycircleapp.TestApp;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.repository.UserRepository;
 

@@ -7,8 +7,6 @@ import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.familycircleapp.matchers.ToastMatcher;
-import com.familycircleapp.mocks.TestApp;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.main.MainActivity;
 import com.firebase.ui.auth.ErrorCodes;
@@ -31,6 +29,7 @@ import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.familycircleapp.matchers.CustomMatchers.toast;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -107,7 +106,7 @@ public class EntryPointActivityTest {
 
     TimeUnit.SECONDS.sleep(1);
     onView(withText(R.string.error_login_no_internet_connection))
-        .inRoot(new ToastMatcher())
+        .inRoot(toast())
         .check(matches(isDisplayed()));
   }
 
@@ -121,7 +120,7 @@ public class EntryPointActivityTest {
 
     TimeUnit.SECONDS.sleep(1);
     onView(withText(R.string.error_login_unknown_error))
-        .inRoot(new ToastMatcher())
+        .inRoot(toast())
         .check(matches(isDisplayed()));
   }
 

@@ -1,6 +1,8 @@
 package com.familycircleapp;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import javax.inject.Singleton;
 
@@ -20,5 +22,17 @@ public final class AndroidModule {
   @Singleton
   Context provideContext() {
     return mContext;
+  }
+
+  @Provides
+  @Singleton
+  SharedPreferences provideSharedPreferences(final Context context) {
+    return PreferenceManager.getDefaultSharedPreferences(context);
+  }
+
+  @Provides
+  @Singleton
+  PermissionManager providePermissionManager(final Context context) {
+    return new PermissionManagerImpl(context);
   }
 }

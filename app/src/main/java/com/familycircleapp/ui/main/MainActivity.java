@@ -13,9 +13,10 @@ import android.view.View;
 
 import com.familycircleapp.App;
 import com.familycircleapp.EntryPointActivity;
+import com.familycircleapp.PermissionManager;
 import com.familycircleapp.R;
 import com.familycircleapp.battery.BatteryInfoListener;
-import com.familycircleapp.location.LocationServiceManager;
+import com.familycircleapp.location.LocationUpdatesManager;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.main.adapter.CircleUserAdapter;
 import com.familycircleapp.utils.Ctx;
@@ -31,12 +32,13 @@ import timber.log.Timber;
 
 public class MainActivity extends LifecycleActivity {
 
-  private static final int RC_LOCATION_PERMISSION = 1;
+  static final int RC_LOCATION_PERMISSION = 1;
 
+  @Inject PermissionManager mPermissionManager;
   @Inject CurrentUser mCurrentUser;
   @Inject ViewModelProvider.Factory mViewModelFactory;
   @Inject BatteryInfoListener mBatteryInfoListener;
-  @Inject LocationServiceManager mLocationServiceManager;
+  @Inject LocationUpdatesManager mLocationUpdatesManager;
 
   @BindView(R.id.loader_screen) View mLoaderScreen;
   @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
@@ -55,11 +57,11 @@ public class MainActivity extends LifecycleActivity {
       mRecyclerView.setAdapter(mCircleUserAdapter);
 
       mBatteryInfoListener.start(getLifecycle());
-      Ctx.requestPermission(
+      mPermissionManager.requestPermission(
           this,
           Manifest.permission.ACCESS_FINE_LOCATION,
           RC_LOCATION_PERMISSION,
-          isGranted -> mLocationServiceManager.startLocationUpdates(this)
+          () ->  mLocationUpdatesManager.startLocationUpdates(this)
       );
 
 
@@ -86,7 +88,7 @@ public class MainActivity extends LifecycleActivity {
 
     final int idx = Arrays.asList(permissions).indexOf(Manifest.permission.ACCESS_FINE_LOCATION);
     if (idx > -1 && grantResults[idx] == PackageManager.PERMISSION_GRANTED) {
-      mLocationServiceManager.startLocationUpdates(this);
+      mLocationUpdatesManager.startLocationUpdates(this);
     } else {
       Ctx.toast(this, R.string.error_location_permission_not_granted);
       Timber.w(Manifest.permission.ACCESS_FINE_LOCATION + " has not been granted");
