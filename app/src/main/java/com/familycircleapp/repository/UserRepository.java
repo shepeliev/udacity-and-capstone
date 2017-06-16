@@ -7,6 +7,8 @@ import com.familycircleapp.battery.BatteryInfo;
 
 public interface UserRepository {
 
+  String NAME = "users";
+
   LiveData<User> getUser(@NonNull final String id);
 
   void saveBatteryInfo(@NonNull final String userId, @NonNull final BatteryInfo batteryInfo);

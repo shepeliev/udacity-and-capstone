@@ -5,5 +5,7 @@ import android.support.annotation.NonNull;
 
 public interface CircleRepository {
 
+  String NAME = "circles";
+
   LiveData<Circle> getCircle(@NonNull final String id);
 }
