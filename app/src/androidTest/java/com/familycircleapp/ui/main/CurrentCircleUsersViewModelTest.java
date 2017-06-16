@@ -5,14 +5,14 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.test.rule.UiThreadTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.familycircleapp.utils.F;
-import com.familycircleapp.testutils.LiveDataUtil;
 import com.familycircleapp.R;
 import com.familycircleapp.repository.Circle;
-import com.familycircleapp.repository.CircleRepository;
+import com.familycircleapp.repository.CurrentCircleRepository;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.repository.User;
 import com.familycircleapp.repository.UserRepository;
+import com.familycircleapp.testutils.LiveDataUtil;
+import com.familycircleapp.utils.F;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,11 +36,12 @@ public class CurrentCircleUsersViewModelTest {
   public UiThreadTestRule uiThread = new UiThreadTestRule();
 
   @Mock CurrentUser mockCurrentUser;
-  @Mock CircleRepository mockCircleRepository;
+  @Mock CurrentCircleRepository mockCurrentCircleRepository;
   @Mock UserRepository mockUserRepository;
   @InjectMocks CurrentCircleUsersViewModel mCurrentCircleUsersViewModel;
 
   private MutableLiveData<Circle> mCircleLiveData;
+  private MutableLiveData<User> mUserLiveData;
 
   @Before
   public void setUp() throws Exception {
@@ -52,8 +53,12 @@ public class CurrentCircleUsersViewModelTest {
     mCircleLiveData = new MutableLiveData<>();
     mCircleLiveData.postValue(getCircle("circle_1", members));
 
+    mUserLiveData = new MutableLiveData<>();
+    mUserLiveData.postValue(getUser("user_1", "circle_1"));
+
     when(mockCurrentUser.getId()).thenReturn("user_1");
-    when(mockCircleRepository.getCircle("circle_1")).thenReturn(mCircleLiveData);
+    when(mockCurrentCircleRepository.getCurrentCircle("user_1")).thenReturn(mCircleLiveData);
+    when(mockUserRepository.getUser("user_1")).thenReturn(mUserLiveData);
   }
 
   @Test
@@ -65,10 +70,6 @@ public class CurrentCircleUsersViewModelTest {
         R.string.user_status_near,
         "address"
     );
-    final User user = getUser("user_1", "circle_1");
-    final MutableLiveData<User> userLiveData = new MutableLiveData<>();
-    userLiveData.postValue(user);
-    when(mockUserRepository.getUser("user_1")).thenReturn(userLiveData);
 
     final int[] testResultListSize = {0};
     final CircleUser[] testResultListItems = new CircleUser[testResultListSize.length];

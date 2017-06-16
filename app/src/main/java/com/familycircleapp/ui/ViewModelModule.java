@@ -3,7 +3,7 @@ package com.familycircleapp.ui;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
-import com.familycircleapp.repository.CircleRepository;
+import com.familycircleapp.repository.CurrentCircleRepository;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.repository.UserRepository;
 import com.familycircleapp.ui.main.CurrentCircleUserIdsViewModel;
@@ -35,10 +35,9 @@ public final class ViewModelModule {
   @ClassKey(CurrentCircleUsersViewModel.class)
   ViewModel provideCurrentCircleUsersViewModel(
       final CurrentUser currentUser,
-      final CircleRepository circleRepository,
-      final UserRepository userRepository
-  ) {
-    return new CurrentCircleUsersViewModel(currentUser, circleRepository, userRepository);
+      final UserRepository userRepository,
+      final CurrentCircleRepository currentCircleRepository) {
+    return new CurrentCircleUsersViewModel(currentUser, currentCircleRepository, userRepository);
   }
 
   @Provides
@@ -46,9 +45,7 @@ public final class ViewModelModule {
   @ClassKey(CurrentCircleUserIdsViewModel.class)
   ViewModel provideCurrentCircleUserIdsViewModel(
       final CurrentUser currentUser,
-      final CircleRepository circleRepository,
-      final UserRepository userRepository
-  ) {
-    return new CurrentCircleUserIdsViewModel(currentUser, circleRepository, userRepository);
+      final CurrentCircleRepository currentCircleRepository) {
+    return new CurrentCircleUserIdsViewModel(currentUser, currentCircleRepository);
   }
 }

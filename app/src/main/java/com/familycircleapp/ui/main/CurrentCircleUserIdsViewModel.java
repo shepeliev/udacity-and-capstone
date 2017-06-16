@@ -5,11 +5,8 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
-import com.familycircleapp.repository.Circle;
-import com.familycircleapp.repository.CircleRepository;
+import com.familycircleapp.repository.CurrentCircleRepository;
 import com.familycircleapp.repository.CurrentUser;
-import com.familycircleapp.repository.User;
-import com.familycircleapp.repository.UserRepository;
 import com.familycircleapp.utils.F;
 
 import java.util.List;
@@ -17,17 +14,13 @@ import java.util.List;
 public class CurrentCircleUserIdsViewModel extends ViewModel {
 
   private final CurrentUser mCurrentUser;
-  private final CircleRepository mCircleRepository;
-  private final UserRepository mUserRepository;
+  private final CurrentCircleRepository mCurrentCircleRepository;
 
   public CurrentCircleUserIdsViewModel(
       @NonNull final CurrentUser currentUser,
-      @NonNull final CircleRepository circleRepository,
-      @NonNull final UserRepository userRepository
-  ) {
+      @NonNull final CurrentCircleRepository currentCircleRepository) {
     mCurrentUser = currentUser;
-    mCircleRepository = circleRepository;
-    mUserRepository = userRepository;
+    mCurrentCircleRepository = currentCircleRepository;
   }
 
   public LiveData<List<String>> getUserIds() {
@@ -36,14 +29,8 @@ public class CurrentCircleUserIdsViewModel extends ViewModel {
       throw new IllegalStateException("Current user is not authenticated");
     }
 
-    final LiveData<User> userLiveData = mUserRepository.getUser(userId);
-    final LiveData<Circle> circleLiveData = Transformations.switchMap(
-        userLiveData,
-        user -> mCircleRepository.getCircle(user.getCurrentCircle())
-    );
-
     return Transformations.map(
-        circleLiveData,
+        mCurrentCircleRepository.getCurrentCircle(userId),
         circle -> F.map(circle.getMembers().keySet(), id -> id)
     );
   }
