@@ -33,4 +33,10 @@ public final class MockRepositoryModule {
   LastLocationRepository provideLastLocationRepository() {
     return mock(LastLocationRepository.class);
   }
+
+  @Provides
+  @Singleton
+  CurrentCircleRepository provideCurrentCircleRepository() {
+    return mock(CurrentCircleRepository.class);
+  }
 }

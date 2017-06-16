@@ -40,4 +40,12 @@ public final class RepositoryModule {
   LastLocationRepository provideLastLocationRepository(final FirebaseDatabase firebaseDatabase) {
     return new LastLocationRepositoryImpl(firebaseDatabase);
   }
+
+  @Provides
+  @Singleton
+  CurrentCircleRepository provideCurrentCircleRepository(
+      final UserRepository userRepository, final CircleRepository circleRepository
+  ) {
+    return new CurrentCircleRepositoryImpl(userRepository, circleRepository);
+  }
 }
