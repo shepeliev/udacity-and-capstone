@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -59,6 +60,9 @@ public class UpdatedLocationIntentServiceTest {
     Mockito.reset(mockGeocoderService, mockDeviceLocationRepository);
 
     when(mockCurrentUser.getId()).thenReturn("user_1");
+    when(mockGeocoderService.fetchAddress(
+        LATITUDE, LONGITUDE, UpdatedLocationIntentService.MAX_ADDRESS_LINES
+    )).thenReturn("address");
   }
 
   @Test
@@ -66,7 +70,6 @@ public class UpdatedLocationIntentServiceTest {
     final long time = System.currentTimeMillis();
     final Intent intent = getLocationResultIntent(time);
     when(mockSharedPreferences.getBoolean(mShareLocationPrefKey, true)).thenReturn(true);
-    when(mockGeocoderService.fetchAddress(LATITUDE, LONGITUDE)).thenReturn("address");
 
     InstrumentationRegistry.getTargetContext().startService(intent);
     TimeUnit.SECONDS.sleep(2);
@@ -86,12 +89,11 @@ public class UpdatedLocationIntentServiceTest {
     final long time = System.currentTimeMillis();
     final Intent intent = getLocationResultIntent(time);
     when(mockSharedPreferences.getBoolean(mShareLocationPrefKey, true)).thenReturn(false);
-    when(mockGeocoderService.fetchAddress(LATITUDE, LONGITUDE)).thenReturn("address");
 
     InstrumentationRegistry.getTargetContext().startService(intent);
     TimeUnit.SECONDS.sleep(2);
 
-    verify(mockGeocoderService, never()).fetchAddress(anyDouble(), anyDouble());
+    verify(mockGeocoderService, never()).fetchAddress(anyDouble(), anyDouble(), anyInt());
     verify(mockDeviceLocationRepository, never())
         .saveDeviceLocation(anyString(), any(DeviceLocation.class));
   }
@@ -100,12 +102,11 @@ public class UpdatedLocationIntentServiceTest {
   public void onHandleIntent_noLocationResultInIntent_doNothing() throws Exception {
     final Intent intent = new Intent(mContext, UpdatedLocationIntentService.class);
     when(mockSharedPreferences.getBoolean(mShareLocationPrefKey, true)).thenReturn(true);
-    when(mockGeocoderService.fetchAddress(LATITUDE, LONGITUDE)).thenReturn("address");
 
     InstrumentationRegistry.getTargetContext().startService(intent);
     TimeUnit.SECONDS.sleep(2);
 
-    verify(mockGeocoderService, never()).fetchAddress(anyDouble(), anyDouble());
+    verify(mockGeocoderService, never()).fetchAddress(anyDouble(), anyDouble(), anyInt());
     verify(mockDeviceLocationRepository, never())
         .saveDeviceLocation(anyString(), any(DeviceLocation.class));
   }
@@ -120,7 +121,7 @@ public class UpdatedLocationIntentServiceTest {
     InstrumentationRegistry.getTargetContext().startService(intent);
     TimeUnit.SECONDS.sleep(2);
 
-    verify(mockGeocoderService, never()).fetchAddress(anyDouble(), anyDouble());
+    verify(mockGeocoderService, never()).fetchAddress(anyDouble(), anyDouble(), anyInt());
     verify(mockDeviceLocationRepository, never())
         .saveDeviceLocation(anyString(), any(DeviceLocation.class));
   }

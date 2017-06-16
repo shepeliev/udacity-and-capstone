@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
-class LocationUpdatesManagerImpl implements LocationUpdatesManager {
+final class LocationUpdatesManagerImpl implements LocationUpdatesManager {
 
   private final Context mContext;
   private final PermissionManager mPermissionManager;

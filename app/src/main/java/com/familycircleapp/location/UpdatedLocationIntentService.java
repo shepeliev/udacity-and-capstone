@@ -19,7 +19,9 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public class UpdatedLocationIntentService extends IntentService {
+final public class UpdatedLocationIntentService extends IntentService {
+
+  static final int MAX_ADDRESS_LINES = 1;
 
   @Inject SharedPreferences mSharedPreferences;
   @Inject CurrentUser mCurrentUser;
@@ -60,16 +62,11 @@ public class UpdatedLocationIntentService extends IntentService {
       return;
     }
 
-    String address = null;
-    String geocoderError = null;
-    try {
-      address = mGeocoderService.fetchAddress(
-          location.getLatitude(),
-          location.getLongitude()
-      );
-    } catch (GeocoderServiceException e) {
-      geocoderError = e.getLocalizedMessage();
-    }
+    String address = mGeocoderService.fetchAddress(
+        location.getLatitude(),
+        location.getLongitude(),
+        MAX_ADDRESS_LINES
+    );
 
     final DeviceLocation deviceLocation = new DeviceLocation.Builder()
         .setTime(location.getTime())
@@ -77,7 +74,6 @@ public class UpdatedLocationIntentService extends IntentService {
         .setLongitude(location.getLongitude())
         .setAccuracy((double) location.getAccuracy())
         .setAddress(address)
-        .setGeocoderError(geocoderError)
         .build();
 
     mLocationRepository.saveDeviceLocation(userId, deviceLocation);

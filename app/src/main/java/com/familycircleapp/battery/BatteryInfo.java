@@ -9,7 +9,7 @@ import com.familycircleapp.utils.F;
 import java.util.Arrays;
 import java.util.Map;
 
-public class BatteryInfo {
+final public class BatteryInfo {
 
   private static final String STATUS_CHARGING = "charging";
   private static final String STATUS_DISCHARGING = "discharging";

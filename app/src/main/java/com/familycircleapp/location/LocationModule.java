@@ -5,6 +5,7 @@ import com.google.android.gms.location.LocationServices;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Geocoder;
 
 import com.familycircleapp.PermissionManager;
 
@@ -48,7 +49,13 @@ public final class LocationModule {
 
   @Provides
   @Singleton
-  GeocoderService provdeGocoderService() {
-    return new GeocoderServiceImpl();
+  Geocoder provideGeocode(final Context context) {
+    return new Geocoder(context);
+  }
+
+  @Provides
+  @Singleton
+  GeocoderService provideGeocoderService(final Context context, final Geocoder geocoder) {
+    return new GeocoderServiceImpl(context, geocoder);
   }
 }

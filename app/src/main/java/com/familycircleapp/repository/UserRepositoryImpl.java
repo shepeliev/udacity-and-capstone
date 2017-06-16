@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 
 import com.familycircleapp.battery.BatteryInfo;
 
-class UserRepositoryImpl implements UserRepository {
+final class UserRepositoryImpl implements UserRepository {
 
   private static final String ENTITY_NAME = "users";
   private final FirebaseDatabase mFirebaseDatabase;

@@ -7,7 +7,6 @@ public final class DeviceLocation {
   private double mLongitude;
   private double mAccuracy;
   private String mAddress;
-  private String mGeocoderError;
 
   public DeviceLocation() {
   }
@@ -18,7 +17,6 @@ public final class DeviceLocation {
     mLongitude = builder.mLongitude;
     mAccuracy = builder.mAccuracy;
     mAddress = builder.mAddress;
-    mGeocoderError = builder.mGeocoderError;
   }
 
   public long getTime() {
@@ -66,15 +64,6 @@ public final class DeviceLocation {
     return this;
   }
 
-  public String getGeocoderError() {
-    return mGeocoderError;
-  }
-
-  public DeviceLocation setGeocoderError(final String geocoderError) {
-    mGeocoderError = geocoderError;
-    return this;
-  }
-
   @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
@@ -86,8 +75,7 @@ public final class DeviceLocation {
     if (Double.compare(that.mLatitude, mLatitude) != 0) return false;
     if (Double.compare(that.mLongitude, mLongitude) != 0) return false;
     if (Double.compare(that.mAccuracy, mAccuracy) != 0) return false;
-    if (mAddress != null ? !mAddress.equals(that.mAddress) : that.mAddress != null) return false;
-    return mGeocoderError != null ? mGeocoderError.equals(that.mGeocoderError) : that.mGeocoderError == null;
+    return mAddress != null ? mAddress.equals(that.mAddress) : that.mAddress == null;
   }
 
   @Override
@@ -102,7 +90,6 @@ public final class DeviceLocation {
     temp = Double.doubleToLongBits(mAccuracy);
     result = 31 * result + (int) (temp ^ (temp >>> 32));
     result = 31 * result + (mAddress != null ? mAddress.hashCode() : 0);
-    result = 31 * result + (mGeocoderError != null ? mGeocoderError.hashCode() : 0);
     return result;
   }
 
@@ -114,7 +101,6 @@ public final class DeviceLocation {
     sb.append(", mLongitude=").append(mLongitude);
     sb.append(", mAccuracy=").append(mAccuracy);
     sb.append(", mAddress='").append(mAddress).append('\'');
-    sb.append(", mGeocoderError='").append(mGeocoderError).append('\'');
     sb.append('}');
     return sb.toString();
   }
@@ -125,7 +111,6 @@ public final class DeviceLocation {
     private double mLongitude;
     private double mAccuracy;
     private String mAddress;
-    private String mGeocoderError;
 
     public Builder setTime(final long time) {
       mTime = time;
@@ -149,11 +134,6 @@ public final class DeviceLocation {
 
     public Builder setAddress(final String address) {
       mAddress = address;
-      return this;
-    }
-
-    public Builder setGeocoderError(final String geocoderError) {
-      mGeocoderError = geocoderError;
       return this;
     }
 
