@@ -29,4 +29,10 @@ public final class MockLocationModule {
   LocationUpdatesManager provideLocationUpdatesManager() {
     return mock(LocationUpdatesManager.class);
   }
+
+  @Provides
+  @Singleton
+  GeocoderService provdeGocoderService() {
+    return mock(GeocoderService.class);
+  }
 }

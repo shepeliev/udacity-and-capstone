@@ -28,4 +28,10 @@ public final class RepositoryModule {
   CircleRepository provideCircleRepository(final FirebaseDatabase firebaseDatabase) {
     return new CircleRepositoryImpl(firebaseDatabase);
   }
+
+  @Provides
+  @Singleton
+  DeviceLocationRepository provideDeviceLocationReposiory() {
+    return new DeviceLocationRepositoryImpl();
+  }
 }

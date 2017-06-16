@@ -21,4 +21,10 @@ public final class MockRepositoryModule {
   UserRepository provideUserRepository() {
     return mock(UserRepository.class);
   }
+
+  @Provides
+  @Singleton
+  DeviceLocationRepository provideDeviceLocationRepository() {
+    return mock(DeviceLocationRepository.class);
+  }
 }

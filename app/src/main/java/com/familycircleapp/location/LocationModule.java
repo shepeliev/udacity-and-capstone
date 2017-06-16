@@ -45,4 +45,10 @@ public final class LocationModule {
         sharedPreferences
     );
   }
+
+  @Provides
+  @Singleton
+  GeocoderService provdeGocoderService() {
+    return new GeocoderServiceImpl();
+  }
 }
