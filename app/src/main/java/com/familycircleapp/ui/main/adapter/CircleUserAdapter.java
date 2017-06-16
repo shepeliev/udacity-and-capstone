@@ -39,11 +39,6 @@ public final class CircleUserAdapter extends RecyclerView.Adapter<CircleUserView
     return mUsers.size();
   }
 
-  @Override
-  public long getItemId(final int position) {
-    return mUsers.get(position).hashCode();
-  }
-
   public void setData(final List<LiveData<CircleUser>> users) {
     mUsers = users;
     notifyDataSetChanged();
