@@ -5,6 +5,7 @@ import com.familycircleapp.datasource.FirebaseModule;
 import com.familycircleapp.repository.RepositoryModule;
 import com.familycircleapp.location.LocationModule;
 import com.familycircleapp.ui.ViewModelModule;
+import com.familycircleapp.ui.map.MapModule;
 
 import javax.inject.Singleton;
 
@@ -15,7 +16,8 @@ import javax.inject.Singleton;
     RepositoryModule.class,
     ViewModelModule.class,
     BatteryModule.class,
-    LocationModule.class
+    LocationModule.class,
+    MapModule.class
 })
 interface AppComponent extends Component {
 

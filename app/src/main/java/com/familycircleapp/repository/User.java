@@ -1,6 +1,6 @@
 package com.familycircleapp.repository;
 
-public final class User {
+public final class User implements HasId {
 
   private String mId;
   private String mDisplayName;
@@ -9,58 +9,55 @@ public final class User {
   private String mCurrentAddress;
   private String mCurrentCircle;
 
+  @Override
   public String getId() {
     return mId;
   }
 
-  public User setId(final String id) {
+  @Override
+  public void setId(final String id) {
     mId = id;
-    return this;
   }
 
   public String getDisplayName() {
     return mDisplayName;
   }
 
-  public User setDisplayName(final String displayName) {
+
+  public void setDisplayName(final String displayName) {
     mDisplayName = displayName;
-    return this;
   }
 
   public double getBatteryLevel() {
     return mBatteryLevel;
   }
 
-  public User setBatteryLevel(final double batteryLevel) {
+  public void setBatteryLevel(final double batteryLevel) {
     mBatteryLevel = batteryLevel;
-    return this;
   }
 
   public String getBatteryStatus() {
     return mBatteryStatus;
   }
 
-  public User setBatteryStatus(final String batteryStatus) {
+  public void setBatteryStatus(final String batteryStatus) {
     mBatteryStatus = batteryStatus;
-    return this;
   }
 
   public String getCurrentAddress() {
     return mCurrentAddress;
   }
 
-  public User setCurrentAddress(final String currentAddress) {
+  public void setCurrentAddress(final String currentAddress) {
     mCurrentAddress = currentAddress;
-    return this;
   }
 
   public String getCurrentCircle() {
     return mCurrentCircle;
   }
 
-  public User setCurrentCircle(final String currentCircle) {
+  public void setCurrentCircle(final String currentCircle) {
     mCurrentCircle = currentCircle;
-    return this;
   }
 
   @Override

@@ -36,7 +36,12 @@ final class DatabaseReferenceLiveData<T> extends LiveData<T>
 
   @Override
   public void onDataChange(final DataSnapshot dataSnapshot) {
-    setValue(dataSnapshot.getValue(mClass));
+    final T value = dataSnapshot.getValue(mClass);
+    if (value instanceof HasId) {
+      ((HasId) value).setId(mDatabaseReference.getKey());
+    }
+
+    setValue(value);
   }
 
   @Override

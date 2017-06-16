@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProvider;
 import com.familycircleapp.repository.CircleRepository;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.repository.UserRepository;
+import com.familycircleapp.ui.main.CurrentCircleUserIdsViewModel;
 import com.familycircleapp.ui.main.CurrentCircleUsersViewModel;
 
 import java.util.Map;
@@ -38,5 +39,16 @@ public final class ViewModelModule {
       final UserRepository userRepository
   ) {
     return new CurrentCircleUsersViewModel(currentUser, circleRepository, userRepository);
+  }
+
+  @Provides
+  @IntoMap
+  @ClassKey(CurrentCircleUserIdsViewModel.class)
+  ViewModel provideCurrentCircleUserIdsViewModel(
+      final CurrentUser currentUser,
+      final CircleRepository circleRepository,
+      final UserRepository userRepository
+  ) {
+    return new CurrentCircleUserIdsViewModel(currentUser, circleRepository, userRepository);
   }
 }

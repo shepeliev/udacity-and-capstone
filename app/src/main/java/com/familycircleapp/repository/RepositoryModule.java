@@ -34,4 +34,10 @@ public final class RepositoryModule {
   DeviceLocationRepository provideDeviceLocationRepository(final FirebaseDatabase firebaseDatabase) {
     return new DeviceLocationRepositoryImpl(firebaseDatabase);
   }
+
+  @Provides
+  @Singleton
+  LastLocationRepository provideLastLocationRepository(final FirebaseDatabase firebaseDatabase) {
+    return new LastLocationRepositoryImpl(firebaseDatabase);
+  }
 }

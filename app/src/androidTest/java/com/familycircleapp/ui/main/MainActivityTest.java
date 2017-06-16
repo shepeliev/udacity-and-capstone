@@ -1,5 +1,7 @@
 package com.familycircleapp.ui.main;
 
+import com.google.android.gms.maps.GoogleMap;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -22,6 +24,7 @@ import com.familycircleapp.TestApp;
 import com.familycircleapp.battery.BatteryInfoListener;
 import com.familycircleapp.location.LocationUpdatesManager;
 import com.familycircleapp.repository.CurrentUser;
+import com.familycircleapp.ui.map.GoogleMapService;
 import com.firebase.ui.auth.KickoffActivity;
 
 import org.junit.Before;
@@ -85,23 +88,30 @@ public class MainActivityTest {
   @Inject CurrentUser mockCurrentUser;
   @Inject BatteryInfoListener mockBatteryInfoListener;
   @Inject LocationUpdatesManager mockLocationUpdatesManager;
+  @Inject GoogleMapService mockGoogleMapService;
   @Mock CurrentCircleUsersViewModel mockCurrentCircleUsersViewModel;
+  @Mock CurrentCircleUserIdsViewModel mockCurrentCircleUserIdsViewModel;
 
   private MutableLiveData<List<LiveData<CircleUser>>> mUsersLiveData;
+  private MutableLiveData<List<String>> mUserIdsLiveData;
 
   @Before
   public void setUp() throws Exception {
     TestApp.getComponent().inject(this);
     MockitoAnnotations.initMocks(this);
     Mockito.reset(mockPermissionManager, mockFactory, mockCurrentUser, mockBatteryInfoListener,
-        mockLocationUpdatesManager);
+        mockLocationUpdatesManager, mockGoogleMapService);
 
     mUsersLiveData = new MutableLiveData<>();
+    mUserIdsLiveData = new MutableLiveData<>();
 
     when(mockCurrentUser.isAuthenticated()).thenReturn(true);
     when(mockFactory.create(CurrentCircleUsersViewModel.class))
         .thenReturn(mockCurrentCircleUsersViewModel);
+    when(mockFactory.create(CurrentCircleUserIdsViewModel.class))
+        .thenReturn(mockCurrentCircleUserIdsViewModel);
     when(mockCurrentCircleUsersViewModel.getUsers()).thenReturn(mUsersLiveData);
+    when(mockCurrentCircleUserIdsViewModel.getUserIds()).thenReturn(mUserIdsLiveData);
   }
 
   @Test
@@ -233,5 +243,29 @@ public class MainActivityTest {
     rule.launchActivity(null);
 
     verify(mockLocationUpdatesManager, never()).startLocationUpdates(any(FragmentActivity.class));
+  }
+
+  @Test
+  public void shouldSetLifeCycleOwner_toGoogleMapService() throws Exception {
+    rule.launchActivity(null);
+
+    verify(mockGoogleMapService).setLifecycleOwner(rule.getActivity());
+  }
+
+  @Test
+  public void shouldSetGoogleMap_toGoogleMapService() throws Exception {
+    rule.launchActivity(null);
+
+    verify(mockGoogleMapService).onMapReady(any(GoogleMap.class));
+  }
+
+  @Test
+  public void shouldSetUserIds_toGoogleMapService() throws Throwable {
+    final List<String> userIds = Collections.singletonList("user_1");
+    rule.launchActivity(null);
+
+    uiThreadRule.runOnUiThread(() -> mUserIdsLiveData.setValue(userIds));
+
+    verify(mockGoogleMapService).putUserIds(Collections.singletonList("user_1"));
   }
 }

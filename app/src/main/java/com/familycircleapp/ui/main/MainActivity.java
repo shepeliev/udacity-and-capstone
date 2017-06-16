@@ -1,5 +1,7 @@
 package com.familycircleapp.ui.main;
 
+import com.google.android.gms.maps.SupportMapFragment;
+
 import android.Manifest;
 import android.arch.lifecycle.LifecycleActivity;
 import android.arch.lifecycle.LiveData;
@@ -19,6 +21,7 @@ import com.familycircleapp.battery.BatteryInfoListener;
 import com.familycircleapp.location.LocationUpdatesManager;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.main.adapter.CircleUserAdapter;
+import com.familycircleapp.ui.map.GoogleMapService;
 import com.familycircleapp.utils.Ctx;
 
 import java.util.Arrays;
@@ -39,6 +42,7 @@ public final class MainActivity extends LifecycleActivity {
   @Inject ViewModelProvider.Factory mViewModelFactory;
   @Inject BatteryInfoListener mBatteryInfoListener;
   @Inject LocationUpdatesManager mLocationUpdatesManager;
+  @Inject GoogleMapService mGoogleMapService;
 
   @BindView(R.id.loader_screen) View mLoaderScreen;
   @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
@@ -52,6 +56,10 @@ public final class MainActivity extends LifecycleActivity {
     App.getComponent().inject(this);
     ButterKnife.bind(this);
 
+    mGoogleMapService.setLifecycleOwner(this);
+    ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+        .getMapAsync(mGoogleMapService);
+
     if (mCurrentUser.isAuthenticated()) {
       mCircleUserAdapter = new CircleUserAdapter(this);
       mRecyclerView.setAdapter(mCircleUserAdapter);
@@ -61,15 +69,20 @@ public final class MainActivity extends LifecycleActivity {
           this,
           Manifest.permission.ACCESS_FINE_LOCATION,
           RC_LOCATION_PERMISSION,
-          () ->  mLocationUpdatesManager.startLocationUpdates(this)
+          () -> mLocationUpdatesManager.startLocationUpdates(this)
       );
-
 
       ViewModelProviders
           .of(this, mViewModelFactory)
           .get(CurrentCircleUsersViewModel.class)
           .getUsers()
           .observe(this, this::onUsersLoaded);
+
+      ViewModelProviders
+          .of(this, mViewModelFactory)
+          .get(CurrentCircleUserIdsViewModel.class)
+          .getUserIds()
+          .observe(this, mGoogleMapService::putUserIds);
     } else {
       Ctx.startActivity(this, EntryPointActivity.class);
       finish();
