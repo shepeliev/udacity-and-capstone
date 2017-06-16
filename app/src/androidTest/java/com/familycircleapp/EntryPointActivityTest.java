@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
-public class EntryPointActivityTest {
+public final class EntryPointActivityTest {
 
   @Inject CurrentUser mockCurrentUser;
   private int mLoginResultCode = Activity.RESULT_CANCELED;

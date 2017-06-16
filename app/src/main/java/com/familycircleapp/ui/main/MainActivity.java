@@ -30,7 +30,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class MainActivity extends LifecycleActivity {
+public final class MainActivity extends LifecycleActivity {
 
   static final int RC_LOCATION_PERMISSION = 1;
 

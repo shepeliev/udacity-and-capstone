@@ -9,7 +9,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.familycircleapp.utils.Consumer;
 
-class PermissionManagerImpl implements PermissionManager {
+final class PermissionManagerImpl implements PermissionManager {
 
   private final Context mContext;
 

@@ -14,7 +14,7 @@ import com.firebase.ui.auth.IdpResponse;
 
 import javax.inject.Inject;
 
-public class EntryPointActivity extends AppCompatActivity {
+public final class EntryPointActivity extends AppCompatActivity {
 
   private static final int RC_LOGIN = 1;
 

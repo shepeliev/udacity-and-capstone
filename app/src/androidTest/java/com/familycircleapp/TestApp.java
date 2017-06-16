@@ -1,6 +1,6 @@
 package com.familycircleapp;
 
-public class TestApp extends App {
+public final  class TestApp extends App {
 
   private static MockComponent sMockComponent;
 

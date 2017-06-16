@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
-public class DatabaseReferenceLiveDataTest {
+public final class DatabaseReferenceLiveDataTest {
 
   @Rule
   public UiThreadTestRule uiThreadRule = new UiThreadTestRule();

@@ -14,7 +14,7 @@ import com.familycircleapp.repository.UserRepository;
 
 import java.util.List;
 
-public class CurrentCircleUsersViewModel extends ViewModel {
+public final class CurrentCircleUsersViewModel extends ViewModel {
 
   private final CurrentUser mCurrentUser;
   private final CircleRepository mCircleRepository;

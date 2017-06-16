@@ -3,7 +3,7 @@ package com.familycircleapp.ui.main;
 import com.familycircleapp.R;
 import com.familycircleapp.repository.User;
 
-public class CircleUser {
+public final class CircleUser {
 
   private final String mDisplayName;
   private final int mBatteryLevel;

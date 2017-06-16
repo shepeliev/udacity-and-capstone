@@ -35,7 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
-public class UpdatedLocationIntentServiceTest {
+public final class UpdatedLocationIntentServiceTest {
 
   private static final String EXTRA_LOCATION_RESULT = "com.google.android.gms.location.EXTRA_LOCATION_RESULT";
   private static final double LATITUDE = 34;
