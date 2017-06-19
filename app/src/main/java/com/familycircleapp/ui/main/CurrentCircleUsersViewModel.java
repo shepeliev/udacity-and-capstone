@@ -18,6 +18,8 @@ public class CurrentCircleUsersViewModel extends ViewModel {
   private final CurrentCircleRepository mCurrentCircleRepository;
   private final UserRepository mUserRepository;
 
+  private LiveData<List<LiveData<CircleUser>>> mUsersLiveData;
+
   public CurrentCircleUsersViewModel(
       @NonNull final CurrentUser currentUser,
       @NonNull final CurrentCircleRepository currentCircleRepository,
@@ -29,6 +31,14 @@ public class CurrentCircleUsersViewModel extends ViewModel {
   }
 
   public LiveData<List<LiveData<CircleUser>>> getUsers() {
+    if (mUsersLiveData == null) {
+      mUsersLiveData = createUsersLiveData();
+    }
+
+    return mUsersLiveData;
+  }
+
+  private LiveData<List<LiveData<CircleUser>>> createUsersLiveData() {
     final String userId = mCurrentUser.getId();
     if (userId == null) {
       throw new IllegalStateException("Current user is not authenticated");
