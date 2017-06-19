@@ -4,7 +4,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import android.Manifest;
 import android.arch.lifecycle.LifecycleActivity;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.pm.PackageManager;
@@ -76,7 +75,10 @@ public final class MainActivity extends LifecycleActivity {
         .getMapAsync(mGoogleMapService);
 
     if (mCurrentUser.isAuthenticated()) {
-      mCircleUserAdapter = new CircleUserAdapter(this);
+      final CircleUserViewModel circleUserViewModel = ViewModelProviders
+          .of(this, mViewModelFactory)
+          .get(CircleUserViewModel.class);
+      mCircleUserAdapter = new CircleUserAdapter(this, circleUserViewModel);
       mRecyclerView.setAdapter(mCircleUserAdapter);
 
       mBatteryInfoListener.enable();
@@ -89,15 +91,9 @@ public final class MainActivity extends LifecycleActivity {
 
       ViewModelProviders
           .of(this, mViewModelFactory)
-          .get(CurrentCircleUsersViewModel.class)
-          .getUsers()
-          .observe(this, this::onUsersLoaded);
-
-      ViewModelProviders
-          .of(this, mViewModelFactory)
           .get(CurrentCircleUserIdsViewModel.class)
           .getUserIds()
-          .observe(this, mGoogleMapService::putUserIds);
+          .observe(this, this::onUserIdsLoaded);
     } else {
       Ctx.startActivity(this, EntryPointActivity.class);
       finish();
@@ -130,11 +126,16 @@ public final class MainActivity extends LifecycleActivity {
     fixMovingMap();
   }
 
-  private void onUsersLoaded(final List<LiveData<CircleUser>> users) {
-    mLoaderScreen.setVisibility(View.GONE);
-    mCircleUserAdapter.setData(users);
-  }
+//  private void onUsersLoaded(final List<LiveData<CircleUser>> users) {
+//    mLoaderScreen.setVisibility(View.GONE);
+//    mCircleUserAdapter.setData(users);
+//  }
 
+  private void onUserIdsLoaded(final List<String> userIds) {
+    mLoaderScreen.setVisibility(View.GONE);
+    mCircleUserAdapter.setData(userIds);
+    mGoogleMapService.putUserIds(userIds);
+  }
 
   private void adjustMapHeight() {
     mRootLayout.getViewTreeObserver().addOnGlobalLayoutListener(

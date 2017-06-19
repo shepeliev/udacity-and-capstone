@@ -1,11 +1,11 @@
 package com.familycircleapp.ui.main.adapter;
 
 import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.familycircleapp.ui.main.CircleUser;
+import com.familycircleapp.ui.main.CircleUserViewModel;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,20 +13,25 @@ import java.util.List;
 public final class CircleUserAdapter extends RecyclerView.Adapter<CircleUserViewHolder> {
 
   private final LifecycleOwner mLifecycleOwner;
-  private List<LiveData<CircleUser>> mUsers = Collections.emptyList();
+  private final CircleUserViewModel mCircleUserViewModel;
+  private List<String> mUserIds = Collections.emptyList();
 
-  public CircleUserAdapter(final LifecycleOwner lifecycleOwner) {
+  public CircleUserAdapter(
+      @NonNull final LifecycleOwner lifecycleOwner,
+      @NonNull final CircleUserViewModel circleUserViewModel
+  ) {
     mLifecycleOwner = lifecycleOwner;
+    mCircleUserViewModel = circleUserViewModel;
   }
 
   @Override
   public CircleUserViewHolder onCreateViewHolder(final ViewGroup parent, final int type) {
-    return new CircleUserViewHolder(mLifecycleOwner, parent);
+    return new CircleUserViewHolder(parent, mLifecycleOwner, mCircleUserViewModel);
   }
 
   @Override
   public void onBindViewHolder(final CircleUserViewHolder holder, final int position) {
-    holder.onBind(mUsers.get(position));
+    holder.onBind(mUserIds.get(position));
   }
 
   @Override
@@ -36,11 +41,11 @@ public final class CircleUserAdapter extends RecyclerView.Adapter<CircleUserView
 
   @Override
   public int getItemCount() {
-    return mUsers.size();
+    return mUserIds.size();
   }
 
-  public void setData(final List<LiveData<CircleUser>> users) {
-    mUsers = users;
+  public void setData(final List<String> users) {
+    mUserIds = users;
     notifyDataSetChanged();
   }
 }

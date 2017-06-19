@@ -5,7 +5,6 @@ import com.google.android.gms.maps.GoogleMap;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Instrumentation;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.content.pm.PackageManager;
@@ -88,11 +87,11 @@ public class MainActivityTest {
   @Inject BatteryInfoListener mockBatteryInfoListener;
   @Inject LocationUpdatesManager mockLocationUpdatesManager;
   @Inject GoogleMapService mockGoogleMapService;
-  @Mock CurrentCircleUsersViewModel mockCurrentCircleUsersViewModel;
   @Mock CurrentCircleUserIdsViewModel mockCurrentCircleUserIdsViewModel;
+  @Mock CircleUserViewModel mockCircleUserViewModel;
 
-  private MutableLiveData<List<LiveData<CircleUser>>> mUsersLiveData;
   private MutableLiveData<List<String>> mUserIdsLiveData;
+  private MutableLiveData<CircleUser> mCircleUserLiveData;
 
   @Before
   public void setUp() throws Exception {
@@ -101,16 +100,16 @@ public class MainActivityTest {
     Mockito.reset(mockPermissionManager, mockFactory, mockCurrentUser, mockBatteryInfoListener,
         mockLocationUpdatesManager, mockGoogleMapService);
 
-    mUsersLiveData = new MutableLiveData<>();
     mUserIdsLiveData = new MutableLiveData<>();
+    mCircleUserLiveData = new MutableLiveData<>();
 
     when(mockCurrentUser.isAuthenticated()).thenReturn(true);
-    when(mockFactory.create(CurrentCircleUsersViewModel.class))
-        .thenReturn(mockCurrentCircleUsersViewModel);
     when(mockFactory.create(CurrentCircleUserIdsViewModel.class))
         .thenReturn(mockCurrentCircleUserIdsViewModel);
-    when(mockCurrentCircleUsersViewModel.getUsers()).thenReturn(mUsersLiveData);
+    when(mockFactory.create(CircleUserViewModel.class))
+        .thenReturn(mockCircleUserViewModel);
     when(mockCurrentCircleUserIdsViewModel.getUserIds()).thenReturn(mUserIdsLiveData);
+    when(mockCircleUserViewModel.getCircleUser("user_1")).thenReturn(mCircleUserLiveData);
   }
 
   @Test
@@ -124,7 +123,7 @@ public class MainActivityTest {
   public void shouldHideLoaderScreen_whenDataIsLoaded() throws Exception {
     rule.launchActivity(null);
 
-    mUsersLiveData.postValue(Collections.emptyList());
+    mUserIdsLiveData.postValue(Collections.emptyList());
 
     onView(withId(R.id.loader_screen)).check(matches(not(isDisplayed())));
   }
@@ -148,12 +147,11 @@ public class MainActivityTest {
         R.string.user_status_near,
         "1 Time Square"
     );
-    final MutableLiveData<CircleUser> userLiveData = new MutableLiveData<>();
-    userLiveData.postValue(user);
-    final List<LiveData<CircleUser>> users = Collections.singletonList(userLiveData);
+    mCircleUserLiveData.postValue(user);
     rule.launchActivity(null);
 
-    uiThreadRule.runOnUiThread(() -> mUsersLiveData.setValue(users));
+    uiThreadRule.runOnUiThread(() ->
+        mUserIdsLiveData.setValue(Collections.singletonList("user_1")));
 
     onView(withId(R.id.tw_user_displayed_name)).check(matches(withText("John")));
     onView(withId(R.id.tw_user_status)).check(matches(withText("Near: 1 Time Square")));
