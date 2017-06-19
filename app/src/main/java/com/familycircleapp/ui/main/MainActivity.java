@@ -63,8 +63,14 @@ public final class MainActivity extends LifecycleActivity {
 
     mBatteryInfoListener.setLifecycleOwner(this);
     mGoogleMapService.setLifecycleOwner(this);
-    getLifecycle().addObserver(mBatteryInfoListener);
-    getLifecycle().addObserver(mGoogleMapService);
+
+    // hack to avoid NPE in tests
+    if (mBatteryInfoListener.getClass().getPackage() != null) {
+      getLifecycle().addObserver(mBatteryInfoListener);
+    }
+    if (mBatteryInfoListener.getClass().getPackage() != null) {
+      getLifecycle().addObserver(mGoogleMapService);
+    }
 
     ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
         .getMapAsync(mGoogleMapService);

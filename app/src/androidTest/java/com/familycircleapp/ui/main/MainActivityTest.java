@@ -5,7 +5,6 @@ import com.google.android.gms.maps.GoogleMap;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Instrumentation;
-import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProvider;
@@ -165,7 +164,7 @@ public class MainActivityTest {
   public void shouldStartBatteryInfoListener_ifUserAuthenticated() throws Exception {
     rule.launchActivity(null);
 
-    verify(mockBatteryInfoListener).setLifecycleOwner(rule.getActivity().getLifecycle());
+    verify(mockBatteryInfoListener).enable();
   }
 
   @Test
@@ -174,7 +173,7 @@ public class MainActivityTest {
 
     rule.launchActivity(null);
 
-    verify(mockBatteryInfoListener, never()).setLifecycleOwner(any(Lifecycle.class));
+    verify(mockBatteryInfoListener, never()).enable();
   }
 
   @Test
