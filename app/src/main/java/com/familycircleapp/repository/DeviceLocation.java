@@ -23,45 +23,40 @@ public final class DeviceLocation {
     return mTime;
   }
 
-  public DeviceLocation setTime(final long time) {
+  public void setTime(final long time) {
     mTime = time;
-    return this;
   }
 
   public double getLatitude() {
     return mLatitude;
   }
 
-  public DeviceLocation setLatitude(final double latitude) {
+  public void setLatitude(final double latitude) {
     mLatitude = latitude;
-    return this;
   }
 
   public double getLongitude() {
     return mLongitude;
   }
 
-  public DeviceLocation setLongitude(final double longitude) {
+  public void setLongitude(final double longitude) {
     mLongitude = longitude;
-    return this;
   }
 
   public double getAccuracy() {
     return mAccuracy;
   }
 
-  public DeviceLocation setAccuracy(final double accuracy) {
+  public void setAccuracy(final double accuracy) {
     mAccuracy = accuracy;
-    return this;
   }
 
   public String getAddress() {
     return mAddress;
   }
 
-  public DeviceLocation setAddress(final String address) {
+  public void setAddress(final String address) {
     mAddress = address;
-    return this;
   }
 
   @Override

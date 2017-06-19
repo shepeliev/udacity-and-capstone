@@ -1,8 +1,10 @@
 package com.familycircleapp.battery;
 
-import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.LifecycleOwner;
 
-public interface BatteryInfoListener {
+public interface BatteryInfoListener  extends LifecycleObserver {
 
-  void start(final Lifecycle lifecycle);
+  void setLifecycleOwner(final LifecycleOwner lifecycleOwner);
+  void enable();
 }

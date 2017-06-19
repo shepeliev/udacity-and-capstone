@@ -2,37 +2,36 @@ package com.familycircleapp.repository;
 
 import java.util.Map;
 
-public final class Circle {
+public final class Circle implements HasId {
 
   private String mId;
   private String mName;
   private Map<String, Boolean> mMembers;
 
+  @Override
   public String getId() {
     return mId;
   }
 
-  public Circle setId(final String id) {
+  @Override
+  public void setId(final String id) {
     mId = id;
-    return this;
   }
 
   public String getName() {
     return mName;
   }
 
-  public Circle setName(final String name) {
+  public void setName(final String name) {
     mName = name;
-    return this;
   }
 
   public Map<String, Boolean> getMembers() {
     return mMembers;
   }
 
-  public Circle setMembers(final Map<String, Boolean> members) {
+  public void setMembers(final Map<String, Boolean> members) {
     mMembers = members;
-    return this;
   }
 
   @Override

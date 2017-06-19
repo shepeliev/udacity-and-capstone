@@ -8,7 +8,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.OnLifecycleEvent;
@@ -22,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class GoogleMapServiceImpl implements GoogleMapService, LifecycleObserver {
+final class GoogleMapServiceImpl implements GoogleMapService {
 
   private final Map<String, LiveData<DeviceLocation>> mLocations = new HashMap<>();
   private final Map<String, Marker> mMarkers = new HashMap<>();
@@ -150,6 +149,7 @@ final class GoogleMapServiceImpl implements GoogleMapService, LifecycleObserver 
 
   private void moveCircle(final Circle circle, final DeviceLocation deviceLocation) {
     circle.setCenter(new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude()));
+    circle.setRadius(deviceLocation.getAccuracy());
   }
 
   private void moveMarker(final Marker marker, final DeviceLocation deviceLocation) {

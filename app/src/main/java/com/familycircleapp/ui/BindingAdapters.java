@@ -3,7 +3,6 @@ package com.familycircleapp.ui;
 import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,6 +33,10 @@ public final class BindingAdapters {
 
   @BindingAdapter({"bind:template", "bind:template_arg"})
   public static void bindTemplateString(final TextView view, final int template, final Object arg) {
+    if (template == 0) {
+      return;
+    }
+
     final Context context = view.getContext();
     view.setText(context.getString(template, arg));
   }
@@ -53,6 +56,10 @@ public final class BindingAdapters {
   public static void bindBatteryInfo(
       final ImageView view, final String batteryStatus, final int batteryLevel
   ) {
+    if (batteryStatus == null) {
+      return;
+    }
+
     final Context context = view.getContext();
 
     if (batteryLevel >= 0) {
@@ -69,10 +76,10 @@ public final class BindingAdapters {
     view.setImageDrawable(drawable);
   }
 
-  public static TextDrawable drawableAvatar(@NonNull final String name) {
+  public static TextDrawable drawableAvatar(final String name) {
     final String initial = TextUtils.isEmpty(name) ? "-" : name.substring(0, 1);
     final ColorGenerator colorGenerator = ColorGenerator.MATERIAL;
-    final int color = colorGenerator.getColor(name);
+    final int color = colorGenerator.getColor(name != null ? name : "-");
     return TextDrawable.builder().buildRound(initial, color);
   }
 }

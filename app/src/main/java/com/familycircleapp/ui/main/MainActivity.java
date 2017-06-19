@@ -10,8 +10,11 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewTreeObserver;
 
 import com.familycircleapp.App;
 import com.familycircleapp.EntryPointActivity;
@@ -44,6 +47,8 @@ public final class MainActivity extends LifecycleActivity {
   @Inject LocationUpdatesManager mLocationUpdatesManager;
   @Inject GoogleMapService mGoogleMapService;
 
+  @BindView(R.id.root_layout) CoordinatorLayout mRootLayout;
+  @BindView(R.id.app_bar_layout) AppBarLayout mAppBarLayout;
   @BindView(R.id.loader_screen) View mLoaderScreen;
   @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
 
@@ -56,7 +61,11 @@ public final class MainActivity extends LifecycleActivity {
     App.getComponent().inject(this);
     ButterKnife.bind(this);
 
+    mBatteryInfoListener.setLifecycleOwner(this);
     mGoogleMapService.setLifecycleOwner(this);
+    getLifecycle().addObserver(mBatteryInfoListener);
+    getLifecycle().addObserver(mGoogleMapService);
+
     ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
         .getMapAsync(mGoogleMapService);
 
@@ -64,7 +73,7 @@ public final class MainActivity extends LifecycleActivity {
       mCircleUserAdapter = new CircleUserAdapter(this);
       mRecyclerView.setAdapter(mCircleUserAdapter);
 
-      mBatteryInfoListener.start(getLifecycle());
+      mBatteryInfoListener.enable();
       mPermissionManager.requestPermission(
           this,
           Manifest.permission.ACCESS_FINE_LOCATION,
@@ -108,8 +117,43 @@ public final class MainActivity extends LifecycleActivity {
     }
   }
 
+  @Override
+  protected void onStart() {
+    super.onStart();
+    adjustMapHeight();
+    fixMovingMap();
+  }
+
   private void onUsersLoaded(final List<LiveData<CircleUser>> users) {
     mLoaderScreen.setVisibility(View.GONE);
     mCircleUserAdapter.setData(users);
+  }
+
+
+  private void adjustMapHeight() {
+    mRootLayout.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+
+          @Override
+          public void onGlobalLayout() {
+            final float height = mRootLayout.getHeight() -
+                getResources().getDimension(R.dimen.recycler_view_visible_top);
+            mAppBarLayout.getLayoutParams().height = (int) height;
+            mRootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+          }
+        }
+    );
+  }
+
+  private void fixMovingMap() {
+    final AppBarLayout.Behavior behavior = new AppBarLayout.Behavior();
+    behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
+      @Override
+      public boolean canDrag(@NonNull final AppBarLayout appBarLayout) {
+        return false;
+      }
+    });
+
+    ((CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams()).setBehavior(behavior);
   }
 }

@@ -165,7 +165,7 @@ public class MainActivityTest {
   public void shouldStartBatteryInfoListener_ifUserAuthenticated() throws Exception {
     rule.launchActivity(null);
 
-    verify(mockBatteryInfoListener).start(rule.getActivity().getLifecycle());
+    verify(mockBatteryInfoListener).setLifecycleOwner(rule.getActivity().getLifecycle());
   }
 
   @Test
@@ -174,7 +174,7 @@ public class MainActivityTest {
 
     rule.launchActivity(null);
 
-    verify(mockBatteryInfoListener, never()).start(any(Lifecycle.class));
+    verify(mockBatteryInfoListener, never()).setLifecycleOwner(any(Lifecycle.class));
   }
 
   @Test
