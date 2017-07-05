@@ -51,4 +51,9 @@ public class FTest {
 
     assertEquals(asList(1, 2, 3, 4), actualList);
   }
+
+  @Test
+  public void testFilter() throws Exception {
+    assertEquals(asList(2, 4, 6), F.filter(asList(1, 2, 3, 4, 5, 6), el -> el % 2 == 0));
+  }
 }

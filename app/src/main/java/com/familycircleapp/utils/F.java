@@ -58,4 +58,16 @@ public final class F {
       consumer.accept(el);
     }
   }
+
+  @NonNull
+  public static <T> List<T> filter(
+      @NonNull final Collection<T> collection, @NonNull final Predicate<T> predicate
+  ) {
+    final List<T> resultList = new ArrayList<>();
+    F.foreach(collection, el -> {
+      if (predicate.test(el)) resultList.add(el);
+    });
+
+    return resultList;
+  }
 }

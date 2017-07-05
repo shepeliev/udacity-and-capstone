@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 
 import com.familycircleapp.repository.DeviceLocation;
 import com.familycircleapp.repository.LastLocationRepository;
+import com.familycircleapp.utils.F;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -96,6 +97,7 @@ final class GoogleMapServiceImpl implements GoogleMapService {
   }
 
   private void cleanup(final Collection<String> userIds) {
+    F.foreach(userIds, this::removeUserMarker);
     for (final String userId : mLocations.keySet()) {
       if (!userIds.contains(userId)) {
         removeUserMarker(userId);
