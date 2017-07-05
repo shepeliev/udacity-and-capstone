@@ -50,4 +50,12 @@ public final class F {
       return acc;
     });
   }
+
+  public static <T> void foreach(
+      @NonNull final Collection<T> collection, @NonNull Consumer<T> consumer
+  ) {
+    for (final T el : collection) {
+      consumer.accept(el);
+    }
+  }
 }

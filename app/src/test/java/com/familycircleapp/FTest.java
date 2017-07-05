@@ -4,7 +4,9 @@ import com.familycircleapp.utils.F;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
@@ -39,5 +41,14 @@ public class FTest {
         F.mapEntry("2", 2),
         F.mapEntry("3", 3)
     )));
+  }
+
+  @Test
+  public void testForeach() throws Exception {
+    final List<Integer> actualList = new ArrayList<>();
+
+    F.foreach(asList(1, 2, 3, 4), actualList::add);
+
+    assertEquals(asList(1, 2, 3, 4), actualList);
   }
 }
