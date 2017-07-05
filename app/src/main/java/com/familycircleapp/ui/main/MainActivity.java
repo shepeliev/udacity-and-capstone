@@ -126,11 +126,6 @@ public final class MainActivity extends LifecycleActivity {
     fixMovingMap();
   }
 
-//  private void onUsersLoaded(final List<LiveData<CircleUser>> users) {
-//    mLoaderScreen.setVisibility(View.GONE);
-//    mCircleUserAdapter.setData(users);
-//  }
-
   private void onUserIdsLoaded(final List<String> userIds) {
     mLoaderScreen.setVisibility(View.GONE);
     mCircleUserAdapter.setData(userIds);
