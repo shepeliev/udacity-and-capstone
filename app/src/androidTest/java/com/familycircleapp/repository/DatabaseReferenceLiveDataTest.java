@@ -55,7 +55,6 @@ public final class DatabaseReferenceLiveDataTest {
         new DatabaseReferenceLiveData<>(mockReference, Foo.class);
     final DataSnapshot mockDataSnapshot = mock(DataSnapshot.class);
     when(mockDataSnapshot.getValue(Foo.class)).thenReturn(new Foo(null, "value"));
-    liveData.onActive();
 
     final Foo[] actualValue = {null};
     uiThreadRule.runOnUiThread(() -> {
