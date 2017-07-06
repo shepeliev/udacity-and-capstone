@@ -11,5 +11,7 @@ public interface UserRepository {
 
   LiveData<User> getUser(@NonNull final String id);
 
+  LiveData<String> getCurrentCircleId(@NonNull final String userId);
+
   void saveBatteryInfo(@NonNull final String userId, @NonNull final BatteryInfo batteryInfo);
 }

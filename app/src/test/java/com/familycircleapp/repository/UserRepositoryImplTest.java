@@ -37,17 +37,34 @@ public class UserRepositoryImplTest {
   }
 
   @Test
-  public void getCircle_shouldCreateLiveDataOnCircleReference() throws Exception {
+  public void testGetUser() throws Exception {
     final DatabaseReference mockUser1Reference = mock(DatabaseReference.class);
     when(mockUsersReference.child("user_1")).thenReturn(mockUser1Reference);
 
-    final LiveData<User> circleLiveData = mUserRepository.getUser("user_1");
+    final LiveData<User> userLiveData = mUserRepository.getUser("user_1");
 
-    assertNotNull(circleLiveData);
+    assertNotNull(userLiveData);
     verify(mockFirebaseDatabase).getReference("users");
     verify(mockUsersReference).child("user_1");
     assertEquals(mockUser1Reference,
-        ((DatabaseReferenceLiveData<User>) circleLiveData).mDatabaseReference);
+        ((DatabaseReferenceLiveData<User>) userLiveData).mDatabaseReference);
+  }
+
+  @Test
+  public void testGetCurrentCircleId() throws Exception {
+    final DatabaseReference mockCurrentCircleRef = mock(DatabaseReference.class);
+    final DatabaseReference mockUser1Ref = mock(DatabaseReference.class);
+    when(mockUser1Ref.child(UserRepositoryImpl.CURRENT_CIRCLE_KEY))
+        .thenReturn(mockCurrentCircleRef);
+    when(mockUsersReference.child("user_1")).thenReturn(mockUser1Ref);
+
+    final LiveData<String> circleIdLiveData = mUserRepository.getCurrentCircleId("user_1");
+
+    assertNotNull(circleIdLiveData);
+    assertEquals(
+        mockCurrentCircleRef,
+        ((DatabaseReferenceLiveData<String>) circleIdLiveData).mDatabaseReference
+    );
   }
 
   @Test

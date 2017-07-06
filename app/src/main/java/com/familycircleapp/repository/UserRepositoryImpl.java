@@ -10,6 +10,7 @@ import com.familycircleapp.battery.BatteryInfo;
 
 final class UserRepositoryImpl implements UserRepository {
 
+  static final String CURRENT_CIRCLE_KEY = "currentCircle";
   private final FirebaseDatabase mFirebaseDatabase;
 
   UserRepositoryImpl(final FirebaseDatabase firebaseDatabase) {
@@ -22,6 +23,15 @@ final class UserRepositoryImpl implements UserRepository {
         .getReference(UserRepository.NAME)
         .child(id);
     return new DatabaseReferenceLiveData<>(reference, User.class);
+  }
+
+  @Override
+  public LiveData<String> getCurrentCircleId(@NonNull final String userId) {
+    final DatabaseReference currentCircleRef = mFirebaseDatabase
+        .getReference(UserRepository.NAME)
+        .child(userId)
+        .child(CURRENT_CIRCLE_KEY);
+    return new DatabaseReferenceLiveData<>(currentCircleRef, String.class);
   }
 
   @Override

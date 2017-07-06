@@ -28,12 +28,13 @@ public class CurrentCircleRepositoryImplTest {
   @Rule
   public UiThreadTestRule uiThread = new UiThreadTestRule();
 
-  @Mock CircleRepository mockCircleRepository;
   @Mock UserRepository mockUserRepository;
+  @Mock CircleRepository mockCircleRepository;
   @InjectMocks CurrentCircleRepositoryImpl mCurrentCircleRepository;
 
   private MutableLiveData<Circle> mCircleLiveData;
   private MutableLiveData<User> mUserLiveData;
+  private MutableLiveData<String> mCurrentCircleIdLiveData;
 
   @Before
   public void setUp() throws Exception {
@@ -48,7 +49,11 @@ public class CurrentCircleRepositoryImplTest {
     mUserLiveData = new MutableLiveData<>();
     mUserLiveData.postValue(getUser("user_1", "circle_1"));
 
-    when(mockUserRepository.getUser("user_1")).thenReturn(mUserLiveData);
+    mCurrentCircleIdLiveData = new MutableLiveData<>();
+    mCurrentCircleIdLiveData.postValue("circle_1");
+
+    when(mockUserRepository.getCurrentCircleId("user_1"))
+        .thenReturn(mCurrentCircleIdLiveData);
     when(mockCircleRepository.getCircle("circle_1")).thenReturn(mCircleLiveData);
   }
 
