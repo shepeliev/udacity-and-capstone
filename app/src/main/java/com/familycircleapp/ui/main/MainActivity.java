@@ -129,7 +129,7 @@ public final class MainActivity extends LifecycleActivity {
   private void onUserIdsLoaded(final List<String> userIds) {
     mLoaderScreen.setVisibility(View.GONE);
     mCircleUserAdapter.setData(userIds);
-    mGoogleMapService.putUserIds(userIds);
+    mGoogleMapService.putUsersOnMap(userIds);
   }
 
   private void adjustMapHeight() {

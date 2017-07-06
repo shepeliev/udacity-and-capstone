@@ -17,6 +17,7 @@ import com.familycircleapp.repository.DeviceLocation;
 import com.familycircleapp.repository.LastLocationRepository;
 import com.familycircleapp.utils.F;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,12 +44,12 @@ final class GoogleMapServiceImpl implements GoogleMapService {
   }
 
   @Override
-  public void putUserIds(@NonNull final List<String> userIds) {
+  public void putUsersOnMap(@NonNull final List<String> userIds) {
     final List<String> idsForDeleting = F.filter(mLocations.keySet(), id -> !userIds.contains(id));
     F.foreach(idsForDeleting, this::removeUserMarker);
 
     final List<String> newIds = F.filter(userIds, id -> !mLocations.containsKey(id));
-    F.foreach(newIds, id -> putUserMarker(id, mLastLocationRepository.gtLastLocation(id)));
+    F.foreach(newIds, id -> putUserOnMap(id, mLastLocationRepository.gtLastLocation(id)));
   }
 
   @Override
@@ -66,23 +67,20 @@ final class GoogleMapServiceImpl implements GoogleMapService {
       return;
     }
 
-    F.foreach(mLocations.entrySet(), entry -> {
-      final String id = entry.getKey();
-      final LiveData<DeviceLocation> liveData = entry.getValue();
-      liveData.observe(mLifecycleOwner, deviceLocation -> updateUserMarker(id, deviceLocation));
-    });
+    F.foreach(mLocations.entrySet(), this::startObserveDeviceLocation);
   }
 
   @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
   void onStop() {
-    F.foreach(
-        F.map(mLocations.keySet(), mLocations::get),
-        liveData -> liveData.removeObservers(mLifecycleOwner)
-    );
+    F.foreach(F.map(mLocations.keySet(), mLocations::get), this::stopObserveDeviceLocation);
   }
 
   @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
   void onDestroy() {
+    removeAllUsers();
+  }
+
+  private void removeAllUsers() {
     mLocations.clear();
 
     F.foreach(mMarkers.values(), Marker::remove);
@@ -92,26 +90,36 @@ final class GoogleMapServiceImpl implements GoogleMapService {
     mCircles.clear();
   }
 
-  private void putUserMarker(final String userId, final LiveData<DeviceLocation> deviceLocation) {
+  private void startObserveDeviceLocation(final Map.Entry<String, LiveData<DeviceLocation>> entry) {
+    final String id = entry.getKey();
+    final LiveData<DeviceLocation> liveData = entry.getValue();
+    liveData.observe(mLifecycleOwner, deviceLocation -> updateUserMarker(id, deviceLocation));
+  }
+
+  private void stopObserveDeviceLocation(final LiveData<DeviceLocation> liveData) {
+    liveData.removeObservers(mLifecycleOwner);
+  }
+
+  private void putUserOnMap(final String userId, final LiveData<DeviceLocation> deviceLocation) {
     if (mLocations.containsKey(userId)) {
-      mLocations.get(userId).removeObservers(mLifecycleOwner);
+      throw new IllegalStateException("Device location for user ID: " +
+          userId + " is already on map");
     }
 
     mLocations.put(userId, deviceLocation);
+
     if (mEnabled &&
         mLifecycleOwner
             .getLifecycle()
             .getCurrentState()
             .isAtLeast(Lifecycle.State.STARTED)) {
-      deviceLocation.observe(
-          mLifecycleOwner, newDeviceLocation -> updateUserMarker(userId, newDeviceLocation)
-      );
+      startObserveDeviceLocation(new AbstractMap.SimpleEntry<>(userId, deviceLocation));
     }
   }
 
   private void removeUserMarker(final String userId) {
     if (mLocations.containsKey(userId)) {
-      mLocations.get(userId).removeObservers(mLifecycleOwner);
+      stopObserveDeviceLocation(mLocations.get(userId));
       mLocations.remove(userId);
     }
 

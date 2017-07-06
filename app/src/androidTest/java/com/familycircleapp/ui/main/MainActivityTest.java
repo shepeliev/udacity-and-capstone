@@ -263,6 +263,6 @@ public class MainActivityTest {
 
     uiThreadRule.runOnUiThread(() -> mUserIdsLiveData.setValue(userIds));
 
-    verify(mockGoogleMapService).putUserIds(Collections.singletonList("user_1"));
+    verify(mockGoogleMapService).putUsersOnMap(Collections.singletonList("user_1"));
   }
 }

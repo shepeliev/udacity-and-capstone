@@ -11,5 +11,5 @@ import java.util.List;
 public interface GoogleMapService extends OnMapReadyCallback, LifecycleObserver {
 
   void setLifecycleOwner(@NonNull final LifecycleOwner lifecycleOwner);
-  void putUserIds(@NonNull final List<String> userIds);
+  void putUsersOnMap(@NonNull final List<String> userIds);
 }
