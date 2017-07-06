@@ -130,6 +130,10 @@ public final class MainActivity extends LifecycleActivity {
     mLoaderScreen.setVisibility(View.GONE);
     mCircleUserAdapter.setData(userIds);
     mGoogleMapService.putUsersOnMap(userIds);
+    if (mCurrentUser.getId() != null) {
+      final float zoom = getResources().getInteger(R.integer.initial_map_zoom);
+      mGoogleMapService.moveCameraToUser(mCurrentUser.getId(), zoom);
+    }
   }
 
   private void adjustMapHeight() {

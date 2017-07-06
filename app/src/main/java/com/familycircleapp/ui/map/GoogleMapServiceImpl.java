@@ -1,5 +1,7 @@
 package com.familycircleapp.ui.map;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -33,6 +35,7 @@ final class GoogleMapServiceImpl implements GoogleMapService {
   private LifecycleOwner mLifecycleOwner;
   private GoogleMap mGoogleMap;
   private boolean mEnabled = false;
+  private SingleShotContainer<UserCameraZoom> mUserCameraZoomCache = new SingleShotContainer<>(null);
 
   GoogleMapServiceImpl(final LastLocationRepository lastLocationRepository) {
     mLastLocationRepository = lastLocationRepository;
@@ -50,6 +53,16 @@ final class GoogleMapServiceImpl implements GoogleMapService {
 
     final List<String> newIds = F.filter(userIds, id -> !mLocations.containsKey(id));
     F.foreach(newIds, id -> putUserOnMap(id, mLastLocationRepository.gtLastLocation(id)));
+  }
+
+  @Override
+  public void moveCameraToUser(@NonNull final String userId, final float zoom) {
+    final Marker marker = mMarkers.get(userId);
+    if (marker == null) {
+      mUserCameraZoomCache = new SingleShotContainer<>(new UserCameraZoom(userId, zoom));
+    } else {
+      moveCamera(new UserCameraZoom(userId, zoom));
+    }
   }
 
   @Override
@@ -146,6 +159,18 @@ final class GoogleMapServiceImpl implements GoogleMapService {
     } else {
       mCircles.put(userId, createCircle(deviceLocation));
     }
+
+    final UserCameraZoom userCameraZoom = mUserCameraZoomCache.getValue();
+    if (userCameraZoom != null && userId.equals(userCameraZoom.mUserId)) {
+      moveCamera(userCameraZoom);
+    }
+  }
+
+  private void moveCamera(final UserCameraZoom userCameraZoom) {
+    final CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+        mMarkers.get(userCameraZoom.mUserId).getPosition(), userCameraZoom.zoom
+    );
+    mGoogleMap.moveCamera(cameraUpdate);
   }
 
   private void moveCircle(final Circle circle, final DeviceLocation deviceLocation) {
@@ -168,5 +193,31 @@ final class GoogleMapServiceImpl implements GoogleMapService {
     final MarkerOptions options = new MarkerOptions()
         .position(new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude()));
     return mGoogleMap.addMarker(options);
+  }
+
+  private static class SingleShotContainer<T> {
+
+    private T mValue;
+
+    public SingleShotContainer(final T value) {
+      mValue = value;
+    }
+
+    public T getValue() {
+      final T value = mValue;
+      mValue = null;
+      return value;
+    }
+  }
+
+  private static class UserCameraZoom {
+
+    private final String mUserId;
+    private final float zoom;
+
+    private UserCameraZoom(final String userId, final float zoom) {
+      mUserId = userId;
+      this.zoom = zoom;
+    }
   }
 }

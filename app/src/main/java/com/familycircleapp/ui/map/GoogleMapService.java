@@ -12,4 +12,5 @@ public interface GoogleMapService extends OnMapReadyCallback, LifecycleObserver 
 
   void setLifecycleOwner(@NonNull final LifecycleOwner lifecycleOwner);
   void putUsersOnMap(@NonNull final List<String> userIds);
+  void moveCameraToUser(@NonNull final String userId, final float zoom);
 }
