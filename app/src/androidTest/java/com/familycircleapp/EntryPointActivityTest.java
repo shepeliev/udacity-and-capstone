@@ -8,6 +8,7 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.familycircleapp.repository.CurrentUser;
+import com.familycircleapp.repository.UserRepository;
 import com.familycircleapp.ui.main.MainActivity;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -31,12 +32,15 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.familycircleapp.matchers.CustomMatchers.toast;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 public final class EntryPointActivityTest {
 
   @Inject CurrentUser mockCurrentUser;
+  @Inject UserRepository mockUserRepository;
+
   private int mLoginResultCode = Activity.RESULT_CANCELED;
   private Intent mLoginResultIntent = null;
 
@@ -94,6 +98,32 @@ public final class EntryPointActivityTest {
 
     intended(hasComponent(MainActivity.class.getName()));
     assertTrue(rule.getActivity().isFinishing());
+  }
+
+  @Test
+  public void shouldSaveDisplayName_ifAuthenticationSucceed() throws Exception {
+    mLoginResultCode = Activity.RESULT_OK;
+    mLoginResultIntent = IdpResponse.getIntent(new IdpResponse("firebase", "user@email.com"));
+    when(mockCurrentUser.isAuthenticated()).thenReturn(false);
+    when(mockCurrentUser.getId()).thenReturn("user_1");
+    when(mockCurrentUser.getDisplayName()).thenReturn("John");
+
+    rule.launchActivity(null);
+
+    verify(mockUserRepository).saveDisplayName("user_1", "John");
+  }
+
+  @Test
+  public void shouldSaveDisplayNameAsNA_ifAuthenticationSucceed_andCurrentUserDisplayNameIsNull() throws Exception {
+    mLoginResultCode = Activity.RESULT_OK;
+    mLoginResultIntent = IdpResponse.getIntent(new IdpResponse("firebase", "user@email.com"));
+    when(mockCurrentUser.isAuthenticated()).thenReturn(false);
+    when(mockCurrentUser.getId()).thenReturn("user_1");
+    when(mockCurrentUser.getDisplayName()).thenReturn(null);
+
+    rule.launchActivity(null);
+
+    verify(mockUserRepository).saveDisplayName("user_1", "N/A");
   }
 
   @Test

@@ -11,6 +11,8 @@ import com.familycircleapp.battery.BatteryInfo;
 final class UserRepositoryImpl implements UserRepository {
 
   static final String CURRENT_CIRCLE_KEY = "currentCircle";
+  static final String DISPLAY_NAME_KEY = "displayName";
+
   private final FirebaseDatabase mFirebaseDatabase;
 
   UserRepositoryImpl(final FirebaseDatabase firebaseDatabase) {
@@ -42,5 +44,14 @@ final class UserRepositoryImpl implements UserRepository {
         .getReference(UserRepository.NAME)
         .child(userId);
     reference.updateChildren(batteryInfo.asMap());
+  }
+
+  @Override
+  public void saveDisplayName(@NonNull final String userId, @NonNull final String displayName) {
+    mFirebaseDatabase
+        .getReference(UserRepository.NAME)
+        .child(userId)
+        .child(DISPLAY_NAME_KEY)
+        .setValue(displayName);
   }
 }

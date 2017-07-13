@@ -14,4 +14,6 @@ public interface UserRepository {
   LiveData<String> getCurrentCircleId(@NonNull final String userId);
 
   void saveBatteryInfo(@NonNull final String userId, @NonNull final BatteryInfo batteryInfo);
+
+  void saveDisplayName(@NonNull String userId, @NonNull String displayName);
 }

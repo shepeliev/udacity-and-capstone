@@ -81,4 +81,17 @@ public class UserRepositoryImplTest {
 
     verify(mockUser1Reference).updateChildren(expectedUpdateMap);
   }
+
+  @Test
+  public void testSaveDisplayName() throws Exception {
+    final DatabaseReference mockUserDisplayNameRef = mock(DatabaseReference.class);
+    final DatabaseReference mockUser1Ref = mock(DatabaseReference.class);
+    when(mockUser1Ref.child(UserRepositoryImpl.DISPLAY_NAME_KEY))
+        .thenReturn(mockUserDisplayNameRef);
+    when(mockUsersReference.child("user_1")).thenReturn(mockUser1Ref);
+
+    mUserRepository.saveDisplayName("user_1", "John");
+
+    verify(mockUserDisplayNameRef).setValue("John");
+  }
 }

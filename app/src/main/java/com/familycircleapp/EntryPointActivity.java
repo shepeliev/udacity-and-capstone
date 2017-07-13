@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.familycircleapp.repository.CurrentUser;
+import com.familycircleapp.repository.UserRepository;
 import com.familycircleapp.ui.main.MainActivity;
 import com.familycircleapp.utils.Ctx;
 import com.firebase.ui.auth.AuthUI;
@@ -19,6 +20,7 @@ public final class EntryPointActivity extends AppCompatActivity {
   private static final int RC_LOGIN = 1;
 
   @Inject CurrentUser mCurrentUser;
+  @Inject UserRepository mUserRepository;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -59,8 +61,20 @@ public final class EntryPointActivity extends AppCompatActivity {
         Ctx.toast(this, R.string.error_login_unknown_error);
         break;
       default:
+        saveDisplayName();
         Ctx.startActivity(this, MainActivity.class);
         finish();
     }
+  }
+
+  private void saveDisplayName() {
+    final String userId = mCurrentUser.getId();
+    assert userId != null;
+
+    final String displayName = mCurrentUser.getDisplayName() != null
+        ? mCurrentUser.getDisplayName()
+        : getString(R.string.na);
+
+    mUserRepository.saveDisplayName(userId, displayName);
   }
 }
