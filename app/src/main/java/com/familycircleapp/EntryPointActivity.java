@@ -1,13 +1,14 @@
 package com.familycircleapp;
 
 import android.app.Activity;
+import android.arch.lifecycle.LifecycleActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.repository.UserRepository;
 import com.familycircleapp.ui.main.MainActivity;
+import com.familycircleapp.ui.newuser.NewUserActivity;
 import com.familycircleapp.utils.Ctx;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
@@ -15,7 +16,7 @@ import com.firebase.ui.auth.IdpResponse;
 
 import javax.inject.Inject;
 
-public final class EntryPointActivity extends AppCompatActivity {
+public final class EntryPointActivity extends LifecycleActivity {
 
   private static final int RC_LOGIN = 1;
 
@@ -61,20 +62,20 @@ public final class EntryPointActivity extends AppCompatActivity {
         Ctx.toast(this, R.string.error_login_unknown_error);
         break;
       default:
-        saveDisplayName();
-        Ctx.startActivity(this, MainActivity.class);
-        finish();
+        handleSuccessLogin();
     }
   }
 
-  private void saveDisplayName() {
+  private void handleSuccessLogin() {
     final String userId = mCurrentUser.getId();
     assert userId != null;
-
-    final String displayName = mCurrentUser.getDisplayName() != null
-        ? mCurrentUser.getDisplayName()
-        : getString(R.string.na);
-
-    mUserRepository.saveDisplayName(userId, displayName);
+    mUserRepository.getUser(userId).observe(this, user -> {
+      if (user != null) {
+        Ctx.startActivity(this, MainActivity.class);
+      } else {
+        Ctx.startActivity(this, NewUserActivity.class);
+      }
+      finish();
+    });
   }
 }

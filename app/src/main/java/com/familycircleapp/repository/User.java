@@ -9,6 +9,13 @@ public final class User implements HasId {
   private String mCurrentAddress;
   private String mCurrentCircle;
 
+  public User() {
+  }
+
+  public User(final String id) {
+    mId = id;
+  }
+
   @Override
   public String getId() {
     return mId;

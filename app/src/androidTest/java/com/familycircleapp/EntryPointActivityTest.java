@@ -2,14 +2,17 @@ package com.familycircleapp;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.familycircleapp.repository.CurrentUser;
+import com.familycircleapp.repository.User;
 import com.familycircleapp.repository.UserRepository;
 import com.familycircleapp.ui.main.MainActivity;
+import com.familycircleapp.ui.newuser.NewUserActivity;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.KickoffActivity;
@@ -32,7 +35,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.familycircleapp.matchers.CustomMatchers.toast;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -55,6 +57,9 @@ public final class EntryPointActivityTest {
               new Instrumentation.ActivityResult(mLoginResultCode, mLoginResultIntent)
           );
           intending(hasComponent(MainActivity.class.getName())).respondWith(
+              new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, null)
+          );
+          intending(hasComponent(NewUserActivity.class.getName())).respondWith(
               new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, null)
           );
         }
@@ -89,10 +94,13 @@ public final class EntryPointActivityTest {
   }
 
   @Test
-  public void shouldStartMainActivityAndFinish_ifAuthenticationSucceed() throws Exception {
+  public void shouldStartMainActivityAndFinish_ifAuthenticationSucceed_andUserExistsInDb() throws Exception {
     mLoginResultCode = Activity.RESULT_OK;
     mLoginResultIntent = IdpResponse.getIntent(new IdpResponse("firebase", "user@email.com"));
     when(mockCurrentUser.isAuthenticated()).thenReturn(false);
+    final MutableLiveData<User> userLiveData = new MutableLiveData<>();
+    userLiveData.postValue(new User("user_1"));
+    when(mockUserRepository.getUser("user_1")).thenReturn(userLiveData);
 
     rule.launchActivity(null);
 
@@ -101,29 +109,18 @@ public final class EntryPointActivityTest {
   }
 
   @Test
-  public void shouldSaveDisplayName_ifAuthenticationSucceed() throws Exception {
+  public void shouldStartNewUserActivityAndFinish_ifAuthenticationSucceed_andUserNotExistsInDb() throws Exception {
     mLoginResultCode = Activity.RESULT_OK;
     mLoginResultIntent = IdpResponse.getIntent(new IdpResponse("firebase", "user@email.com"));
     when(mockCurrentUser.isAuthenticated()).thenReturn(false);
-    when(mockCurrentUser.getId()).thenReturn("user_1");
-    when(mockCurrentUser.getDisplayName()).thenReturn("John");
+    final MutableLiveData<User> userLiveData = new MutableLiveData<>();
+    userLiveData.postValue(null);
+    when(mockUserRepository.getUser("user_1")).thenReturn(userLiveData);
 
     rule.launchActivity(null);
 
-    verify(mockUserRepository).saveDisplayName("user_1", "John");
-  }
-
-  @Test
-  public void shouldSaveDisplayNameAsNA_ifAuthenticationSucceed_andCurrentUserDisplayNameIsNull() throws Exception {
-    mLoginResultCode = Activity.RESULT_OK;
-    mLoginResultIntent = IdpResponse.getIntent(new IdpResponse("firebase", "user@email.com"));
-    when(mockCurrentUser.isAuthenticated()).thenReturn(false);
-    when(mockCurrentUser.getId()).thenReturn("user_1");
-    when(mockCurrentUser.getDisplayName()).thenReturn(null);
-
-    rule.launchActivity(null);
-
-    verify(mockUserRepository).saveDisplayName("user_1", "N/A");
+    intended(hasComponent(NewUserActivity.class.getName()));
+    assertTrue(rule.getActivity().isFinishing());
   }
 
   @Test
