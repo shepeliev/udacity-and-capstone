@@ -37,8 +37,8 @@
     <string name="hint_enter_invite_code">Invite code</string>
     <string name="join_circle_description_or">or</string>
     <string name="btn_join_to_circle">Join into circle</string>
-    <string name="error_invite_code_expired">invite code is expired</string>
-    <string name="error_invite_code_not_found">invite code is incorrect</string>
+    <string name="error_invite_code_expired">Invite code is expired</string>
+    <string name="error_invite_code_not_found">Invite code is incorrect</string>
     <string name="hint_enter_circle_name">Enter a new circle name (ex. Friends)</string>
     <string name="btn_create_new_circle">Create new circle</string>
     <string name="action_create_circle">Create new circle</string>
