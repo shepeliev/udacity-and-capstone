@@ -13,8 +13,10 @@ public final class RepositoryModule {
 
   @Provides
   @Singleton
-  CurrentUser provideCurrentUser(final FirebaseAuth firebaseAuth) {
-    return new CurrentUserImpl(firebaseAuth);
+  CurrentUser provideCurrentUser(
+      final FirebaseAuth firebaseAuth, final FirebaseDatabase firebaseDatabase
+  ) {
+    return new CurrentUserImpl(firebaseAuth, firebaseDatabase);
   }
 
   @Provides
@@ -47,5 +49,11 @@ public final class RepositoryModule {
       final UserRepository userRepository, final CircleRepository circleRepository
   ) {
     return new CurrentCircleRepositoryImpl(userRepository, circleRepository);
+  }
+
+  @Provides
+  @Singleton
+  InviteRepository provideInviteRepository() {
+    return new InviteRepositoryImpl();
   }
 }

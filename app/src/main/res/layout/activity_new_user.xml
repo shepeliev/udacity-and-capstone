@@ -5,14 +5,15 @@
     <data>
 
         <import type="android.view.View" />
+        <import type="android.text.TextUtils"/>
 
         <variable
             name="joinCircleViewModel"
-            type="com.familycircleapp.ui.newuser.JoinCircleViewModel" />
+            type="com.familycircleapp.ui.common.JoinCircleViewModel" />
 
         <variable
             name="createCircleViewModel"
-            type="com.familycircleapp.ui.newuser.CreateCircleViewModel" />
+            type="com.familycircleapp.ui.common.CreateCircleViewModel" />
 
     </data>
 
@@ -65,8 +66,8 @@
                 android:id="@+id/btn_create_new_circle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:enabled="@{joinCircleViewModel.buttonEnabled &amp;&amp; createCircleViewModel.buttonEnabled}"
-                android:onClick="@{() -> createCircleViewModel.createCircle()}"
+                android:enabled="@{!joinCircleViewModel.running &amp;&amp; !createCircleViewModel.running}"
+                android:onClick="@{() -> createCircleViewModel.start()}"
                 android:text="@string/btn_create_first_circle"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -80,13 +81,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:enabled="@{joinCircleViewModel.buttonEnabled &amp;&amp; createCircleViewModel.buttonEnabled}"
-            android:onClick="@{() -> joinCircleViewModel.joinCircle()}"
+            android:enabled="@{!joinCircleViewModel.running &amp;&amp; !createCircleViewModel.running &amp;&amp; joinCircleViewModel.enabled}"
+            android:onClick="@{() -> joinCircleViewModel.start()}"
             android:text="@string/btn_join_to_circle" />
 
         <include
             layout="@layout/part_loader_screen"
-            app:visibility="@{joinCircleViewModel.isLoaderScreenVisible || createCircleViewModel.isLoaderScreenVisible ? View.VISIBLE : View.GONE}" />
+            app:visibility="@{joinCircleViewModel.running || createCircleViewModel.running ? View.VISIBLE : View.GONE}" />
 
     </FrameLayout>
 </layout>

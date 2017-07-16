@@ -5,12 +5,15 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.familycircleapp.App;
 import com.familycircleapp.R;
 import com.familycircleapp.databinding.ActivityNewUserBinding;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.repository.UserRepository;
+import com.familycircleapp.ui.common.CreateCircleViewModel;
+import com.familycircleapp.ui.common.JoinCircleViewModel;
 import com.familycircleapp.ui.main.MainActivity;
 import com.familycircleapp.utils.Ctx;
 
@@ -38,20 +41,25 @@ public class NewUserActivity extends LifecycleActivity {
     binding.setJoinCircleViewModel(joinCircleViewModel);
     binding.setCreateCircleViewModel(createCircleViewModel);
 
-    joinCircleViewModel.getResult().observe(this, this::handleCreateJoinCircleResult);
-    createCircleViewModel.getResult().observe(this, this::handleCreateJoinCircleResult);
+    joinCircleViewModel.getResult().observe(this, this::handleSuccessResult);
+    joinCircleViewModel.getError().observe(this, this::handleFailResult);
+    createCircleViewModel.getResult().observe(this, this::handleSuccessResult);
+    createCircleViewModel.getError().observe(this, this::handleFailResult);
 
     if (savedInstanceState == null) {
       saveDisplayName();
     }
   }
 
-  private void handleCreateJoinCircleResult(final CreateJoinCircleResult result) {
-    result.onSuccess(() -> {
-      Ctx.startActivity(this, MainActivity.class);
-      finish();
-    });
-    result.onFail(errorResId -> Ctx.toast(this, errorResId));
+  private void handleFailResult(final String errorText) {
+    if (!TextUtils.isEmpty(errorText)) {
+      Ctx.toast(this, errorText);
+    }
+  }
+
+  private void handleSuccessResult(@SuppressWarnings("unused") final boolean result) {
+    Ctx.startActivity(this, MainActivity.class);
+    finish();
   }
 
   private void saveDisplayName() {

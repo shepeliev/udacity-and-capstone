@@ -17,6 +17,7 @@
     <string name="error_join_to_circle">Join to the circle failed: <xliff:g example="network error" id="error_message">%1$s</xliff:g></string>
     <string name="error_create_new_circle">Crating new circle failed: <xliff:g example="network error" id="error_message">%1$s</xliff:g></string>
     <string name="error_loading_data">Loading data has been failed: <xliff:g example="network error" id="errorMessage">%1$s</xliff:g></string>
+    <string name="error_database">Database error: <xliff:g example="network error" id="errorMessage">%1$s</xliff:g></string>
     <string name="na">N/A</string>
     <string name="error_google_services_connection_suspended">Connection to Google Services suspended: <xliff:g example="connection lost" id="cause">%1$s</xliff:g></string>
     <string name="error_google_services_connection_lost">connection lost</string>

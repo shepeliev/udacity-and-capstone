@@ -1,10 +1,10 @@
 package com.familycircleapp;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import timber.log.Timber;
 
-public class App extends Application {
+public class App extends MultiDexApplication {
 
   private static Component sAppComponent;
 

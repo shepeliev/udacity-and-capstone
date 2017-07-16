@@ -2,14 +2,19 @@ package com.familycircleapp.ui;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
+import android.content.Context;
 
+import com.familycircleapp.repository.CircleRepository;
 import com.familycircleapp.repository.CurrentCircleRepository;
 import com.familycircleapp.repository.CurrentUser;
+import com.familycircleapp.repository.InviteRepository;
 import com.familycircleapp.repository.UserRepository;
+import com.familycircleapp.ui.common.CreateCircleErrorTextResolver;
+import com.familycircleapp.ui.common.CreateCircleViewModel;
+import com.familycircleapp.ui.common.JoinCircleErrorTextResolver;
+import com.familycircleapp.ui.common.JoinCircleViewModel;
 import com.familycircleapp.ui.main.CircleUserViewModel;
 import com.familycircleapp.ui.main.CurrentCircleUserIdsViewModel;
-import com.familycircleapp.ui.newuser.CreateCircleViewModel;
-import com.familycircleapp.ui.newuser.JoinCircleViewModel;
 
 import java.util.Map;
 
@@ -33,11 +38,24 @@ public final class ViewModelModule {
   }
 
   @Provides
+  @Singleton
+  JoinCircleErrorTextResolver provideJoinCircleErrorTextResolver(final Context context) {
+    return new JoinCircleErrorTextResolver(context);
+  }
+
+  @Provides
+  @Singleton
+  CreateCircleErrorTextResolver provideCreateCircleErrorTextResolver(final Context context) {
+    return new CreateCircleErrorTextResolver(context);
+  }
+
+  @Provides
   @IntoMap
   @ClassKey(CurrentCircleUserIdsViewModel.class)
   ViewModel provideCurrentCircleUserIdsViewModel(
       final CurrentUser currentUser,
-      final CurrentCircleRepository currentCircleRepository) {
+      final CurrentCircleRepository currentCircleRepository
+  ) {
     return new CurrentCircleUserIdsViewModel(currentUser, currentCircleRepository);
   }
 
@@ -51,14 +69,22 @@ public final class ViewModelModule {
   @Provides
   @IntoMap
   @ClassKey(JoinCircleViewModel.class)
-  ViewModel provideJoinCircleViewModel() {
-    return new JoinCircleViewModel();
+  ViewModel provideJoinCircleViewModel(
+      final JoinCircleErrorTextResolver joinCircleErrorTextResolver,
+      final CurrentUser currentUser,
+      final InviteRepository inviteRepository
+  ) {
+    return new JoinCircleViewModel(joinCircleErrorTextResolver, currentUser, inviteRepository);
   }
 
   @Provides
   @IntoMap
   @ClassKey(CreateCircleViewModel.class)
-  ViewModel provideCreateCircleViewModel() {
-    return new CreateCircleViewModel();
+  ViewModel provideCreateCircleViewModel(
+      final CreateCircleErrorTextResolver createCircleErrorTextResolver,
+      final CurrentUser currentUser,
+      final CircleRepository circleRepository
+      ) {
+    return new CreateCircleViewModel(createCircleErrorTextResolver, currentUser, circleRepository);
   }
 }

@@ -39,4 +39,10 @@ public final class MockRepositoryModule {
   CurrentCircleRepository provideCurrentCircleRepository() {
     return mock(CurrentCircleRepository.class);
   }
+
+  @Provides
+  @Singleton
+  InviteRepository provideInviteRepository() {
+    return mock(InviteRepository.class);
+  }
 }
