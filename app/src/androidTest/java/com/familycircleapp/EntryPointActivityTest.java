@@ -2,13 +2,13 @@ package com.familycircleapp;
 
 import android.app.Activity;
 import android.app.Instrumentation;
-import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.familycircleapp.repository.CurrentUser;
+import com.familycircleapp.repository.NotFoundException;
 import com.familycircleapp.repository.User;
 import com.familycircleapp.repository.UserRepository;
 import com.familycircleapp.ui.main.MainActivity;
@@ -25,6 +25,8 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+
+import io.reactivex.Single;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -98,9 +100,8 @@ public final class EntryPointActivityTest {
     mLoginResultCode = Activity.RESULT_OK;
     mLoginResultIntent = IdpResponse.getIntent(new IdpResponse("firebase", "user@email.com"));
     when(mockCurrentUser.isAuthenticated()).thenReturn(false);
-    final MutableLiveData<User> userLiveData = new MutableLiveData<>();
-    userLiveData.postValue(new User("user_1"));
-    when(mockUserRepository.getUser("user_1")).thenReturn(userLiveData);
+    when(mockCurrentUser.getId()).thenReturn("user_1");
+    when(mockUserRepository.getUser("user_1")).thenReturn(Single.just(new User("user_1")));
 
     rule.launchActivity(null);
 
@@ -113,9 +114,9 @@ public final class EntryPointActivityTest {
     mLoginResultCode = Activity.RESULT_OK;
     mLoginResultIntent = IdpResponse.getIntent(new IdpResponse("firebase", "user@email.com"));
     when(mockCurrentUser.isAuthenticated()).thenReturn(false);
-    final MutableLiveData<User> userLiveData = new MutableLiveData<>();
-    userLiveData.postValue(null);
-    when(mockUserRepository.getUser("user_1")).thenReturn(userLiveData);
+    when(mockCurrentUser.getId()).thenReturn("user_1");
+    when(mockUserRepository.getUser("user_1"))
+        .thenReturn(Single.error(new NotFoundException()));
 
     rule.launchActivity(null);
 

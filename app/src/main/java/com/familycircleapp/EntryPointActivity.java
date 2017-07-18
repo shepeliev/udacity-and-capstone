@@ -69,13 +69,20 @@ public final class EntryPointActivity extends LifecycleActivity {
   private void handleSuccessLogin() {
     final String userId = mCurrentUser.getId();
     assert userId != null;
-    mUserRepository.getUser(userId).observe(this, user -> {
-      if (user != null) {
-        Ctx.startActivity(this, MainActivity.class);
-      } else {
-        Ctx.startActivity(this, NewUserActivity.class);
-      }
-      finish();
-    });
+
+    mUserRepository.getUser(userId)
+        .doFinally(this::finish)
+        .subscribe(
+            user -> Ctx.startActivity(this, MainActivity.class),
+            error -> Ctx.startActivity(this, NewUserActivity.class)
+        );
+//    mUserRepository.getUserLiveData(userId).observe(this, user -> {
+//      if (user != null) {
+//        Ctx.startActivity(this, MainActivity.class);
+//      } else {
+//        Ctx.startActivity(this, NewUserActivity.class);
+//      }
+//      finish();
+//    });
   }
 }
