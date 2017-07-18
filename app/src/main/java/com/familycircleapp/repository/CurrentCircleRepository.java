@@ -5,5 +5,6 @@ import android.support.annotation.NonNull;
 
 public interface CurrentCircleRepository {
 
-  LiveData<Circle> getCurrentCircle(@NonNull final String userId);
+  @NonNull
+  LiveData<Circle> getCurrentCircle(final @NonNull String userId);
 }

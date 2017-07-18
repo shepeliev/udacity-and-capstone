@@ -10,14 +10,16 @@ class CurrentCircleRepositoryImpl implements CurrentCircleRepository {
   private final CircleRepository mCircleRepository;
 
   CurrentCircleRepositoryImpl(
-      @NonNull final UserRepository userRepository, @NonNull final CircleRepository circleRepository
+      final @NonNull UserRepository userRepository,
+      final @NonNull CircleRepository circleRepository
   ) {
     mUserRepository = userRepository;
     mCircleRepository = circleRepository;
   }
 
   @Override
-  public LiveData<Circle> getCurrentCircle(@NonNull final String userId) {
+  @NonNull
+  public LiveData<Circle> getCurrentCircle(final @NonNull String userId) {
     return Transformations.switchMap(
         mUserRepository.getCurrentCircleIdLiveData(userId),
         mCircleRepository::getCircleLiveData
