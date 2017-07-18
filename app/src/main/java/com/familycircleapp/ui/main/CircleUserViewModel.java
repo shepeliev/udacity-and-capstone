@@ -33,6 +33,6 @@ public class CircleUserViewModel extends ViewModel {
   }
 
   private LiveData<CircleUser> createCircleUserLiveData(final String userId) {
-    return Transformations.map(mUserRepository.getUser(userId), CircleUser::fromUser);
+    return Transformations.map(mUserRepository.getUserLiveData(userId), CircleUser::fromUser);
   }
 }

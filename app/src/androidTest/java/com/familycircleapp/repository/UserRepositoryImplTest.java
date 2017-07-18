@@ -4,67 +4,72 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import android.arch.lifecycle.LiveData;
+import android.support.test.rule.UiThreadTestRule;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.familycircleapp.battery.BatteryInfo;
 import com.familycircleapp.utils.F;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Map;
 
+import io.reactivex.Single;
+
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class UserRepositoryImplTest {
 
-  @Mock FirebaseDatabase mockFirebaseDatabase;
-  @Mock DatabaseReference mockUsersReference;
-  @InjectMocks UserRepositoryImpl mUserRepository;
+  @Rule
+  public UiThreadTestRule mUiThread = new UiThreadTestRule();
+
+  @Mock private FirebaseDatabase mockFirebaseDatabase;
+  @Mock private DatabaseReference mockUsersReference;
+  private UserRepositoryImpl mUserRepository;
 
   @Before
   public void setUp() throws Exception {
+    MockitoAnnotations.initMocks(this);
     when(mockFirebaseDatabase.getReference("users")).thenReturn(mockUsersReference);
+    mUserRepository = new UserRepositoryImpl(mockFirebaseDatabase);
+  }
+
+  @Test
+  public void testGetUserLiveData() throws Throwable {
+    final LiveData<User> userLiveData = mUserRepository.getUserLiveData("user_1");
+
+    assertNotNull(userLiveData);
+    verify(mockUsersReference).child("user_1");
   }
 
   @Test
   public void testGetUser() throws Exception {
-    final DatabaseReference mockUser1Reference = mock(DatabaseReference.class);
-    when(mockUsersReference.child("user_1")).thenReturn(mockUser1Reference);
+    final Single<User> user = mUserRepository.getUser("user_1");
 
-    final LiveData<User> userLiveData = mUserRepository.getUser("user_1");
-
-    assertNotNull(userLiveData);
-    verify(mockFirebaseDatabase).getReference("users");
+    assertNotNull(user);
     verify(mockUsersReference).child("user_1");
-    assertEquals(mockUser1Reference,
-        ((DatabaseReferenceLiveData<User>) userLiveData).mDatabaseReference);
   }
 
   @Test
   public void testGetCurrentCircleId() throws Exception {
-    final DatabaseReference mockCurrentCircleRef = mock(DatabaseReference.class);
     final DatabaseReference mockUser1Ref = mock(DatabaseReference.class);
-    when(mockUser1Ref.child(UserRepositoryImpl.CURRENT_CIRCLE_KEY))
-        .thenReturn(mockCurrentCircleRef);
     when(mockUsersReference.child("user_1")).thenReturn(mockUser1Ref);
 
-    final LiveData<String> circleIdLiveData = mUserRepository.getCurrentCircleId("user_1");
+    final LiveData<String> circleIdLiveData = mUserRepository.getCurrentCircleIdLiveData("user_1");
 
     assertNotNull(circleIdLiveData);
-    assertEquals(
-        mockCurrentCircleRef,
-        ((DatabaseReferenceLiveData<String>) circleIdLiveData).mDatabaseReference
-    );
+    verify(mockUsersReference).child("user_1");
+    verify(mockUser1Ref).child("currentCircle");
   }
 
   @Test

@@ -7,17 +7,27 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import android.support.annotation.NonNull;
+import android.support.test.rule.UiThreadTestRule;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.familycircleapp.repository.HasId;
 import com.familycircleapp.repository.NotFoundException;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -26,14 +36,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class RxTest {
+
+  @Rule
+  public UiThreadTestRule mUiThread = new UiThreadTestRule();
 
   @Mock private DatabaseReference mockReference;
   @Mock private DataSnapshot mockDataSnapshot;
 
   @Before
   public void setUp() throws Exception {
+    MockitoAnnotations.initMocks(this);
     when(mockDataSnapshot.getRef()).thenReturn(mockReference);
   }
 
@@ -147,6 +161,17 @@ public class RxTest {
     listener.onCancelled(DatabaseError.zzqv(DatabaseError.PERMISSION_DENIED));
 
     assertTrue(error[0] instanceof DatabaseException);
+  }
+
+  @Test
+  public void liveData() throws Throwable {
+    final List<Long> list = new ArrayList<>();
+    Rx.liveData(
+        Observable.interval(100, TimeUnit.MILLISECONDS).take(3)
+    ).observeForever(list::add);
+    TimeUnit.SECONDS.sleep(1);
+
+    assertEquals(asList(0L, 1L, 2L), list);
   }
 
   private class Foo implements HasId {

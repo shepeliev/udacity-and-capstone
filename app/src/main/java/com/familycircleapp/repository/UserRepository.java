@@ -5,15 +5,19 @@ import android.support.annotation.NonNull;
 
 import com.familycircleapp.battery.BatteryInfo;
 
+import io.reactivex.Single;
+
 public interface UserRepository {
 
   String NAME = "users";
 
-  LiveData<User> getUser(@NonNull final String id);
+  LiveData<User> getUserLiveData(final @NonNull String id);
 
-  LiveData<String> getCurrentCircleId(@NonNull final String userId);
+  Single<User> getUser(final @NonNull String id);
 
-  void saveBatteryInfo(@NonNull final String userId, @NonNull final BatteryInfo batteryInfo);
+  LiveData<String> getCurrentCircleIdLiveData(final @NonNull String userId);
 
-  void saveDisplayName(@NonNull String userId, @NonNull String displayName);
+  void saveBatteryInfo(final @NonNull String userId, final @NonNull BatteryInfo batteryInfo);
+
+  void saveDisplayName(final @NonNull String userId, final @NonNull String displayName);
 }

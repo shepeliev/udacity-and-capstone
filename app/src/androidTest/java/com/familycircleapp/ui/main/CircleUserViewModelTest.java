@@ -35,7 +35,7 @@ public class CircleUserViewModelTest {
     MockitoAnnotations.initMocks(this);
 
     final MutableLiveData<User> userLiveData = new MutableLiveData<>();
-    when(mockUserRepository.getUser("user_1")).thenReturn(userLiveData);
+    when(mockUserRepository.getUserLiveData("user_1")).thenReturn(userLiveData);
     final User user = new User();
     user.setDisplayName("User");
     user.setBatteryLevel(0.77);

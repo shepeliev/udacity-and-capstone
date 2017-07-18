@@ -7,51 +7,50 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.familycircleapp.battery.BatteryInfo;
+import com.familycircleapp.utils.Rx;
+
+import io.reactivex.Single;
 
 final class UserRepositoryImpl implements UserRepository {
 
   static final String CURRENT_CIRCLE_KEY = "currentCircle";
   static final String DISPLAY_NAME_KEY = "displayName";
 
-  private final FirebaseDatabase mFirebaseDatabase;
+  private final DatabaseReference mUsersReference;
 
-  UserRepositoryImpl(final FirebaseDatabase firebaseDatabase) {
-    mFirebaseDatabase = firebaseDatabase;
+  UserRepositoryImpl(final @NonNull FirebaseDatabase firebaseDatabase) {
+    mUsersReference = firebaseDatabase.getReference(UserRepository.NAME);
   }
 
   @Override
-  public LiveData<User> getUser(@NonNull final String id) {
-    final DatabaseReference reference = mFirebaseDatabase
-        .getReference(UserRepository.NAME)
-        .child(id);
-    return new DatabaseReferenceLiveData<>(reference, User.class);
+  public LiveData<User> getUserLiveData(@NonNull final String id) {
+    final DatabaseReference reference = mUsersReference.child(id);
+    return Rx.liveData(reference, User.class);
   }
 
   @Override
-  public LiveData<String> getCurrentCircleId(@NonNull final String userId) {
-    final DatabaseReference currentCircleRef = mFirebaseDatabase
-        .getReference(UserRepository.NAME)
-        .child(userId)
-        .child(CURRENT_CIRCLE_KEY);
-    return new DatabaseReferenceLiveData<>(currentCircleRef, String.class);
+  public Single<User> getUser(@NonNull final String id) {
+    return Rx.single(mUsersReference.child(id), User.class);
+  }
+
+  @Override
+  public LiveData<String> getCurrentCircleIdLiveData(@NonNull final String userId) {
+    return Rx.liveData(
+        mUsersReference.child(userId).child(CURRENT_CIRCLE_KEY),
+        String.class
+    );
   }
 
   @Override
   public void saveBatteryInfo(
       @NonNull final String userId, @NonNull final BatteryInfo batteryInfo
   ) {
-    final DatabaseReference reference = mFirebaseDatabase
-        .getReference(UserRepository.NAME)
-        .child(userId);
+    final DatabaseReference reference = mUsersReference.child(userId);
     reference.updateChildren(batteryInfo.asMap());
   }
 
   @Override
   public void saveDisplayName(@NonNull final String userId, @NonNull final String displayName) {
-    mFirebaseDatabase
-        .getReference(UserRepository.NAME)
-        .child(userId)
-        .child(DISPLAY_NAME_KEY)
-        .setValue(displayName);
+    mUsersReference.child(userId).child(DISPLAY_NAME_KEY).setValue(displayName);
   }
 }

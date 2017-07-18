@@ -5,6 +5,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
@@ -13,6 +14,8 @@ import com.familycircleapp.repository.NotFoundException;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 public final class Rx {
 
@@ -83,5 +86,31 @@ public final class Rx {
     }
 
     return new Pair<>(new NotFoundException(dataSnapshot.getRef().toString()), null);
+  }
+
+  public static <T> LiveData<T> liveData(final @NonNull Observable<T> observable) {
+    return new LiveData<T>() {
+
+      private Disposable mDisposable;
+
+      @Override
+      protected void onActive() {
+        mDisposable = observable.subscribe(this::postValue, Timber::e);
+      }
+
+      @Override
+      protected void onInactive() {
+        if (mDisposable != null) {
+          mDisposable.dispose();
+          mDisposable = null;
+        }
+      }
+    };
+  }
+
+  public static <T> LiveData<T> liveData(
+      final @NonNull DatabaseReference databaseReference, final @NonNull Class<T> clazz
+  ) {
+    return Rx.liveData(Rx.observable(databaseReference, clazz));
   }
 }

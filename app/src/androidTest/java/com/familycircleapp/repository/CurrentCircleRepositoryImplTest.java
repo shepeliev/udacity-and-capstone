@@ -52,7 +52,7 @@ public class CurrentCircleRepositoryImplTest {
     mCurrentCircleIdLiveData = new MutableLiveData<>();
     mCurrentCircleIdLiveData.postValue("circle_1");
 
-    when(mockUserRepository.getCurrentCircleId("user_1"))
+    when(mockUserRepository.getCurrentCircleIdLiveData("user_1"))
         .thenReturn(mCurrentCircleIdLiveData);
     when(mockCircleRepository.getCircle("circle_1")).thenReturn(mCircleLiveData);
   }

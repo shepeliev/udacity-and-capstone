@@ -19,7 +19,7 @@ class CurrentCircleRepositoryImpl implements CurrentCircleRepository {
   @Override
   public LiveData<Circle> getCurrentCircle(@NonNull final String userId) {
     return Transformations.switchMap(
-        mUserRepository.getCurrentCircleId(userId),
+        mUserRepository.getCurrentCircleIdLiveData(userId),
         mCircleRepository::getCircle
     );
   }
