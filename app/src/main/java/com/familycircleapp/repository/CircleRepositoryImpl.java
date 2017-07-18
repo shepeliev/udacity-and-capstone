@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.familycircleapp.utils.Consumer;
+import com.familycircleapp.utils.Rx;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,18 +20,18 @@ final class CircleRepositoryImpl implements CircleRepository {
   static final String NAME_KEY = "name";
   static final String MEMBERS_KEY = "members";
 
-  private final FirebaseDatabase mFirebaseDatabase;
+  private final DatabaseReference mDatabaseReference;
+  private final DatabaseReference mCirclesReference;
 
   CircleRepositoryImpl(final FirebaseDatabase firebaseDatabase) {
-    mFirebaseDatabase = firebaseDatabase;
+    mCirclesReference = firebaseDatabase.getReference(CircleRepository.NAME);
+    mDatabaseReference = firebaseDatabase.getReference();
   }
 
   @Override
-  public LiveData<Circle> getCircle(@NonNull final String id) {
-    final DatabaseReference reference = mFirebaseDatabase
-        .getReference(CircleRepository.NAME)
-        .child(id);
-    return new DatabaseReferenceLiveData<>(reference, Circle.class);
+  public LiveData<Circle> getCircleLiveData(@NonNull final String id) {
+    final DatabaseReference reference = mCirclesReference.child(id);
+    return Rx.liveData(reference, Circle.class);
   }
 
   @Override
@@ -39,15 +40,14 @@ final class CircleRepositoryImpl implements CircleRepository {
       @NonNull final String circleName,
       @Nullable final Consumer<Throwable> onComplete
   ) {
-    final DatabaseReference databaseReference = mFirebaseDatabase.getReference();
-    final String circleId = databaseReference.child(CircleRepository.NAME).push().getKey();
-    final Map<String, Object> update = new HashMap<String, Object>(){{
+    final String circleId = mCirclesReference.push().getKey();
+    final Map<String, Object> update = new HashMap<String, Object>() {{
       put("/" + CircleRepository.NAME + "/" + circleId + "/" + NAME_KEY, circleName);
       put("/" + CircleRepository.NAME + "/" + circleId + "/" + MEMBERS_KEY + "/" + userId, true);
       put("/" + UserRepository.NAME + "/" + userId + "/" + CURRENT_CIRCLE_KEY, circleId);
     }};
 
-    databaseReference.updateChildren(update, (error, ref) -> {
+    mDatabaseReference.updateChildren(update, (error, ref) -> {
       if (onComplete != null) {
         onComplete.accept(error != null ? error.toException() : null);
       }

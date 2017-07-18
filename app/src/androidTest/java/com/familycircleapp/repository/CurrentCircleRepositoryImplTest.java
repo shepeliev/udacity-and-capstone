@@ -54,7 +54,7 @@ public class CurrentCircleRepositoryImplTest {
 
     when(mockUserRepository.getCurrentCircleIdLiveData("user_1"))
         .thenReturn(mCurrentCircleIdLiveData);
-    when(mockCircleRepository.getCircle("circle_1")).thenReturn(mCircleLiveData);
+    when(mockCircleRepository.getCircleLiveData("circle_1")).thenReturn(mCircleLiveData);
   }
 
   @Test

@@ -10,7 +10,7 @@ public interface CircleRepository {
 
   String NAME = "circles";
 
-  LiveData<Circle> getCircle(@NonNull final String id);
+  LiveData<Circle> getCircleLiveData(@NonNull final String id);
 
   void createNewCircle(
       @NonNull final String userId,
