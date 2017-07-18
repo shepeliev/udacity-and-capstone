@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import com.familycircleapp.repository.CircleRepository;
 import com.familycircleapp.repository.CurrentUser;
 
-public class CreateCircleViewModel extends BackgroundTaskViewModel<Boolean> {
+public class CreateCircleViewModel extends BackgroundTaskViewModel<String> {
 
   private final ObservableField<String> mCircleName = new ObservableField<>("");
 
@@ -31,12 +31,8 @@ public class CreateCircleViewModel extends BackgroundTaskViewModel<Boolean> {
   protected void startTask() {
     final String userId = mCurrentUser.getId();
     assert userId != null;
-    mCircleRepository.createNewCircle(userId, mCircleName.get(), error -> {
-      if (error != null) {
-        fail(error);
-      } else {
-        success(true);
-      }
-    });
+    mCircleRepository
+        .createNewCircle(userId, mCircleName.get())
+        .subscribe(this::success, this::fail);
   }
 }

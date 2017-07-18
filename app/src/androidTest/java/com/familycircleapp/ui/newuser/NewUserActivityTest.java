@@ -70,8 +70,8 @@ public class NewUserActivityTest {
     when(mockViewModelFactory.create(CreateCircleViewModel.class))
         .thenReturn(mockCreateCircleViewModel);
 
-    final MutableLiveData<Boolean> joinResult = new MutableLiveData<>();
-    final MutableLiveData<Boolean> createResult = new MutableLiveData<>();
+    final MutableLiveData<String> joinResult = new MutableLiveData<>();
+    final MutableLiveData<String> createResult = new MutableLiveData<>();
     when(mockJoinCircleViewModel.getResult()).thenReturn(joinResult);
     when(mockCreateCircleViewModel.getResult()).thenReturn(createResult);
 
@@ -210,14 +210,14 @@ public class NewUserActivityTest {
 
   @Test
   public void testJoinCircleSuccess() throws Exception {
-    final MutableLiveData<Boolean> resultLiveData = new MutableLiveData<>();
+    final MutableLiveData<String> resultLiveData = new MutableLiveData<>();
     when(mockJoinCircleViewModel.getResult()).thenReturn(resultLiveData);
     rule.launchActivity(null);
     intending(hasComponent(MainActivity.class.getName())).respondWith(
         new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, null)
     );
 
-    resultLiveData.postValue(true);
+    resultLiveData.postValue("circle_1");
     TimeUnit.SECONDS.sleep(1);
 
     intended(hasComponent(MainActivity.class.getName()));
@@ -226,14 +226,14 @@ public class NewUserActivityTest {
 
   @Test
   public void testCreateCircleSuccess() throws Exception {
-    final MutableLiveData<Boolean> resultLiveData = new MutableLiveData<>();
+    final MutableLiveData<String> resultLiveData = new MutableLiveData<>();
     when(mockCreateCircleViewModel.getResult()).thenReturn(resultLiveData);
     rule.launchActivity(null);
     intending(hasComponent(MainActivity.class.getName())).respondWith(
         new Instrumentation.ActivityResult(Activity.RESULT_CANCELED, null)
     );
 
-    resultLiveData.postValue(true);
+    resultLiveData.postValue("circle_1");
     TimeUnit.SECONDS.sleep(1);
 
     intended(hasComponent(MainActivity.class.getName()));

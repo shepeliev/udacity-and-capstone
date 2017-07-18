@@ -8,21 +8,18 @@ import android.support.test.runner.AndroidJUnit4;
 import com.familycircleapp.repository.CircleRepository;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.testutils.LiveDataUtil;
-import com.familycircleapp.utils.Consumer;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import io.reactivex.Single;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -50,13 +47,16 @@ public class CreateCircleViewModelTest {
   @Test
   public void start_databaseError_shouldFail() throws Exception {
     when(mockErrorTextResolver.getErrorText(any(DatabaseException.class))).thenReturn("error");
+    when(mockCircleRepository.createNewCircle("user_1", "Family"))
+        .thenReturn(Single.error(new DatabaseException("")));
+
     mModel.start();
 
     //noinspection unchecked
-    final ArgumentCaptor<Consumer<Throwable>> onResult = ArgumentCaptor.forClass(Consumer.class);
-    verify(mockCircleRepository)
-        .createNewCircle(eq("user_1"), eq("Family"), onResult.capture());
-    onResult.getValue().accept(new DatabaseException(""));
+//    final ArgumentCaptor<Consumer<Throwable>> onResult = ArgumentCaptor.forClass(Consumer.class);
+//    verify(mockCircleRepository)
+//        .createNewCircle(eq("user_1"), eq("Family"), onResult.capture());
+//    onResult.getValue().accept(new DatabaseException(""));
 
     assertEquals("error", mModel.getErrorText().get());
   }
@@ -64,17 +64,20 @@ public class CreateCircleViewModelTest {
 
   @Test
   public void start_shouldSuccess() throws Throwable {
+    when(mockCircleRepository.createNewCircle("user_1", "Family"))
+        .thenReturn(Single.just("circle_1"));
+
     mModel.start();
 
     //noinspection unchecked
-    final ArgumentCaptor<Consumer<Throwable>> onResult = ArgumentCaptor.forClass(Consumer.class);
-    verify(mockCircleRepository)
-        .createNewCircle(eq("user_1"), eq("Family"), onResult.capture());
-    onResult.getValue().accept(null);
+//    final ArgumentCaptor<Consumer<Throwable>> onResult = ArgumentCaptor.forClass(Consumer.class);
+//    verify(mockCircleRepository)
+//        .createNewCircle(eq("user_1"), eq("Family"), onResult.capture());
+//    onResult.getValue().accept(null);
 
-    final boolean[] success = {false};
-    mUiThread.runOnUiThread(() -> success[0] = LiveDataUtil.getValue(mModel.getResult()));
+    final String[] result = {null};
+    mUiThread.runOnUiThread(() -> result[0] = LiveDataUtil.getValue(mModel.getResult()));
 
-    assertTrue(success[0]);
+    assertEquals("circle_1", result[0]);
   }
 }

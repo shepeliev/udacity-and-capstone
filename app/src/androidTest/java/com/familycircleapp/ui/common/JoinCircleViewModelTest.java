@@ -23,7 +23,6 @@ import org.mockito.MockitoAnnotations;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -121,9 +120,9 @@ public class JoinCircleViewModelTest {
     verify(mockCurrentUser).joinCircle(eq("circle_1"), onComplete.capture());
     onComplete.getValue().accept(null);
 
-    final boolean[] success = {false};
+    final String[] success = {null};
     mUiThread.runOnUiThread(() -> success[0] = LiveDataUtil.getValue(mModel.getResult()));
 
-    assertTrue(success[0]);
+    assertEquals("circle_1", success[0]);
   }
 }

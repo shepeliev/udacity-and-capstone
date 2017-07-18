@@ -51,7 +51,7 @@ public class CircleRepositoryImplTest {
     when(mockCirclesReference.push()).thenReturn(mockNewCircleRef);
     when(mockNewCircleRef.getKey()).thenReturn("circle_1");
 
-    mCircleRepository.createNewCircle("user_1", "Family", null);
+    mCircleRepository.createNewCircle("user_1", "Family").subscribe();
 
     final Map<String, Object> expectedUpdate = new HashMap<String, Object>(){{
       put("/circles/circle_1/name", "Family");

@@ -5,13 +5,14 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.familycircleapp.utils.Consumer;
+import com.familycircleapp.utils.Db;
 import com.familycircleapp.utils.Rx;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import io.reactivex.Single;
 
 import static com.familycircleapp.repository.UserRepositoryImpl.CURRENT_CIRCLE_KEY;
 
@@ -29,16 +30,16 @@ final class CircleRepositoryImpl implements CircleRepository {
   }
 
   @Override
-  public LiveData<Circle> getCircleLiveData(@NonNull final String id) {
+  @NonNull
+  public LiveData<Circle> getCircleLiveData(final @NonNull String id) {
     final DatabaseReference reference = mCirclesReference.child(id);
     return Rx.liveData(reference, Circle.class);
   }
 
+  @NonNull
   @Override
-  public void createNewCircle(
-      @NonNull final String userId,
-      @NonNull final String circleName,
-      @Nullable final Consumer<Throwable> onComplete
+  public Single<String> createNewCircle(
+      final @NonNull String userId, final @NonNull String circleName
   ) {
     final String circleId = mCirclesReference.push().getKey();
     final Map<String, Object> update = new HashMap<String, Object>() {{
@@ -47,10 +48,6 @@ final class CircleRepositoryImpl implements CircleRepository {
       put("/" + UserRepository.NAME + "/" + userId + "/" + CURRENT_CIRCLE_KEY, circleId);
     }};
 
-    mDatabaseReference.updateChildren(update, (error, ref) -> {
-      if (onComplete != null) {
-        onComplete.accept(error != null ? error.toException() : null);
-      }
-    });
+    return Db.updateChildren(mDatabaseReference, update);
   }
 }

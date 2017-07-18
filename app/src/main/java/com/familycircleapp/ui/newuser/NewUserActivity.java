@@ -57,7 +57,7 @@ public class NewUserActivity extends LifecycleActivity {
     }
   }
 
-  private void handleSuccessResult(@SuppressWarnings("unused") final boolean result) {
+  private void handleSuccessResult(@SuppressWarnings("unused") final String result) {
     Ctx.startActivity(this, MainActivity.class);
     finish();
   }

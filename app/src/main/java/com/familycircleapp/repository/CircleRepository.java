@@ -2,19 +2,16 @@ package com.familycircleapp.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.familycircleapp.utils.Consumer;
+import io.reactivex.Single;
 
 public interface CircleRepository {
 
   String NAME = "circles";
 
-  LiveData<Circle> getCircleLiveData(@NonNull final String id);
+  @NonNull
+  LiveData<Circle> getCircleLiveData(final @NonNull String id);
 
-  void createNewCircle(
-      @NonNull final String userId,
-      @NonNull final String circleName,
-      @Nullable final Consumer<Throwable> onComplete
-      );
+  @NonNull
+  Single<String> createNewCircle(final @NonNull String userId, final @NonNull String circleName);
 }

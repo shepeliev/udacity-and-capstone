@@ -12,7 +12,7 @@ import com.familycircleapp.repository.InviteRepository;
 
 import timber.log.Timber;
 
-public class JoinCircleViewModel extends BackgroundTaskViewModel<Boolean> {
+public class JoinCircleViewModel extends BackgroundTaskViewModel<String> {
 
   private final ObservableField<String> mInviteCode = new ObservableField<>("");
   private final ObservableBoolean mIsEnabled = new ObservableBoolean(false);
@@ -69,7 +69,7 @@ public class JoinCircleViewModel extends BackgroundTaskViewModel<Boolean> {
           Timber.e(error);
           fail(error);
         } else {
-          success(true);
+          success(invite.getCircleId());
         }
       });
     }
