@@ -8,14 +8,13 @@ import android.support.test.runner.AndroidJUnit4;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.repository.Invite;
 import com.familycircleapp.repository.InviteRepository;
+import com.familycircleapp.repository.NotFoundException;
 import com.familycircleapp.testutils.LiveDataUtil;
-import com.familycircleapp.utils.Consumer;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -25,8 +24,6 @@ import io.reactivex.Single;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -43,24 +40,16 @@ public class JoinCircleViewModelTest {
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    mModel = new JoinCircleViewModel(
-        mockErrorTextResolver, mockCurrentUser, mockInviteRepository
-    );
+    mModel = new JoinCircleViewModel(mockErrorTextResolver, mockCurrentUser, mockInviteRepository);
     mModel.getInviteCode().set("XXXXYYYY");
   }
 
   @Test
   public void start_inviteCodeNotFound_shouldFail() throws Exception {
-    when(
-        mockErrorTextResolver.getErrorText(
-            any(JoinCircleErrorTextResolver.InviteCodeNotFound.class))
-    ).thenReturn("error");
-    mModel.start();
+    when(mockErrorTextResolver.getErrorText(any(NotFoundException.class))).thenReturn("error");
+    when(mockInviteRepository.get("XXXXYYYY")).thenReturn(Single.error(new NotFoundException()));
 
-    //noinspection unchecked
-    final ArgumentCaptor<Consumer<Invite>> onResult = ArgumentCaptor.forClass(Consumer.class);
-    verify(mockInviteRepository).get(eq("XXXXYYYY"), onResult.capture());
-    onResult.getValue().accept(null);
+    mModel.start();
 
     assertEquals("error", mModel.getErrorText().get());
   }
@@ -69,16 +58,13 @@ public class JoinCircleViewModelTest {
   public void start_inviteCodeExpired_shouldFail() throws Exception {
     when(
         mockErrorTextResolver.getErrorText(
-            any(JoinCircleErrorTextResolver.InviteCodeExpired.class)
+            any(JoinCircleErrorTextResolver.InviteCodeExpiredException.class)
         )).thenReturn("error");
-    mModel.start();
-
-    //noinspection unchecked
-    final ArgumentCaptor<Consumer<Invite>> onResult = ArgumentCaptor.forClass(Consumer.class);
-    verify(mockInviteRepository).get(eq("XXXXYYYY"), onResult.capture());
     final Invite expiredInvite = new Invite();
     expiredInvite.setExpiration(System.currentTimeMillis() - 1);
-    onResult.getValue().accept(expiredInvite);
+    when(mockInviteRepository.get("XXXXYYYY")).thenReturn(Single.just(expiredInvite));
+
+    mModel.start();
 
     assertEquals("error", mModel.getErrorText().get());
   }
@@ -88,15 +74,12 @@ public class JoinCircleViewModelTest {
     when(mockErrorTextResolver.getErrorText(any(DatabaseException.class))).thenReturn("error");
     when(mockCurrentUser.joinCircle("circle_1"))
         .thenReturn(Single.error(new DatabaseException("error")));
-    mModel.start();
-
-    //noinspection unchecked
-    final ArgumentCaptor<Consumer<Invite>> onResult = ArgumentCaptor.forClass(Consumer.class);
-    verify(mockInviteRepository).get(eq("XXXXYYYY"), onResult.capture());
     final Invite invite = new Invite();
     invite.setCircleId("circle_1");
     invite.setExpiration(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
-    onResult.getValue().accept(invite);
+    when(mockInviteRepository.get("XXXXYYYY")).thenReturn(Single.just(invite));
+
+    mModel.start();
 
     assertEquals("error", mModel.getErrorText().get());
   }
@@ -104,16 +87,12 @@ public class JoinCircleViewModelTest {
   @Test
   public void start_shouldSuccess() throws Throwable {
     when(mockCurrentUser.joinCircle("circle_1")).thenReturn(Single.just("circle_1"));
-
-    mModel.start();
-
-    //noinspection unchecked
-    final ArgumentCaptor<Consumer<Invite>> onResult = ArgumentCaptor.forClass(Consumer.class);
-    verify(mockInviteRepository).get(eq("XXXXYYYY"), onResult.capture());
     final Invite invite = new Invite();
     invite.setCircleId("circle_1");
     invite.setExpiration(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
-    onResult.getValue().accept(invite);
+    when(mockInviteRepository.get("XXXXYYYY")).thenReturn(Single.just(invite));
+
+    mModel.start();
 
     final String[] success = {null};
     mUiThread.runOnUiThread(() -> success[0] = LiveDataUtil.getValue(mModel.getResult()));

@@ -47,7 +47,7 @@ public class JoinCircleViewModel extends BackgroundTaskViewModel<String> {
 
   @Override
   protected void startTask() {
-    mInviteRepository.get(mInviteCode.get(), this::handleInvite);
+    mInviteRepository.get(mInviteCode.get()).subscribe(this::handleInvite, this::fail);
   }
 
   @Override
@@ -56,11 +56,9 @@ public class JoinCircleViewModel extends BackgroundTaskViewModel<String> {
     mInviteCode.removeOnPropertyChangedCallback(mInviteCodeChangeCallback);
   }
 
-  private void handleInvite(final Invite invite) {
-    if (invite == null) {
-      fail(new JoinCircleErrorTextResolver.InviteCodeNotFound());
-    } else if (invite.getExpiration() < System.currentTimeMillis()) {
-      fail(new JoinCircleErrorTextResolver.InviteCodeExpired());
+  private void handleInvite(final @NonNull Invite invite) {
+    if (invite.getExpiration() < System.currentTimeMillis()) {
+      fail(new JoinCircleErrorTextResolver.InviteCodeExpiredException());
     } else {
       mCurrentUser.joinCircle(invite.getCircleId()).subscribe(this::success, this::fail);
     }

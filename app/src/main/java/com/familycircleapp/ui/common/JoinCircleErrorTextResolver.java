@@ -6,6 +6,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.familycircleapp.R;
+import com.familycircleapp.repository.NotFoundException;
 
 import timber.log.Timber;
 
@@ -20,9 +21,9 @@ public final class JoinCircleErrorTextResolver
 
   @Override
   public String getErrorText(@NonNull final Throwable error) {
-    if (error instanceof InviteCodeNotFound) {
+    if (error instanceof NotFoundException) {
       return mContext.getString(R.string.error_invite_code_not_found);
-    } else if (error instanceof InviteCodeExpired) {
+    } else if (error instanceof InviteCodeExpiredException) {
       return mContext.getString(R.string.error_invite_code_expired);
     } else if (error instanceof DatabaseException) {
       return mContext.getString(R.string.error_database, error.getLocalizedMessage());
@@ -32,6 +33,5 @@ public final class JoinCircleErrorTextResolver
     }
   }
 
-  public static class InviteCodeNotFound extends RuntimeException {}
-  public static class InviteCodeExpired extends RuntimeException {}
+  public static class InviteCodeExpiredException extends RuntimeException {}
 }
