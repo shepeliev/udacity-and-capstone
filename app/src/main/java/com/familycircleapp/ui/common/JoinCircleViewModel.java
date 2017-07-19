@@ -10,8 +10,6 @@ import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.repository.Invite;
 import com.familycircleapp.repository.InviteRepository;
 
-import timber.log.Timber;
-
 public class JoinCircleViewModel extends BackgroundTaskViewModel<String> {
 
   private final ObservableField<String> mInviteCode = new ObservableField<>("");
@@ -64,14 +62,7 @@ public class JoinCircleViewModel extends BackgroundTaskViewModel<String> {
     } else if (invite.getExpiration() < System.currentTimeMillis()) {
       fail(new JoinCircleErrorTextResolver.InviteCodeExpired());
     } else {
-      mCurrentUser.joinCircle(invite.getCircleId(), error -> {
-        if (error != null) {
-          Timber.e(error);
-          fail(error);
-        } else {
-          success(invite.getCircleId());
-        }
-      });
+      mCurrentUser.joinCircle(invite.getCircleId()).subscribe(this::success, this::fail);
     }
   }
 }

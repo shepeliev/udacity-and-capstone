@@ -5,9 +5,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -28,8 +28,15 @@ import static org.mockito.Mockito.when;
 public class CurrentUserImplTest {
 
   @Mock private FirebaseAuth mockFirebaseAuth;
-  @Mock private FirebaseDatabase mockFirebaseDatabase;
-  @InjectMocks private CurrentUserImpl mCurrentUser;
+  @Mock private DatabaseReference mockDatabaseReference;
+  private CurrentUserImpl mCurrentUser;
+
+  @Before
+  public void setUp() throws Exception {
+    final FirebaseDatabase mockFirebaseDatabase = mock(FirebaseDatabase.class);
+    when(mockFirebaseDatabase.getReference()).thenReturn(mockDatabaseReference);
+    mCurrentUser = new CurrentUserImpl(mockFirebaseAuth, mockFirebaseDatabase);
+  }
 
   @Test
   public void isAuthenticated_returnsFalse_ifUserNotAuthenticated() throws Exception {
@@ -75,15 +82,14 @@ public class CurrentUserImplTest {
     final FirebaseUser mockFirebaseUser = mock(FirebaseUser.class);
     when(mockFirebaseUser.getUid()).thenReturn("user_1");
     when(mockFirebaseAuth.getCurrentUser()).thenReturn(mockFirebaseUser);
-    final DatabaseReference mockDatabaseRef = mock(DatabaseReference.class);
-    when(mockFirebaseDatabase.getReference()).thenReturn(mockDatabaseRef);
 
-    mCurrentUser.joinCircle("circle_1", null);
+    mCurrentUser.joinCircle("circle_1").subscribe();
 
     final Map<String, Object> expectedUpdate = new HashMap<String, Object>() {{
       put("/circles/circle_1/members/user_1", true);
       put("/users/user_1/currentCircle", "circle_1");
+      put("/users/user_1/circles/circle_1", true);
     }};
-    verify(mockDatabaseRef).updateChildren(eq(expectedUpdate), any());
+    verify(mockDatabaseReference).updateChildren(eq(expectedUpdate), any());
   }
 }

@@ -2,15 +2,18 @@ package com.familycircleapp.repository;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.familycircleapp.utils.Consumer;
+import com.familycircleapp.utils.Db;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import io.reactivex.Single;
 
 import static com.familycircleapp.repository.CircleRepositoryImpl.MEMBERS_KEY;
 import static com.familycircleapp.repository.UserRepositoryImpl.CURRENT_CIRCLE_KEY;
@@ -18,14 +21,14 @@ import static com.familycircleapp.repository.UserRepositoryImpl.CURRENT_CIRCLE_K
 final class CurrentUserImpl implements CurrentUser {
 
   private final FirebaseAuth mFirebaseAuth;
-  private final FirebaseDatabase mFirebaseDatabase;
+  private final DatabaseReference mDatabaseReference;
 
   public CurrentUserImpl(
       @NonNull final FirebaseAuth firebaseAuth,
       @NonNull final FirebaseDatabase firebaseDatabase
   ) {
     mFirebaseAuth = firebaseAuth;
-    mFirebaseDatabase = firebaseDatabase;
+    mDatabaseReference = firebaseDatabase.getReference();
   }
 
   @Override
@@ -48,23 +51,19 @@ final class CurrentUserImpl implements CurrentUser {
   }
 
   @Override
-  public void joinCircle(
-      @NonNull final String circleId,
-      @Nullable final Consumer<Throwable> onComplete
-  ) {
+  public Single<String> joinCircle(final @NonNull String circleId) {
     final String userId = getId();
-    assert userId != null;
-
+    if (userId == null) {
+      throw new IllegalStateException("Current user has to be authenticated");
+    }
 
     final Map<String, Object> update = new HashMap<String, Object>() {{
       put("/" + CircleRepository.NAME + "/" + circleId + "/" + MEMBERS_KEY + "/" + userId, true);
       put("/" + UserRepository.NAME + "/" + userId + "/" + CURRENT_CIRCLE_KEY, circleId);
+      put("/" + UserRepository.NAME + "/" + userId + "/" + CircleRepository.NAME + "/" + circleId,
+          true);
     }};
 
-    mFirebaseDatabase.getReference().updateChildren(update, (databaseError, databaseReference) -> {
-      if (onComplete != null) {
-        onComplete.accept(databaseError != null ? databaseError.toException() : null);
-      }
-    });
+    return Db.updateChildren(mDatabaseReference, update);
   }
 }

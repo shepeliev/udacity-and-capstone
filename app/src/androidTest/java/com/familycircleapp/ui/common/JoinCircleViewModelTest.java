@@ -1,6 +1,5 @@
 package com.familycircleapp.ui.common;
 
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
 
 import android.support.test.rule.UiThreadTestRule;
@@ -21,6 +20,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Single;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -85,6 +86,8 @@ public class JoinCircleViewModelTest {
   @Test
   public void start_databaseError_shouldFail() throws Exception {
     when(mockErrorTextResolver.getErrorText(any(DatabaseException.class))).thenReturn("error");
+    when(mockCurrentUser.joinCircle("circle_1"))
+        .thenReturn(Single.error(new DatabaseException("error")));
     mModel.start();
 
     //noinspection unchecked
@@ -94,17 +97,14 @@ public class JoinCircleViewModelTest {
     invite.setCircleId("circle_1");
     invite.setExpiration(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
     onResult.getValue().accept(invite);
-
-    //noinspection unchecked
-    final ArgumentCaptor<Consumer<Throwable>> onComplete = ArgumentCaptor.forClass(Consumer.class);
-    verify(mockCurrentUser).joinCircle(eq("circle_1"), onComplete.capture());
-    onComplete.getValue().accept(DatabaseError.zzqv(DatabaseError.PERMISSION_DENIED).toException());
 
     assertEquals("error", mModel.getErrorText().get());
   }
 
   @Test
   public void start_shouldSuccess() throws Throwable {
+    when(mockCurrentUser.joinCircle("circle_1")).thenReturn(Single.just("circle_1"));
+
     mModel.start();
 
     //noinspection unchecked
@@ -114,11 +114,6 @@ public class JoinCircleViewModelTest {
     invite.setCircleId("circle_1");
     invite.setExpiration(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
     onResult.getValue().accept(invite);
-
-    //noinspection unchecked
-    final ArgumentCaptor<Consumer<Throwable>> onComplete = ArgumentCaptor.forClass(Consumer.class);
-    verify(mockCurrentUser).joinCircle(eq("circle_1"), onComplete.capture());
-    onComplete.getValue().accept(null);
 
     final String[] success = {null};
     mUiThread.runOnUiThread(() -> success[0] = LiveDataUtil.getValue(mModel.getResult()));
