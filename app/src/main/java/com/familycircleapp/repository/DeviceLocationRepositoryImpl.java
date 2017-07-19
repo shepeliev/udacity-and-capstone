@@ -1,46 +1,36 @@
 package com.familycircleapp.repository;
 
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import android.support.annotation.NonNull;
 
-import com.familycircleapp.utils.F;
+import com.familycircleapp.utils.Db;
 
-import static java.util.Arrays.asList;
+import java.util.HashMap;
 
 final class DeviceLocationRepositoryImpl implements DeviceLocationRepository {
 
-  private final FirebaseDatabase mFirebaseDatabase;
+  private final DatabaseReference mDatabaseReference;
+  private final DatabaseReference mLocationsReference;
 
-  DeviceLocationRepositoryImpl(final FirebaseDatabase firebaseDatabase) {
-    mFirebaseDatabase = firebaseDatabase;
+  DeviceLocationRepositoryImpl(final @NonNull FirebaseDatabase firebaseDatabase) {
+    mDatabaseReference = firebaseDatabase.getReference();
+    mLocationsReference = firebaseDatabase.getReference(DeviceLocationRepository.NAME);
   }
 
   @Override
   public void saveDeviceLocation(
       @NonNull final String userId, @NonNull final DeviceLocation deviceLocation
   ) {
-    final String newLocationKey = mFirebaseDatabase
-        .getReference(DeviceLocationRepository.NAME)
-        .child(userId)
-        .push()
-        .getKey();
+    final String newLocationKey = mLocationsReference.child(userId).push().getKey();
 
-    mFirebaseDatabase.getReference().updateChildren(
-        F.mapOf(asList(
-            F.mapEntry(
-                "/" + DeviceLocationRepository.NAME + "/" + userId + "/" + newLocationKey,
-                deviceLocation
-            ),
-            F.mapEntry(
-                "/" + UserRepository.NAME + "/" + userId + "/currentAddress",
-                deviceLocation.getAddress()
-            ),
-            F.mapEntry(
-                "/" + UserRepository.NAME + "/" + userId + "/lastKnownLocation",
-                deviceLocation
-            )
-        ))
-    );
+    final HashMap<String, Object> update = new HashMap<String, Object>() {{
+      put("/" + DeviceLocationRepository.NAME + "/" + userId + "/" + newLocationKey, deviceLocation);
+      put("/" + UserRepository.NAME + "/" + userId + "/currentAddress", deviceLocation.getAddress());
+      put("/" + UserRepository.NAME + "/" + userId + "/lastKnownLocation", deviceLocation);
+    }};
+
+    Db.updateChildren(mDatabaseReference, update).subscribe();
   }
 }

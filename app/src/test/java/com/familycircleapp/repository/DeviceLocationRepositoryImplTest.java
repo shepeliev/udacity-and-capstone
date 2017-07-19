@@ -3,16 +3,16 @@ package com.familycircleapp.repository;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import com.familycircleapp.utils.F;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static java.util.Arrays.asList;
+import java.util.HashMap;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,7 +28,7 @@ public class DeviceLocationRepositoryImplTest {
   @Mock DatabaseReference mockLocationsReference;
   @Mock DatabaseReference mockUser1LocationsReference;
   @Mock DatabaseReference mockNewLocationReference;
-  @InjectMocks DeviceLocationRepositoryImpl mDeviceLocationRepository;
+  DeviceLocationRepositoryImpl mDeviceLocationRepository;
 
   @Before
   public void setUp() throws Exception {
@@ -38,6 +38,8 @@ public class DeviceLocationRepositoryImplTest {
     when(mockLocationsReference.child("user_1")).thenReturn(mockUser1LocationsReference);
     when(mockUser1LocationsReference.push()).thenReturn(mockNewLocationReference);
     when(mockNewLocationReference.getKey()).thenReturn("new_location_key");
+
+    mDeviceLocationRepository = new DeviceLocationRepositoryImpl(mockFirebaseDatabase);
   }
 
   @Test
@@ -46,13 +48,12 @@ public class DeviceLocationRepositoryImplTest {
 
     mDeviceLocationRepository.saveDeviceLocation("user_1", deviceLocation);
 
-    verify(mockDatabaseReference).updateChildren(
-        F.mapOf(asList(
-            F.mapEntry("/locations/user_1/new_location_key", deviceLocation),
-            F.mapEntry("/users/user_1/currentAddress", deviceLocation.getAddress()),
-            F.mapEntry("/users/user_1/lastKnownLocation", deviceLocation)
-        ))
-    );
+    final HashMap<String, Object> expectedUpdate = new HashMap<String, Object>() {{
+      put("/locations/user_1/new_location_key", deviceLocation);
+      put("/users/user_1/currentAddress", deviceLocation.getAddress());
+      put("/users/user_1/lastKnownLocation", deviceLocation);
+    }};
+    verify(mockDatabaseReference).updateChildren(eq(expectedUpdate), any());
   }
 
   public DeviceLocation getDeviceLocation() {
