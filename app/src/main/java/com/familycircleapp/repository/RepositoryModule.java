@@ -39,8 +39,8 @@ public final class RepositoryModule {
 
   @Provides
   @Singleton
-  LastLocationRepository provideLastLocationRepository(final FirebaseDatabase firebaseDatabase) {
-    return new LastLocationRepositoryImpl(firebaseDatabase);
+  LastKnownLocationRepository provideLastLocationRepository(final FirebaseDatabase firebaseDatabase) {
+    return new LastKnownLocationRepositoryImpl(firebaseDatabase);
   }
 
   @Provides

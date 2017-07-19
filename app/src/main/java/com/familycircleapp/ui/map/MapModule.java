@@ -1,6 +1,6 @@
 package com.familycircleapp.ui.map;
 
-import com.familycircleapp.repository.LastLocationRepository;
+import com.familycircleapp.repository.LastKnownLocationRepository;
 
 import javax.inject.Singleton;
 
@@ -12,7 +12,7 @@ public final class MapModule {
 
   @Provides
   @Singleton
-  GoogleMapService provideGoogleMapService(final LastLocationRepository lastLocationRepository) {
-    return new GoogleMapServiceImpl(lastLocationRepository);
+  GoogleMapService provideGoogleMapService(final LastKnownLocationRepository lastKnownLocationRepository) {
+    return new GoogleMapServiceImpl(lastKnownLocationRepository);
   }
 }

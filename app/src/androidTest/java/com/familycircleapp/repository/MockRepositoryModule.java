@@ -30,8 +30,8 @@ public final class MockRepositoryModule {
 
   @Provides
   @Singleton
-  LastLocationRepository provideLastLocationRepository() {
-    return mock(LastLocationRepository.class);
+  LastKnownLocationRepository provideLastLocationRepository() {
+    return mock(LastKnownLocationRepository.class);
   }
 
   @Provides

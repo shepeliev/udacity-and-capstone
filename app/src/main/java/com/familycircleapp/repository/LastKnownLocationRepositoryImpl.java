@@ -6,21 +6,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
-class LastLocationRepositoryImpl implements LastLocationRepository {
+import com.familycircleapp.utils.Rx;
+
+class LastKnownLocationRepositoryImpl implements LastKnownLocationRepository {
 
   private static final String LAST_KNOWN_LOCATION_KEY = "lastKnownLocation";
-  private final FirebaseDatabase mFirebaseDatabase;
+  private final DatabaseReference mUsersReference;
 
-  LastLocationRepositoryImpl(final FirebaseDatabase firebaseDatabase) {
-    mFirebaseDatabase = firebaseDatabase;
+  LastKnownLocationRepositoryImpl(final FirebaseDatabase firebaseDatabase) {
+    mUsersReference = firebaseDatabase.getReference(UserRepository.NAME);
   }
 
   @Override
   public LiveData<DeviceLocation> gtLastLocation(@NonNull final String userId) {
-    final DatabaseReference reference = mFirebaseDatabase
-        .getReference(UserRepository.NAME)
+    final DatabaseReference reference = mUsersReference
         .child(userId)
         .child(LAST_KNOWN_LOCATION_KEY);
-    return new DatabaseReferenceLiveData<>(reference, DeviceLocation.class);
+    return Rx.liveData(reference, DeviceLocation.class);
   }
 }

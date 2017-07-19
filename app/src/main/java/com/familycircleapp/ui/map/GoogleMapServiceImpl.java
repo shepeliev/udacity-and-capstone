@@ -16,7 +16,7 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import android.support.annotation.NonNull;
 
 import com.familycircleapp.repository.DeviceLocation;
-import com.familycircleapp.repository.LastLocationRepository;
+import com.familycircleapp.repository.LastKnownLocationRepository;
 import com.familycircleapp.utils.F;
 
 import java.util.AbstractMap;
@@ -30,15 +30,15 @@ final class GoogleMapServiceImpl implements GoogleMapService {
   private final Map<String, Marker> mMarkers = new HashMap<>();
   private final Map<String, Circle> mCircles = new HashMap<>();
 
-  private final LastLocationRepository mLastLocationRepository;
+  private final LastKnownLocationRepository mLastKnownLocationRepository;
 
   private LifecycleOwner mLifecycleOwner;
   private GoogleMap mGoogleMap;
   private boolean mEnabled = false;
   private SingleShotContainer<UserCameraZoom> mUserCameraZoomCache = new SingleShotContainer<>(null);
 
-  GoogleMapServiceImpl(final LastLocationRepository lastLocationRepository) {
-    mLastLocationRepository = lastLocationRepository;
+  GoogleMapServiceImpl(final LastKnownLocationRepository lastKnownLocationRepository) {
+    mLastKnownLocationRepository = lastKnownLocationRepository;
   }
 
   @Override
@@ -52,7 +52,7 @@ final class GoogleMapServiceImpl implements GoogleMapService {
     F.foreach(idsForDeleting, this::removeUserMarker);
 
     final List<String> newIds = F.filter(userIds, id -> !mLocations.containsKey(id));
-    F.foreach(newIds, id -> putUserOnMap(id, mLastLocationRepository.gtLastLocation(id)));
+    F.foreach(newIds, id -> putUserOnMap(id, mLastKnownLocationRepository.gtLastLocation(id)));
   }
 
   @Override
