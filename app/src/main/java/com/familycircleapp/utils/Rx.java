@@ -34,8 +34,6 @@ public final class Rx {
               final Pair<Throwable, T> value = getValue(dataSnapshot, clazz);
               if (value.first == null) {
                 emitter.onNext(value.second);
-              } else {
-                emitter.onError(value.first);
               }
             }
 
