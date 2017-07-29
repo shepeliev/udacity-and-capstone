@@ -3,6 +3,7 @@ package com.familycircleapp.utils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import android.arch.lifecycle.LiveData;
@@ -71,6 +72,31 @@ public final class Rx {
     ));
   }
 
+  public static <T> Single<T> single(
+      @NonNull final DatabaseReference reference,
+      @NonNull final GenericTypeIndicator<T> typeIndicator
+  ) {
+    return Single.create(emitter -> reference.addListenerForSingleValueEvent(
+        new ValueEventListener() {
+          @Override
+          public void onDataChange(final DataSnapshot dataSnapshot) {
+            final Pair<Throwable, T> value = getValue(dataSnapshot, typeIndicator);
+            if (value.first == null) {
+              emitter.onSuccess(value.second);
+            } else {
+              emitter.onError(value.first);
+            }
+          }
+
+          @Override
+          public void onCancelled(final DatabaseError databaseError) {
+            emitter.onError(databaseError.toException());
+          }
+        }
+    ));
+  }
+
+
   private static <T> Pair<Throwable, T> getValue(
       final DataSnapshot dataSnapshot, final Class<T> clazz
   ) {
@@ -85,6 +111,22 @@ public final class Rx {
 
     return new Pair<>(new NotFoundException(dataSnapshot.getRef().toString()), null);
   }
+
+  private static <T> Pair<Throwable, T> getValue(
+      final DataSnapshot dataSnapshot, final GenericTypeIndicator<T> typeIndicator
+  ) {
+    if (dataSnapshot.exists()) {
+      final T value = dataSnapshot.getValue(typeIndicator);
+      if (value instanceof HasId) {
+        ((HasId) value).setId(dataSnapshot.getKey());
+      }
+
+      return new Pair<>(null, value);
+    }
+
+    return new Pair<>(new NotFoundException(dataSnapshot.getRef().toString()), null);
+  }
+
 
   public static <T> LiveData<T> liveData(final @NonNull Observable<T> observable) {
     return new LiveData<T>() {

@@ -64,6 +64,6 @@ final class CurrentUserImpl implements CurrentUser {
           true);
     }};
 
-    return Db.updateChildren(mDatabaseReference, update);
+    return Db.updateChildren(mDatabaseReference, update).map(o -> circleId);
   }
 }

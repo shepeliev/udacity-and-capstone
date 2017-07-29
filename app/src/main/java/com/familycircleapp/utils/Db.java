@@ -14,7 +14,7 @@ public final class Db {
     throw new UnsupportedOperationException();
   }
 
-  public static Single<String> updateChildren(
+  public static Single<Object> updateChildren(
       final @NonNull DatabaseReference databaseReference,
       final @NonNull Map<String, Object> update
   ) {
@@ -26,7 +26,7 @@ public final class Db {
               if (error != null) {
                 emitter.onError(error.toException());
               } else {
-                emitter.onSuccess(reference.getKey());
+                emitter.onSuccess(new Object());
               }
             }
         )

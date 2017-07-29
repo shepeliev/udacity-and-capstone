@@ -32,8 +32,7 @@ public final class EntryPointActivity extends LifecycleActivity {
       final Intent intent = AuthUI.getInstance().createSignInIntentBuilder().build();
       startActivityForResult(intent, RC_LOGIN);
     } else {
-      Ctx.startActivity(this, MainActivity.class);
-      finish();
+      handleSuccessLogin();
     }
   }
 
@@ -76,13 +75,5 @@ public final class EntryPointActivity extends LifecycleActivity {
             user -> Ctx.startActivity(this, MainActivity.class),
             error -> Ctx.startActivity(this, NewUserActivity.class)
         );
-//    mUserRepository.getUserLiveData(userId).observe(this, user -> {
-//      if (user != null) {
-//        Ctx.startActivity(this, MainActivity.class);
-//      } else {
-//        Ctx.startActivity(this, NewUserActivity.class);
-//      }
-//      finish();
-//    });
   }
 }

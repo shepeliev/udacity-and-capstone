@@ -48,6 +48,6 @@ final class CircleRepositoryImpl implements CircleRepository {
       put("/" + UserRepository.NAME + "/" + userId + "/" + CURRENT_CIRCLE_KEY, circleId);
     }};
 
-    return Db.updateChildren(mDatabaseReference, update);
+    return Db.updateChildren(mDatabaseReference, update).map(o -> circleId);
   }
 }
