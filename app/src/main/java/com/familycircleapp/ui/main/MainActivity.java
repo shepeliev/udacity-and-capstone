@@ -3,7 +3,6 @@ package com.familycircleapp.ui.main;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import android.Manifest;
-import android.arch.lifecycle.LifecycleActivity;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.pm.PackageManager;
@@ -12,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -22,6 +22,7 @@ import com.familycircleapp.R;
 import com.familycircleapp.battery.BatteryInfoListener;
 import com.familycircleapp.location.LocationUpdatesManager;
 import com.familycircleapp.repository.CurrentUser;
+import com.familycircleapp.ui.AppCompatLifecycleActivity;
 import com.familycircleapp.ui.main.adapter.CircleUserAdapter;
 import com.familycircleapp.ui.map.GoogleMapService;
 import com.familycircleapp.utils.Ctx;
@@ -35,7 +36,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public final class MainActivity extends LifecycleActivity {
+public final class MainActivity extends AppCompatLifecycleActivity {
 
   static final int RC_LOCATION_PERMISSION = 1;
 
@@ -124,6 +125,12 @@ public final class MainActivity extends LifecycleActivity {
     super.onStart();
     adjustMapHeight();
     fixMovingMap();
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(final Menu menu) {
+    getMenuInflater().inflate(R.menu.action_menu, menu);
+    return true;
   }
 
   private void onUserIdsLoaded(final List<String> userIds) {
