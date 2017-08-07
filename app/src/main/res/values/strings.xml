@@ -30,9 +30,11 @@
     <string name="error_location_permission_not_granted">Access location permission has not been granted</string>
     <string name="user_status_near">Near: <xliff:g example="555 Broad str." id="address">%1$s</xliff:g></string>
     <string name="invite_description">Give the code below to somebody who you want to see in circle <strong>\"<xliff:g example="Family" id="circle_name">%1$s</xliff:g>\"</strong>.</string>
+    <string name="invite_code_template" translatable="false">%1$s-%2$s</string>
     <string name="btn_send_code">Send code</string>
     <string name="invite_expiration">This code is valid for <xliff:g example="7" id="days">%1$d</xliff:g> days.</string>
     <string name="error_create_invite_code">Creating an invite code failed: <xliff:g example="network error" id="error_message">%1$s</xliff:g>.</string>
+    <string name="share_invite_code_chooser_title">Send invite code to</string>
     <string name="share_invite_code_message">Family Circle invite code: <xliff:g expample="XYZX-YVYT" id="code">%1$s</xliff:g></string>
     <string name="join_circle_description">For joining into existing circle enter the invite code below:</string>
     <string name="hint_enter_invite_code">Invite code</string>

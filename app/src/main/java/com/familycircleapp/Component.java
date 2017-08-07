@@ -3,6 +3,7 @@ package com.familycircleapp;
 
 import com.familycircleapp.battery.BatteryInfoReceiver;
 import com.familycircleapp.location.UpdatedLocationIntentService;
+import com.familycircleapp.ui.invite.InviteActivity;
 import com.familycircleapp.ui.main.MainActivity;
 import com.familycircleapp.ui.newuser.NewUserActivity;
 
@@ -17,4 +18,6 @@ public interface Component {
   void inject(final UpdatedLocationIntentService target);
 
   void inject(NewUserActivity target);
+
+  void inject(InviteActivity target);
 }

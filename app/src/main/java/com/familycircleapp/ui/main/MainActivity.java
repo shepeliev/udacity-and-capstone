@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.View;
@@ -23,9 +24,11 @@ import com.familycircleapp.battery.BatteryInfoListener;
 import com.familycircleapp.location.LocationUpdatesManager;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.AppCompatLifecycleActivity;
+import com.familycircleapp.ui.invite.InviteActivity;
 import com.familycircleapp.ui.main.adapter.CircleUserAdapter;
 import com.familycircleapp.ui.map.GoogleMapService;
 import com.familycircleapp.utils.Ctx;
+import com.jakewharton.rxbinding2.view.RxView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +37,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 public final class MainActivity extends AppCompatLifecycleActivity {
@@ -51,8 +55,10 @@ public final class MainActivity extends AppCompatLifecycleActivity {
   @BindView(R.id.app_bar_layout) AppBarLayout mAppBarLayout;
   @BindView(R.id.loader_screen) View mLoaderScreen;
   @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
+  @BindView(R.id.btn_invite) FloatingActionButton mInviteButton;
 
   private CircleUserAdapter mCircleUserAdapter;
+  private Disposable mInviteButtonDisposable;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +105,10 @@ public final class MainActivity extends AppCompatLifecycleActivity {
       Ctx.startActivity(this, EntryPointActivity.class);
       finish();
     }
+
+    mInviteButtonDisposable = RxView
+        .clicks(mInviteButton)
+        .subscribe(o -> Ctx.startActivity(this, InviteActivity.class));
   }
 
   @Override
@@ -125,6 +135,15 @@ public final class MainActivity extends AppCompatLifecycleActivity {
     super.onStart();
     adjustMapHeight();
     fixMovingMap();
+  }
+
+  @Override
+  protected void onDestroy() {
+    if (mInviteButtonDisposable != null) {
+      mInviteButtonDisposable.dispose();
+      mInviteButtonDisposable = null;
+    }
+    super.onDestroy();
   }
 
   @Override

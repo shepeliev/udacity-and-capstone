@@ -46,14 +46,16 @@ public final class RepositoryModule {
   @Provides
   @Singleton
   CurrentCircleRepository provideCurrentCircleRepository(
-      final UserRepository userRepository, final CircleRepository circleRepository
+      final CurrentUser currentUser,
+      final UserRepository userRepository,
+      final CircleRepository circleRepository
   ) {
-    return new CurrentCircleRepositoryImpl(userRepository, circleRepository);
+    return new CurrentCircleRepositoryImpl(currentUser, userRepository, circleRepository);
   }
 
   @Provides
   @Singleton
-  InviteRepository provideInviteRepository() {
-    return new InviteRepositoryImpl();
+  InviteRepository provideInviteRepository(final FirebaseDatabase firebaseDatabase) {
+    return new InviteRepositoryImpl(firebaseDatabase);
   }
 }

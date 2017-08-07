@@ -12,6 +12,7 @@ import com.familycircleapp.utils.Rx;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 import static com.familycircleapp.repository.UserRepositoryImpl.CURRENT_CIRCLE_KEY;
@@ -34,6 +35,16 @@ final class CircleRepositoryImpl implements CircleRepository {
   public LiveData<Circle> getCircleLiveData(final @NonNull String id) {
     final DatabaseReference reference = mCirclesReference.child(id);
     return Rx.liveData(reference, Circle.class);
+  }
+
+  @Override
+  public Observable<Circle> observeCircle(@NonNull final String id) {
+    return Rx.observable(mCirclesReference.child(id), Circle.class);
+  }
+
+  @Override
+  public Single<Circle> getCircle(@NonNull final String id) {
+    return Rx.single(mCirclesReference.child(id), Circle.class);
   }
 
   @NonNull

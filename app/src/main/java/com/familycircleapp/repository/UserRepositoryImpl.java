@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import com.familycircleapp.battery.BatteryInfo;
 import com.familycircleapp.utils.Rx;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 final class UserRepositoryImpl implements UserRepository {
@@ -39,6 +40,11 @@ final class UserRepositoryImpl implements UserRepository {
         mUsersReference.child(userId).child(CURRENT_CIRCLE_KEY),
         String.class
     );
+  }
+
+  @Override
+  public Observable<String> observeCurrentCircleId(@NonNull final String userId) {
+    return Rx.observable(mUsersReference.child(userId).child(CURRENT_CIRCLE_KEY), String.class);
   }
 
   @Override

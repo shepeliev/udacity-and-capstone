@@ -40,7 +40,7 @@ public class CurrentCircleUserIdsViewModel extends ViewModel {
     }
 
     return Transformations.map(
-        mCurrentCircleRepository.getCurrentCircle(userId),
+        mCurrentCircleRepository.getCurrentCircleLiveData(userId),
         circle -> F.map(circle.getMembers().keySet(), id -> id)
     );
   }

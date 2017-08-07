@@ -29,6 +29,10 @@
 
         <activity android:name=".ui.newuser.NewUserActivity" />
 
+        <activity
+            android:name=".ui.invite.InviteActivity"
+            android:parentActivityName=".ui.main.MainActivity" />
+
         <service
             android:name=".location.UpdatedLocationIntentService"
             android:exported="false" />

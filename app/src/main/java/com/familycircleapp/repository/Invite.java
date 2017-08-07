@@ -8,9 +8,18 @@ public final class Invite implements HasId {
   private String mCircleId;
   private long mExpiration;
 
+  public Invite() {
+  }
+
+  public Invite(final String id, final String circleId, final long expiration) {
+    mId = id;
+    mCircleId = circleId;
+    mExpiration = expiration;
+  }
+
   @Override
   public String getId() {
-    return null;
+    return mId;
   }
 
   @Override

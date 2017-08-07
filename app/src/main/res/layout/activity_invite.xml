@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <TextView
+            android:id="@+id/tw_invite_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            tools:text="@string/invite_description" />
+
+        <TextView
+            android:id="@+id/tw_invite_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="52dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            tools:text="XYTV-BTZW" />
+
+        <TextView
+            android:id="@+id/tw_invite_expiration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100dp"
+            tools:text="@string/invite_expiration" />
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/btn_send_code"
+        style="@style/WizardButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="@string/btn_send_code" />
+
+    <FrameLayout
+        android:id="@+id/loader_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/loader_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
+</FrameLayout>

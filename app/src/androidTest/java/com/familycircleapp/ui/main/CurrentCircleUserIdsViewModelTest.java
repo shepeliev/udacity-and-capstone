@@ -51,7 +51,7 @@ public class CurrentCircleUserIdsViewModelTest {
     mCircleLiveData.postValue(getCircle("circle_1", members));
 
     when(mockCurrentUser.getId()).thenReturn("user_1");
-    when(mockCurrentCircleRepository.getCurrentCircle("user_1")).thenReturn(mCircleLiveData);
+    when(mockCurrentCircleRepository.getCurrentCircleLiveData("user_1")).thenReturn(mCircleLiveData);
   }
 
   @Test

@@ -59,7 +59,7 @@ public class CurrentCircleRepositoryImplTest {
 
   @Test
   public void testGetCurrentCircle() throws Throwable {
-    final LiveData<Circle> currentCircle = mCurrentCircleRepository.getCurrentCircle("user_1");
+    final LiveData<Circle> currentCircle = mCurrentCircleRepository.getCurrentCircleLiveData("user_1");
 
     final Circle[] actualCircle = {null};
     uiThread.runOnUiThread(() -> actualCircle[0] = LiveDataUtil.getValue(currentCircle));

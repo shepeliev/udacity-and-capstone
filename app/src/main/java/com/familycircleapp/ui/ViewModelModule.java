@@ -11,8 +11,11 @@ import com.familycircleapp.repository.InviteRepository;
 import com.familycircleapp.repository.UserRepository;
 import com.familycircleapp.ui.common.CreateCircleErrorTextResolver;
 import com.familycircleapp.ui.common.CreateCircleViewModel;
+import com.familycircleapp.ui.common.CurrentCircleNameViewModel;
+import com.familycircleapp.ui.common.CurrentUserViewModel;
 import com.familycircleapp.ui.common.JoinCircleErrorTextResolver;
 import com.familycircleapp.ui.common.JoinCircleViewModel;
+import com.familycircleapp.ui.invite.InviteViewModel;
 import com.familycircleapp.ui.main.CircleUserViewModel;
 import com.familycircleapp.ui.main.CurrentCircleUserIdsViewModel;
 
@@ -84,7 +87,33 @@ public final class ViewModelModule {
       final CreateCircleErrorTextResolver createCircleErrorTextResolver,
       final CurrentUser currentUser,
       final CircleRepository circleRepository
-      ) {
+  ) {
     return new CreateCircleViewModel(createCircleErrorTextResolver, currentUser, circleRepository);
+  }
+
+  @Provides
+  @IntoMap
+  @ClassKey(CurrentCircleNameViewModel.class)
+  ViewModel provideCurrentCircleNameViewModel(final CurrentCircleRepository currentCircleRepository) {
+    return new CurrentCircleNameViewModel(currentCircleRepository);
+  }
+
+  @Provides
+  @IntoMap
+  @ClassKey(CurrentUserViewModel.class)
+  ViewModel provideCurrentUserViewModel(
+      final CurrentUser currentUser, final UserRepository userRepository
+  ) {
+    return new CurrentUserViewModel(currentUser, userRepository);
+  }
+
+  @Provides
+  @IntoMap
+  @ClassKey(InviteViewModel.class)
+  ViewModel provideInviteViewModel(
+      final CurrentCircleRepository currentCircleRepository,
+      final InviteRepository inviteRepository
+  ) {
+    return new InviteViewModel(currentCircleRepository, inviteRepository);
   }
 }
