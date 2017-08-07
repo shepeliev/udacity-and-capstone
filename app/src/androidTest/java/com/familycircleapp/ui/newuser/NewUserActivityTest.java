@@ -106,9 +106,6 @@ public class NewUserActivityTest {
   public void testLoaderScreen() throws Exception {
     final ObservableBoolean isVisibleJoin = new ObservableBoolean();
     final ObservableBoolean isVisibleCreate = new ObservableBoolean();
-    when(mockJoinCircleViewModel.isRunning()).thenReturn(isVisibleJoin);
-    when(mockJoinCircleViewModel.isEnabled()).thenReturn(new ObservableBoolean(true));
-    when(mockCreateCircleViewModel.isRunning()).thenReturn(isVisibleCreate);
     rule.launchActivity(null);
 
     isVisibleJoin.set(false);
@@ -142,7 +139,6 @@ public class NewUserActivityTest {
   @Test
   public void testInviteCodeEditText() throws Exception {
     final ObservableField<String> inviteCode = new ObservableField<>();
-    when(mockJoinCircleViewModel.getInviteCode()).thenReturn(inviteCode);
     rule.launchActivity(null);
 
     onView(withId(R.id.et_invite_code)).perform(typeText("XXXXYYYY"));
@@ -153,7 +149,6 @@ public class NewUserActivityTest {
   @Test
   public void testJoinCircleButtonEnablity() throws Exception {
     final ObservableBoolean joinEnabled = new ObservableBoolean();
-    when(mockJoinCircleViewModel.isEnabled()).thenReturn(joinEnabled);
     rule.launchActivity(null);
 
     joinEnabled.set(false);
@@ -166,7 +161,6 @@ public class NewUserActivityTest {
 
   @Test
   public void testJoinCircleButtonClick() throws Exception {
-    when(mockJoinCircleViewModel.isEnabled()).thenReturn(new ObservableBoolean(true));
     rule.launchActivity(null);
 
     onView(withId(R.id.btn_join_to_circle)).perform(click());

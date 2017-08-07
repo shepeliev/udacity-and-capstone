@@ -1,7 +1,6 @@
 package com.familycircleapp.ui;
 
 import android.content.Context;
-import android.databinding.BindingAdapter;
 import android.support.annotation.DrawableRes;
 import android.text.TextUtils;
 import android.widget.ImageView;
@@ -31,7 +30,6 @@ public final class BindingAdapters {
     throw new UnsupportedOperationException();
   }
 
-  @BindingAdapter({"bind:template", "bind:template_arg"})
   public static void bindTemplateString(final TextView view, final int template, final Object arg) {
     if (template == 0) {
       return;
@@ -52,7 +50,6 @@ public final class BindingAdapters {
     }
   }
 
-  @BindingAdapter({"bind:battery_status", "bind:battery_level"})
   public static void bindBatteryInfo(
       final ImageView view, final String batteryStatus, final int batteryLevel
   ) {
@@ -70,7 +67,6 @@ public final class BindingAdapters {
     }
   }
 
-  @BindingAdapter("bind:name")
   public static void bindAvatar(final ImageView view, final String name) {
     final TextDrawable drawable = drawableAvatar(name);
     view.setImageDrawable(drawable);

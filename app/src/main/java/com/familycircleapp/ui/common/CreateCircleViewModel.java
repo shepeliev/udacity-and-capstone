@@ -1,17 +1,17 @@
 package com.familycircleapp.ui.common;
 
-import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.familycircleapp.repository.CircleRepository;
 import com.familycircleapp.repository.CurrentUser;
 
 public class CreateCircleViewModel extends BackgroundTaskViewModel<String> {
 
-  private final ObservableField<String> mCircleName = new ObservableField<>("");
-
   private final CurrentUser mCurrentUser;
   private final CircleRepository mCircleRepository;
+
+  private String mCircleName;
 
   public CreateCircleViewModel(
       @NonNull final ErrorTextResolver errorTextResolver,
@@ -23,16 +23,21 @@ public class CreateCircleViewModel extends BackgroundTaskViewModel<String> {
     mCircleRepository = circleRepository;
   }
 
-  public ObservableField<String> getCircleName() {
-    return mCircleName;
+  public void setCircleName(final String circleName) {
+    mCircleName = circleName;
   }
 
   @Override
   protected void startTask() {
+    if (TextUtils.isEmpty(mCircleName)) {
+      throw new IllegalStateException("circle name shouldn't be empty");
+    }
+
     final String userId = mCurrentUser.getId();
-    assert userId != null;
-    mCircleRepository
-        .createNewCircle(userId, mCircleName.get())
-        .subscribe(this::success, this::fail);
+    if (userId == null) {
+      throw new IllegalStateException("user must be authenticated");
+    }
+
+    mCircleRepository.createNewCircle(userId, mCircleName).subscribe(this::success, this::fail);
   }
 }
