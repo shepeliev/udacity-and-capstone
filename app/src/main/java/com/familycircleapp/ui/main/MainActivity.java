@@ -13,6 +13,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -24,6 +25,7 @@ import com.familycircleapp.battery.BatteryInfoListener;
 import com.familycircleapp.location.LocationUpdatesManager;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.AppCompatLifecycleActivity;
+import com.familycircleapp.ui.NewCircleActivity;
 import com.familycircleapp.ui.invite.InviteActivity;
 import com.familycircleapp.ui.main.adapter.CircleUserAdapter;
 import com.familycircleapp.ui.map.GoogleMapService;
@@ -150,6 +152,17 @@ public final class MainActivity extends AppCompatLifecycleActivity {
   public boolean onCreateOptionsMenu(final Menu menu) {
     getMenuInflater().inflate(R.menu.action_menu, menu);
     return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(final MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.action_create_circle:
+        Ctx.startActivity(this, NewCircleActivity.class);
+        return true;
+    }
+
+    return super.onOptionsItemSelected(item);
   }
 
   private void onUserIdsLoaded(final List<String> userIds) {
