@@ -3,6 +3,7 @@ package com.familycircleapp;
 
 import com.familycircleapp.battery.BatteryInfoReceiver;
 import com.familycircleapp.location.UpdatedLocationIntentService;
+import com.familycircleapp.ui.JoinCircleActivity;
 import com.familycircleapp.ui.NewCircleActivity;
 import com.familycircleapp.ui.SwitchCircleDialog;
 import com.familycircleapp.ui.invite.InviteActivity;
@@ -26,4 +27,6 @@ public interface Component {
   void inject(NewCircleActivity target);
 
   void inject(SwitchCircleDialog target);
+
+  void inject(JoinCircleActivity target);
 }

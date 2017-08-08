@@ -34,6 +34,10 @@
             android:name=".ui.NewCircleActivity"
             android:parentActivityName=".ui.main.MainActivity"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.JoinCircleActivity"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:windowSoftInputMode="adjustResize" />
 
         <service
             android:name=".location.UpdatedLocationIntentService"

@@ -25,6 +25,7 @@ import com.familycircleapp.battery.BatteryInfoListener;
 import com.familycircleapp.location.LocationUpdatesManager;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.AppCompatLifecycleActivity;
+import com.familycircleapp.ui.JoinCircleActivity;
 import com.familycircleapp.ui.NewCircleActivity;
 import com.familycircleapp.ui.SwitchCircleDialog;
 import com.familycircleapp.ui.common.CurrentCircleNameViewModel;
@@ -171,6 +172,11 @@ public final class MainActivity extends AppCompatLifecycleActivity {
       case R.id.action_create_circle:
         Ctx.startActivity(this, NewCircleActivity.class);
         return true;
+
+      case R.id.action_join_circle:
+        Ctx.startActivity(this, JoinCircleActivity.class);
+        return true;
+
       case R.id.action_switch_circle:
         new SwitchCircleDialog().asyncShow(getSupportFragmentManager());
         return true;

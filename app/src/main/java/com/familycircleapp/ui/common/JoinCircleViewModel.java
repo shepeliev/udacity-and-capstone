@@ -31,7 +31,10 @@ public class JoinCircleViewModel extends BackgroundTaskViewModel<String> {
       throw new IllegalStateException("invite code should not be empty");
     }
 
-    mInviteRepository.get(mInviteCode).subscribe(this::handleInvite, this::fail);
+    final String normalizedInviteCode = mInviteCode
+        .replace("-", "")
+        .toUpperCase();
+    mInviteRepository.get(normalizedInviteCode).subscribe(this::handleInvite, this::fail);
   }
 
   public void setInviteCode(final String inviteCode) {
