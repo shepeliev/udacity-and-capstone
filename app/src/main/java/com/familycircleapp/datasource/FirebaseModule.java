@@ -20,6 +20,8 @@ public final class FirebaseModule {
   @Provides
   @Singleton
   public FirebaseDatabase provideFirebaseDatabase() {
-    return FirebaseDatabase.getInstance();
+    final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    firebaseDatabase.setPersistenceEnabled(true);
+    return firebaseDatabase;
   }
 }
