@@ -57,6 +57,7 @@ final class CircleRepositoryImpl implements CircleRepository {
       put("/" + CircleRepository.NAME + "/" + circleId + "/" + NAME_KEY, circleName);
       put("/" + CircleRepository.NAME + "/" + circleId + "/" + MEMBERS_KEY + "/" + userId, true);
       put("/" + UserRepository.NAME + "/" + userId + "/" + CURRENT_CIRCLE_KEY, circleId);
+      put("/" + UserRepository.NAME + "/" + userId + "/" + CircleRepository.NAME + "/" + circleId, true);
     }};
 
     return Db.updateChildren(mDatabaseReference, update).map(o -> circleId);

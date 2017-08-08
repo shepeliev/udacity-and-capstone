@@ -1,5 +1,7 @@
 package com.familycircleapp.repository;
 
+import java.util.Map;
+
 public final class User implements HasId {
 
   private String mId;
@@ -8,6 +10,7 @@ public final class User implements HasId {
   private String mBatteryStatus;
   private String mCurrentAddress;
   private String mCurrentCircle;
+  private Map<String, Boolean> mCircles;
 
   public User() {
   }
@@ -67,6 +70,14 @@ public final class User implements HasId {
     mCurrentCircle = currentCircle;
   }
 
+  public Map<String, Boolean> getCircles() {
+    return mCircles;
+  }
+
+  public void setCircles(final Map<String, Boolean> circles) {
+    mCircles = circles;
+  }
+
   @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
@@ -82,7 +93,9 @@ public final class User implements HasId {
       return false;
     if (mCurrentAddress != null ? !mCurrentAddress.equals(user.mCurrentAddress) : user.mCurrentAddress != null)
       return false;
-    return mCurrentCircle != null ? mCurrentCircle.equals(user.mCurrentCircle) : user.mCurrentCircle == null;
+    if (mCurrentCircle != null ? !mCurrentCircle.equals(user.mCurrentCircle) : user.mCurrentCircle != null)
+      return false;
+    return mCircles != null ? mCircles.equals(user.mCircles) : user.mCircles == null;
   }
 
   @Override
@@ -96,6 +109,7 @@ public final class User implements HasId {
     result = 31 * result + (mBatteryStatus != null ? mBatteryStatus.hashCode() : 0);
     result = 31 * result + (mCurrentAddress != null ? mCurrentAddress.hashCode() : 0);
     result = 31 * result + (mCurrentCircle != null ? mCurrentCircle.hashCode() : 0);
+    result = 31 * result + (mCircles != null ? mCircles.hashCode() : 0);
     return result;
   }
 
@@ -108,6 +122,7 @@ public final class User implements HasId {
     sb.append(", mBatteryStatus='").append(mBatteryStatus).append('\'');
     sb.append(", mCurrentAddress='").append(mCurrentAddress).append('\'');
     sb.append(", mCurrentCircle='").append(mCurrentCircle).append('\'');
+    sb.append(", mCircles=").append(mCircles);
     sb.append('}');
     return sb.toString();
   }

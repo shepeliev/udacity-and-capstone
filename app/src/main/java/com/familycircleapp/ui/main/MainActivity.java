@@ -26,6 +26,7 @@ import com.familycircleapp.location.LocationUpdatesManager;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.AppCompatLifecycleActivity;
 import com.familycircleapp.ui.NewCircleActivity;
+import com.familycircleapp.ui.SwitchCircleDialog;
 import com.familycircleapp.ui.common.CurrentCircleNameViewModel;
 import com.familycircleapp.ui.invite.InviteActivity;
 import com.familycircleapp.ui.main.adapter.CircleUserAdapter;
@@ -33,7 +34,6 @@ import com.familycircleapp.ui.map.GoogleMapService;
 import com.familycircleapp.utils.Ctx;
 import com.jakewharton.rxbinding2.view.RxView;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -42,6 +42,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
+
+import static java.util.Arrays.asList;
 
 public final class MainActivity extends AppCompatLifecycleActivity {
 
@@ -132,7 +134,7 @@ public final class MainActivity extends AppCompatLifecycleActivity {
       return;
     }
 
-    final int idx = Arrays.asList(permissions).indexOf(Manifest.permission.ACCESS_FINE_LOCATION);
+    final int idx = asList(permissions).indexOf(Manifest.permission.ACCESS_FINE_LOCATION);
     if (idx > -1 && grantResults[idx] == PackageManager.PERMISSION_GRANTED) {
       mLocationUpdatesManager.startLocationUpdates(this);
     } else {
@@ -168,6 +170,9 @@ public final class MainActivity extends AppCompatLifecycleActivity {
     switch (item.getItemId()) {
       case R.id.action_create_circle:
         Ctx.startActivity(this, NewCircleActivity.class);
+        return true;
+      case R.id.action_switch_circle:
+        new SwitchCircleDialog().asyncShow(getSupportFragmentManager());
         return true;
     }
 
