@@ -8,7 +8,7 @@ import android.os.Bundle;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.repository.UserRepository;
 import com.familycircleapp.ui.main.MainActivity;
-import com.familycircleapp.ui.newuser.NewUserActivity;
+import com.familycircleapp.ui.NewUserActivity;
 import com.familycircleapp.utils.Ctx;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;

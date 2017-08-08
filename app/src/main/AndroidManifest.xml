@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.main.MainActivity" />
-        <activity android:name=".ui.newuser.NewUserActivity" />
+        <activity android:name=".ui.NewUserActivity" />
         <activity
             android:name=".ui.invite.InviteActivity"
             android:parentActivityName=".ui.main.MainActivity" />

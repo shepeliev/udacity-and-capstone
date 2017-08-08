@@ -14,6 +14,7 @@ import com.familycircleapp.R;
 import com.familycircleapp.TestApp;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.repository.UserRepository;
+import com.familycircleapp.ui.NewUserActivity;
 import com.familycircleapp.ui.common.CreateCircleViewModel;
 import com.familycircleapp.ui.common.JoinCircleViewModel;
 import com.familycircleapp.ui.main.MainActivity;

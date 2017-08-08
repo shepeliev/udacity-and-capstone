@@ -1,4 +1,4 @@
-package com.familycircleapp.ui.newuser;
+package com.familycircleapp.ui;
 
 import android.arch.lifecycle.LifecycleActivity;
 import android.arch.lifecycle.ViewModelProvider;

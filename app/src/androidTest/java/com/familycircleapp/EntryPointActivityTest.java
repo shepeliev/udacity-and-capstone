@@ -12,7 +12,7 @@ import com.familycircleapp.repository.NotFoundException;
 import com.familycircleapp.repository.User;
 import com.familycircleapp.repository.UserRepository;
 import com.familycircleapp.ui.main.MainActivity;
-import com.familycircleapp.ui.newuser.NewUserActivity;
+import com.familycircleapp.ui.NewUserActivity;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.KickoffActivity;

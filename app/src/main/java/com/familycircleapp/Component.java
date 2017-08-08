@@ -6,7 +6,7 @@ import com.familycircleapp.location.UpdatedLocationIntentService;
 import com.familycircleapp.ui.NewCircleActivity;
 import com.familycircleapp.ui.invite.InviteActivity;
 import com.familycircleapp.ui.main.MainActivity;
-import com.familycircleapp.ui.newuser.NewUserActivity;
+import com.familycircleapp.ui.NewUserActivity;
 
 public interface Component {
 
