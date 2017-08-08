@@ -23,6 +23,7 @@ import com.familycircleapp.PermissionManager;
 import com.familycircleapp.R;
 import com.familycircleapp.battery.BatteryInfoListener;
 import com.familycircleapp.location.LocationUpdatesManager;
+import com.familycircleapp.repository.Circle;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.AppCompatLifecycleActivity;
 import com.familycircleapp.ui.JoinCircleActivity;
@@ -65,6 +66,7 @@ public final class MainActivity extends AppCompatLifecycleActivity {
 
   private CircleUserAdapter mCircleUserAdapter;
   private Disposable mDisposable;
+  private List<Circle> mCurrentUserCircles;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +122,11 @@ public final class MainActivity extends AppCompatLifecycleActivity {
         .getCircleName()
         .observe(this, this::setTitle);
 
+    viewModelProvider
+        .get(CircleListViewModel.class)
+        .getCircles()
+        .observe(this, circles -> mCurrentUserCircles = circles);
+
     mDisposable = RxView
         .clicks(mInviteButton)
         .subscribe(o -> Ctx.startActivity(this, InviteActivity.class));
@@ -167,6 +174,14 @@ public final class MainActivity extends AppCompatLifecycleActivity {
   }
 
   @Override
+  public boolean onPrepareOptionsMenu(final Menu menu) {
+    menu.findItem(R.id.action_switch_circle).setEnabled(
+        mCurrentUserCircles != null && !mCurrentUserCircles.isEmpty()
+    );
+    return super.onPrepareOptionsMenu(menu);
+  }
+
+  @Override
   public boolean onOptionsItemSelected(final MenuItem item) {
     switch (item.getItemId()) {
       case R.id.action_create_circle:
@@ -178,7 +193,9 @@ public final class MainActivity extends AppCompatLifecycleActivity {
         return true;
 
       case R.id.action_switch_circle:
-        new SwitchCircleDialog().asyncShow(getSupportFragmentManager());
+        SwitchCircleDialog
+            .getInstance(mCurrentUserCircles)
+            .show(getSupportFragmentManager(), null);
         return true;
     }
 

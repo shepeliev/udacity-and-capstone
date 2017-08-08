@@ -27,6 +27,18 @@ public final class F {
     return r;
   }
 
+  @NonNull
+  public static <T, R> List<R> map(
+      @NonNull final T[] list, @NonNull final Function<T, R> f
+  ) {
+    final ArrayList<R> r = new ArrayList<>();
+    for (final T el : list) {
+      r.add(f.apply(el));
+    }
+
+    return r;
+  }
+
   public static <T, R> R fold(
       @NonNull final Iterable<T> list, final R initial, @NonNull final Function2<R, T, R> f
   ) {

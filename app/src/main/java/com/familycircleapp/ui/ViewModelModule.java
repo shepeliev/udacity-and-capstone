@@ -16,6 +16,7 @@ import com.familycircleapp.ui.common.CurrentUserViewModel;
 import com.familycircleapp.ui.common.JoinCircleErrorTextResolver;
 import com.familycircleapp.ui.common.JoinCircleViewModel;
 import com.familycircleapp.ui.invite.InviteViewModel;
+import com.familycircleapp.ui.main.CircleListViewModel;
 import com.familycircleapp.ui.main.CircleUserViewModel;
 import com.familycircleapp.ui.main.CurrentCircleUserIdsViewModel;
 
@@ -115,5 +116,15 @@ public final class ViewModelModule {
       final InviteRepository inviteRepository
   ) {
     return new InviteViewModel(currentCircleRepository, inviteRepository);
+  }
+
+  @Provides
+  @IntoMap
+  @ClassKey(CircleListViewModel.class)
+  ViewModel provideCircleListViewModel(
+      final CurrentUser currentUser,
+      final CircleRepository circleRepository
+  ) {
+    return new CircleListViewModel(currentUser, circleRepository);
   }
 }

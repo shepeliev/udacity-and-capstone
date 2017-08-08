@@ -6,16 +6,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 
 import com.familycircleapp.App;
 import com.familycircleapp.R;
 import com.familycircleapp.repository.Circle;
-import com.familycircleapp.repository.CircleRepository;
 import com.familycircleapp.repository.CurrentUser;
-import com.familycircleapp.repository.UserRepository;
-import com.familycircleapp.utils.Ctx;
 import com.familycircleapp.utils.F;
 
 import java.util.ArrayList;
@@ -23,39 +19,20 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
-
 public class SwitchCircleDialog extends DialogFragment {
 
   private static final String ARG_CIRCLE_LIST = "circleList";
 
   @Inject CurrentUser mCurrentUser;
-  @Inject UserRepository mUserRepository;
-  @Inject CircleRepository mCircleRepository;
 
   public SwitchCircleDialog() {
     App.getComponent().inject(this);
   }
 
-  public void asyncShow(@NonNull final FragmentManager fragmentManager) {
-    final String userId = mCurrentUser.getId();
-    if (userId == null) {
-      throw new IllegalStateException("user must be authenticated");
-    }
-
-    mUserRepository.getUser(userId)
-        .toObservable()
-        .flatMap(user -> Observable.fromIterable(user.getCircles().keySet()))
-        .flatMap(circleId -> mCircleRepository.getCircle(circleId).toObservable())
-        .toList()
-        .subscribe(
-            circles -> {
-              fillArguments(circles);
-              show(fragmentManager, null);
-            },
-
-            error -> Ctx.toast(getContext(), error.getLocalizedMessage())
-        );
+  public static SwitchCircleDialog getInstance(@NonNull final List<Circle> circles) {
+    final SwitchCircleDialog dialog = new SwitchCircleDialog();
+    dialog.fillArguments(circles);
+    return dialog;
   }
 
   private void fillArguments(final List<Circle> circles) {

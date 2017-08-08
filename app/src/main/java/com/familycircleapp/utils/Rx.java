@@ -49,6 +49,31 @@ public final class Rx {
     });
   }
 
+  public static <T> Observable<T> observable(
+      final @NonNull DatabaseReference reference, final @NonNull GenericTypeIndicator<T> type
+  ) {
+    return Observable.create(emitter -> {
+      final ValueEventListener valueEventListener = reference.addValueEventListener(
+          new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+              final Pair<Throwable, T> value = getValue(dataSnapshot, type);
+              if (value.first == null) {
+                emitter.onNext(value.second);
+              }
+            }
+
+            @Override
+            public void onCancelled(final DatabaseError databaseError) {
+              emitter.onError(databaseError.toException());
+            }
+          }
+      );
+
+      emitter.setCancellable(() -> reference.removeEventListener(valueEventListener));
+    });
+  }
+
   public static <T> Single<T> single(
       @NonNull final DatabaseReference reference, @NonNull final Class<T> clazz
   ) {
