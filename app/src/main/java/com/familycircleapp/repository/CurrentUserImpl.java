@@ -27,13 +27,16 @@ final class CurrentUserImpl implements CurrentUser {
 
   private final FirebaseAuth mFirebaseAuth;
   private final DatabaseReference mDatabaseReference;
+  private final UserRepository mUserRepository;
 
   public CurrentUserImpl(
       @NonNull final FirebaseAuth firebaseAuth,
-      @NonNull final FirebaseDatabase firebaseDatabase
+      @NonNull final FirebaseDatabase firebaseDatabase,
+      @NonNull final UserRepository userRepository
   ) {
     mFirebaseAuth = firebaseAuth;
     mDatabaseReference = firebaseDatabase.getReference();
+    mUserRepository = userRepository;
   }
 
   @Override
@@ -70,6 +73,26 @@ final class CurrentUserImpl implements CurrentUser {
     }};
 
     return Db.updateChildren(mDatabaseReference, update).map(o -> circleId);
+  }
+
+  @Override
+  public Single<Object> leaveCurrentCircle(@NonNull final String newCircleId) {
+    final String userId = getId();
+    if (userId == null) {
+      throw new IllegalStateException("Current user has to be authenticated");
+    }
+
+    return mUserRepository.getUser(userId)
+        .flatMap(user -> {
+          final HashMap<String, Object> update = new HashMap<String, Object>() {{
+            final String circleId = user.getCurrentCircle();
+            put("/" + CircleRepository.NAME + "/" + circleId + "/" + MEMBERS_KEY + "/" + userId, null);
+            put("/" + UserRepository.NAME + "/" + userId + "/" + CircleRepository.NAME + "/" + circleId, null);
+            put("/" + UserRepository.NAME + "/" + userId + "/" + CURRENT_CIRCLE_KEY, newCircleId);
+          }};
+
+          return Db.updateChildren(mDatabaseReference, update);
+        });
   }
 
   @Override

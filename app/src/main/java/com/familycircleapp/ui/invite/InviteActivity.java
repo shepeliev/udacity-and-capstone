@@ -1,6 +1,7 @@
 package com.familycircleapp.ui.invite;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.familycircleapp.App;
 import com.familycircleapp.R;
+import com.familycircleapp.repository.Circle;
 import com.familycircleapp.repository.Invite;
 import com.familycircleapp.ui.AppCompatLifecycleActivity;
 import com.familycircleapp.ui.common.CurrentCircleNameViewModel;
@@ -45,10 +47,14 @@ public final class InviteActivity extends AppCompatLifecycleActivity {
     App.getComponent().inject(this);
     ButterKnife.bind(this);
 
-    final LiveData<String> currentCircleNameLiveData = ViewModelProviders
-        .of(this, mFactory)
-        .get(CurrentCircleNameViewModel.class)
-        .getCircleName();
+    final LiveData<String> currentCircleNameLiveData =
+        Transformations.map(
+            ViewModelProviders
+                .of(this, mFactory)
+                .get(CurrentCircleNameViewModel.class)
+                .getCircle(),
+            Circle::getName
+        );
 
     currentCircleNameLiveData.observe(this, circleName ->
         mInviteDescription.setText(getString(R.string.invite_description, circleName)));

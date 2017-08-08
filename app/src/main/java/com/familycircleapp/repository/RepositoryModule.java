@@ -14,9 +14,11 @@ public final class RepositoryModule {
   @Provides
   @Singleton
   CurrentUser provideCurrentUser(
-      final FirebaseAuth firebaseAuth, final FirebaseDatabase firebaseDatabase
+      final FirebaseAuth firebaseAuth,
+      final FirebaseDatabase firebaseDatabase,
+      final UserRepository userRepository
   ) {
-    return new CurrentUserImpl(firebaseAuth, firebaseDatabase);
+    return new CurrentUserImpl(firebaseAuth, firebaseDatabase, userRepository);
   }
 
   @Provides

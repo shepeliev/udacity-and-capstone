@@ -20,5 +20,7 @@ public interface CurrentUser {
 
   Single<String> joinCircle(final @NonNull String circleId);
 
+  Single<Object> leaveCurrentCircle(@NonNull final String newCircleId);
+
   Observable<List<String>> observeCirclesList();
 }

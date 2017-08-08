@@ -34,6 +34,7 @@ import com.familycircleapp.ui.invite.InviteActivity;
 import com.familycircleapp.ui.main.adapter.CircleUserAdapter;
 import com.familycircleapp.ui.map.GoogleMapService;
 import com.familycircleapp.utils.Ctx;
+import com.familycircleapp.utils.F;
 import com.jakewharton.rxbinding2.view.RxView;
 
 import java.util.List;
@@ -67,6 +68,7 @@ public final class MainActivity extends AppCompatLifecycleActivity {
   private CircleUserAdapter mCircleUserAdapter;
   private Disposable mDisposable;
   private List<Circle> mCurrentUserCircles;
+  private String mCurrentCircleId;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -119,8 +121,13 @@ public final class MainActivity extends AppCompatLifecycleActivity {
 
     viewModelProvider
         .get(CurrentCircleNameViewModel.class)
-        .getCircleName()
-        .observe(this, this::setTitle);
+        .getCircle()
+        .observe(this, circle -> {
+          if (circle != null) {
+            mCurrentCircleId = circle.getId();
+            setTitle(circle.getName());
+          }
+        });
 
     viewModelProvider
         .get(CircleListViewModel.class)
@@ -175,9 +182,9 @@ public final class MainActivity extends AppCompatLifecycleActivity {
 
   @Override
   public boolean onPrepareOptionsMenu(final Menu menu) {
-    menu.findItem(R.id.action_switch_circle).setEnabled(
-        mCurrentUserCircles != null && !mCurrentUserCircles.isEmpty()
-    );
+    final boolean hasSeveralCircles = mCurrentUserCircles != null && mCurrentUserCircles.size() > 1;
+    menu.findItem(R.id.action_switch_circle).setVisible(hasSeveralCircles);
+    menu.findItem(R.id.action_leave_circle).setVisible(hasSeveralCircles);
     return super.onPrepareOptionsMenu(menu);
   }
 
@@ -196,6 +203,16 @@ public final class MainActivity extends AppCompatLifecycleActivity {
         SwitchCircleDialog
             .getInstance(mCurrentUserCircles)
             .show(getSupportFragmentManager(), null);
+        return true;
+
+      case R.id.action_leave_circle:
+        final Circle newCircle = F
+            .filter(mCurrentUserCircles, circle -> !circle.getId().equals(mCurrentCircleId))
+            .get(0);
+        mCurrentUser
+            .leaveCurrentCircle(newCircle.getId())
+            .subscribe((o) -> {
+            }, (error) -> Ctx.toast(this, error.getLocalizedMessage()));
         return true;
     }
 

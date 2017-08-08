@@ -35,7 +35,7 @@ public class CurrentUserImplTest {
   public void setUp() throws Exception {
     final FirebaseDatabase mockFirebaseDatabase = mock(FirebaseDatabase.class);
     when(mockFirebaseDatabase.getReference()).thenReturn(mockDatabaseReference);
-    mCurrentUser = new CurrentUserImpl(mockFirebaseAuth, mockFirebaseDatabase);
+    mCurrentUser = new CurrentUserImpl(mockFirebaseAuth, mockFirebaseDatabase, userRepository);
   }
 
   @Test

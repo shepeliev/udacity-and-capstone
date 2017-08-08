@@ -13,6 +13,7 @@ public final class CurrentCircleNameViewModel extends ViewModel {
 
   private final CurrentCircleRepository mCurrentCircleRepository;
   private LiveData<String> mName;
+  private LiveData<Circle> mCircle;
 
   public CurrentCircleNameViewModel(
       @NonNull final CurrentCircleRepository currentCircleRepository
@@ -26,6 +27,14 @@ public final class CurrentCircleNameViewModel extends ViewModel {
     }
 
     return mName;
+  }
+
+  public LiveData<Circle> getCircle() {
+    if (mCircle == null) {
+      mCircle = Rx.liveData(mCurrentCircleRepository.observeCurrentCircle());
+    }
+
+    return mCircle;
   }
 
   private LiveData<String> loadCircleName() {
