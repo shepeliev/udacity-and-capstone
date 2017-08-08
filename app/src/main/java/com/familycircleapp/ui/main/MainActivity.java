@@ -26,6 +26,7 @@ import com.familycircleapp.location.LocationUpdatesManager;
 import com.familycircleapp.repository.CurrentUser;
 import com.familycircleapp.ui.AppCompatLifecycleActivity;
 import com.familycircleapp.ui.NewCircleActivity;
+import com.familycircleapp.ui.common.CurrentCircleNameViewModel;
 import com.familycircleapp.ui.invite.InviteActivity;
 import com.familycircleapp.ui.main.adapter.CircleUserAdapter;
 import com.familycircleapp.ui.map.GoogleMapService;
@@ -60,7 +61,7 @@ public final class MainActivity extends AppCompatLifecycleActivity {
   @BindView(R.id.btn_invite) FloatingActionButton mInviteButton;
 
   private CircleUserAdapter mCircleUserAdapter;
-  private Disposable mInviteButtonDisposable;
+  private Disposable mDisposable;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,22 @@ public final class MainActivity extends AppCompatLifecycleActivity {
     App.getComponent().inject(this);
     ButterKnife.bind(this);
 
+    if (!mCurrentUser.isAuthenticated()) {
+      Ctx.startActivity(this, EntryPointActivity.class);
+      finish();
+      return;
+    }
+
+    mPermissionManager.requestPermission(
+        this,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        RC_LOCATION_PERMISSION,
+        () -> mLocationUpdatesManager.startLocationUpdates(this)
+    );
+
     mBatteryInfoListener.setLifecycleOwner(this);
+    mBatteryInfoListener.enable();
+
     mGoogleMapService.setLifecycleOwner(this);
 
     // hack to avoid NPE in tests
@@ -80,35 +96,28 @@ public final class MainActivity extends AppCompatLifecycleActivity {
       getLifecycle().addObserver(mGoogleMapService);
     }
 
-    ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+    ((SupportMapFragment) getSupportFragmentManager()
+        .findFragmentById(R.id.map))
         .getMapAsync(mGoogleMapService);
 
-    if (mCurrentUser.isAuthenticated()) {
-      final CircleUserViewModel circleUserViewModel = ViewModelProviders
-          .of(this, mViewModelFactory)
-          .get(CircleUserViewModel.class);
-      mCircleUserAdapter = new CircleUserAdapter(this, circleUserViewModel);
-      mRecyclerView.setAdapter(mCircleUserAdapter);
+    final ViewModelProvider viewModelProvider = ViewModelProviders.of(this, mViewModelFactory);
+    mCircleUserAdapter = new CircleUserAdapter(
+        this,
+        viewModelProvider.get(CircleUserViewModel.class)
+    );
+    mRecyclerView.setAdapter(mCircleUserAdapter);
 
-      mBatteryInfoListener.enable();
-      mPermissionManager.requestPermission(
-          this,
-          Manifest.permission.ACCESS_FINE_LOCATION,
-          RC_LOCATION_PERMISSION,
-          () -> mLocationUpdatesManager.startLocationUpdates(this)
-      );
+    viewModelProvider
+        .get(CurrentCircleUserIdsViewModel.class)
+        .getUserIds()
+        .observe(this, this::onUserIdsLoaded);
 
-      ViewModelProviders
-          .of(this, mViewModelFactory)
-          .get(CurrentCircleUserIdsViewModel.class)
-          .getUserIds()
-          .observe(this, this::onUserIdsLoaded);
-    } else {
-      Ctx.startActivity(this, EntryPointActivity.class);
-      finish();
-    }
+    viewModelProvider
+        .get(CurrentCircleNameViewModel.class)
+        .getCircleName()
+        .observe(this, this::setTitle);
 
-    mInviteButtonDisposable = RxView
+    mDisposable = RxView
         .clicks(mInviteButton)
         .subscribe(o -> Ctx.startActivity(this, InviteActivity.class));
   }
@@ -141,9 +150,9 @@ public final class MainActivity extends AppCompatLifecycleActivity {
 
   @Override
   protected void onDestroy() {
-    if (mInviteButtonDisposable != null) {
-      mInviteButtonDisposable.dispose();
-      mInviteButtonDisposable = null;
+    if (mDisposable != null) {
+      mDisposable.dispose();
+      mDisposable = null;
     }
     super.onDestroy();
   }
