@@ -40,7 +40,7 @@ public final class InviteViewModel extends BackgroundTaskViewModel<Invite> {
 
   private Single<Invite> getInviteForCircle(final Circle circle) {
     return circle.getInviteCode() != null ?
-        getFromExistentInvite(circle) :
+        getFromExistentInvite(circle).onErrorResumeNext(getNewInvite(circle)) :
         getNewInvite(circle);
   }
 
