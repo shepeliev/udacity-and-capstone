@@ -1,5 +1,7 @@
 package com.familycircleapp.repository;
 
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -10,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.familycircleapp.utils.Db;
+import com.familycircleapp.utils.F;
 import com.familycircleapp.utils.Rx;
 
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ import io.reactivex.Single;
 
 import static com.familycircleapp.repository.CircleRepositoryImpl.MEMBERS_KEY;
 import static com.familycircleapp.repository.UserRepositoryImpl.CURRENT_CIRCLE_KEY;
+import static java.util.Collections.emptySet;
 
 final class CurrentUserImpl implements CurrentUser {
 
@@ -111,5 +115,41 @@ final class CurrentUserImpl implements CurrentUser {
         .child(userId)
         .child(CircleRepository.NAME);
     return Rx.observable(circlesRef, type).map(map -> new ArrayList<>(map.keySet()));
+  }
+
+  @Override
+  public Single<Object> deleteAccount(@NonNull final String password) {
+    //noinspection ConstantConditions
+    return reauthenticate(password)
+        .flatMap(aVoid -> mUserRepository.getUser(getId()))
+        .map(user -> F.fold(
+            user.getCircles() != null ? user.getCircles().keySet() : emptySet(),
+            new HashMap<String, Object>() {{
+              put("/" + UserRepository.NAME + "/" + user.getId(), null);
+            }},
+            (map, id) -> {
+              map.put("/" + CircleRepository.NAME + "/" + id + "/" + MEMBERS_KEY + "/" + user.getId(), null);
+              return map;
+            }
+        ))
+        .flatMap(update -> Db.updateChildren(mDatabaseReference, update));
+  }
+
+  private Single<Object> reauthenticate(final String password) {
+    final FirebaseUser firebaseUser = mFirebaseAuth.getCurrentUser();
+    if (firebaseUser == null) {
+      throw new IllegalStateException("user must be authenticated");
+    }
+
+    //noinspection ConstantConditions
+    final AuthCredential credential =
+        EmailAuthProvider.getCredential(firebaseUser.getEmail(), password);
+
+    return Single.create(
+        emitter -> firebaseUser
+            .reauthenticate(credential)
+            .addOnSuccessListener(aVoid -> emitter.onSuccess(new Object()))
+            .addOnFailureListener(emitter::onError)
+    );
   }
 }

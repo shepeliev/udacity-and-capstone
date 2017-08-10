@@ -34,5 +34,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
           return true;
         }
     );
+
+    findPreference(getString(R.string.pref_delete_account)).setOnPreferenceClickListener(
+        preference -> {
+          new DeleteAccountDialog().show(getFragmentManager(), null);
+          return true;
+        }
+    );
   }
 }

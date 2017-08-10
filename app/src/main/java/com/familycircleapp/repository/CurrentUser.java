@@ -23,4 +23,6 @@ public interface CurrentUser {
   Single<Object> leaveCurrentCircle(@NonNull final String newCircleId);
 
   Observable<List<String>> observeCirclesList();
+
+  Single<Object> deleteAccount(@NonNull final String password);
 }
