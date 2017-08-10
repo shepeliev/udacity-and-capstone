@@ -6,9 +6,6 @@ import com.familycircleapp.location.MockLocationModule;
 import com.familycircleapp.location.UpdatedLocationIntentServiceTest;
 import com.familycircleapp.map.MockMapModule;
 import com.familycircleapp.repository.MockRepositoryModule;
-import com.familycircleapp.ui.MockViewModelModule;
-import com.familycircleapp.ui.main.MainActivityTest;
-import com.familycircleapp.ui.newuser.NewUserActivityTest;
 
 import javax.inject.Singleton;
 
@@ -26,11 +23,7 @@ public interface MockComponent extends Component {
 
   void inject(EntryPointActivityTest target);
 
-  void inject(MainActivityTest target);
-
   void inject(BatteryInfoReceiverTest target);
 
   void inject(UpdatedLocationIntentServiceTest target);
-
-  void inject(NewUserActivityTest target);
 }

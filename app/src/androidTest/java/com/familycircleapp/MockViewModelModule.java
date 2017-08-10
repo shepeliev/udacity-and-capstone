@@ -1,4 +1,4 @@
-package com.familycircleapp.ui;
+package com.familycircleapp;
 
 import android.arch.lifecycle.ViewModelProvider;
 
