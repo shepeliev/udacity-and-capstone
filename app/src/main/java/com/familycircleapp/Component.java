@@ -9,6 +9,7 @@ import com.familycircleapp.ui.SwitchCircleDialog;
 import com.familycircleapp.ui.invite.InviteActivity;
 import com.familycircleapp.ui.main.MainActivity;
 import com.familycircleapp.ui.NewUserActivity;
+import com.familycircleapp.ui.settings.SettingsFragment;
 
 public interface Component {
 
@@ -29,4 +30,6 @@ public interface Component {
   void inject(SwitchCircleDialog target);
 
   void inject(JoinCircleActivity target);
+
+  void inject(SettingsFragment target);
 }

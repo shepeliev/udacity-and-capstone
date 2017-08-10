@@ -29,13 +29,14 @@ public class CurrentUserImplTest {
 
   @Mock private FirebaseAuth mockFirebaseAuth;
   @Mock private DatabaseReference mockDatabaseReference;
+  @Mock private UserRepository mockUserRepository;
   private CurrentUserImpl mCurrentUser;
 
   @Before
   public void setUp() throws Exception {
     final FirebaseDatabase mockFirebaseDatabase = mock(FirebaseDatabase.class);
     when(mockFirebaseDatabase.getReference()).thenReturn(mockDatabaseReference);
-    mCurrentUser = new CurrentUserImpl(mockFirebaseAuth, mockFirebaseDatabase, userRepository);
+    mCurrentUser = new CurrentUserImpl(mockFirebaseAuth, mockFirebaseDatabase, mockUserRepository);
   }
 
   @Test

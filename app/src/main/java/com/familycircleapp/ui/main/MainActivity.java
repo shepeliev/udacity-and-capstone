@@ -33,6 +33,7 @@ import com.familycircleapp.ui.common.CurrentCircleNameViewModel;
 import com.familycircleapp.ui.invite.InviteActivity;
 import com.familycircleapp.ui.main.adapter.CircleUserAdapter;
 import com.familycircleapp.ui.map.GoogleMapService;
+import com.familycircleapp.ui.settings.SettingsActivity;
 import com.familycircleapp.utils.Ctx;
 import com.familycircleapp.utils.F;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -213,6 +214,10 @@ public final class MainActivity extends AppCompatLifecycleActivity {
             .leaveCurrentCircle(newCircle.getId())
             .subscribe((o) -> {
             }, (error) -> Ctx.toast(this, error.getLocalizedMessage()));
+        return true;
+
+      case R.id.action_settings:
+        Ctx.startActivity(this, SettingsActivity.class);
         return true;
     }
 
