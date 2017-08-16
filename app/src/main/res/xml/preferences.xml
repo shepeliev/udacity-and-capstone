@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--<com.familycircleapp.ui.settings.UsernamePreference-->
-        <!--android:key="@string/pref_username"-->
-        <!--android:singleLine="true"-->
-        <!--android:title="@string/settings_username" />-->
-<!---->
+    <com.familycircleapp.ui.settings.UsernamePreference
+        android:key="@string/pref_username"
+        android:singleLine="true"
+        android:title="@string/settings_username" />
+
     <com.familycircleapp.ui.settings.UpdateIntervalPreference
         android:defaultValue="@integer/default_update_interval_minutes"
         android:key="@string/pref_update_interval"
