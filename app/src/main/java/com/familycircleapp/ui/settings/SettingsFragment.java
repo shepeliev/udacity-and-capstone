@@ -1,5 +1,6 @@
 package com.familycircleapp.ui.settings;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -14,10 +15,13 @@ import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 import javax.inject.Inject;
 
-public class SettingsFragment extends PreferenceFragmentCompat {
+public class SettingsFragment extends PreferenceFragmentCompat
+    implements SharedPreferences.OnSharedPreferenceChangeListener {
 
   private static final String FRAGMENT_DIALOG_TAG = "android.support.v7.preference.PreferenceFragment.DIALOG";
+
   @Inject LocationUpdatesManager mLocationUpdatesManager;
+  @Inject SharedPreferences mSharedPreferences;
 
   @Override
   public void onCreatePreferencesFix(
@@ -44,6 +48,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
           return true;
         }
     );
+
+    mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
+  }
+
+  @Override
+  public void onDestroy() {
+    mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    super.onDestroy();
   }
 
   @Override
@@ -59,6 +71,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
       dialog.show(fragmentManager, FRAGMENT_DIALOG_TAG);
     } else {
       super.onDisplayPreferenceDialog(preference);
+    }
+  }
+
+  @Override
+  public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
+    if (getString(R.string.pref_update_interval).equals(key)){
+      mLocationUpdatesManager.startLocationUpdates(getActivity());
+      // TODO restart update battery info job
     }
   }
 }
