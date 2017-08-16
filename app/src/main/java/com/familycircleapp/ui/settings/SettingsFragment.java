@@ -2,7 +2,9 @@ package com.familycircleapp.ui.settings;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
+import android.support.v7.preference.Preference;
 
 import com.familycircleapp.App;
 import com.familycircleapp.R;
@@ -14,6 +16,7 @@ import javax.inject.Inject;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
+  private static final String FRAGMENT_DIALOG_TAG = "android.support.v7.preference.PreferenceFragment.DIALOG";
   @Inject LocationUpdatesManager mLocationUpdatesManager;
 
   @Override
@@ -41,5 +44,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
           return true;
         }
     );
+  }
+
+  @Override
+  public void onDisplayPreferenceDialog(final Preference preference) {
+    final FragmentManager fragmentManager = getFragmentManager();
+    if (fragmentManager.findFragmentByTag(FRAGMENT_DIALOG_TAG) != null) {
+      return;
+    }
+
+    if (preference instanceof UpdateIntervalPreference) {
+      final UpdateIntervalDialog dialog = UpdateIntervalDialog.getInstance(preference.getKey());
+      dialog.setTargetFragment(this, 0);
+      dialog.show(fragmentManager, FRAGMENT_DIALOG_TAG);
+    } else {
+      super.onDisplayPreferenceDialog(preference);
+    }
   }
 }
