@@ -95,24 +95,15 @@ public final class MainActivity extends AppCompatLifecycleActivity {
         () -> mLocationUpdatesManager.startLocationUpdates(this)
     );
 
-    mBatteryInfoListener.setLifecycleOwner(this);
-    mBatteryInfoListener.enable();
+    mGoogleMapService.setLifecycleOwner(this);
+    getLifecycle().addObserver(mBatteryInfoListener);
+    getLifecycle().addObserver(mGoogleMapService);
 
     final int intervalMinutes = mSharedPreferences.getInt(
         getString(R.string.pref_update_interval),
         getResources().getInteger(R.integer.default_update_interval_minutes)
     );
     UpdateBatteryInfoJob.startJob(TimeUnit.MINUTES.toMillis(intervalMinutes));
-
-    mGoogleMapService.setLifecycleOwner(this);
-
-    // hack to avoid NPE in tests
-    if (mBatteryInfoListener.getClass().getPackage() != null) {
-      getLifecycle().addObserver(mBatteryInfoListener);
-    }
-    if (mBatteryInfoListener.getClass().getPackage() != null) {
-      getLifecycle().addObserver(mGoogleMapService);
-    }
 
     ((SupportMapFragment) getSupportFragmentManager()
         .findFragmentById(R.id.map))
