@@ -5,6 +5,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import com.familycircleapp.EntryPointActivity;
 import com.familycircleapp.PermissionManager;
 import com.familycircleapp.R;
 import com.familycircleapp.battery.BatteryInfoListener;
+import com.familycircleapp.battery.UpdateBatteryInfoJob;
 import com.familycircleapp.location.LocationUpdatesManager;
 import com.familycircleapp.repository.Circle;
 import com.familycircleapp.repository.CurrentUser;
@@ -39,6 +41,7 @@ import com.familycircleapp.utils.F;
 import com.jakewharton.rxbinding2.view.RxView;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -59,6 +62,7 @@ public final class MainActivity extends AppCompatLifecycleActivity {
   @Inject BatteryInfoListener mBatteryInfoListener;
   @Inject LocationUpdatesManager mLocationUpdatesManager;
   @Inject GoogleMapService mGoogleMapService;
+  @Inject SharedPreferences mSharedPreferences;
 
   @BindView(R.id.root_layout) CoordinatorLayout mRootLayout;
   @BindView(R.id.app_bar_layout) AppBarLayout mAppBarLayout;
@@ -93,6 +97,12 @@ public final class MainActivity extends AppCompatLifecycleActivity {
 
     mBatteryInfoListener.setLifecycleOwner(this);
     mBatteryInfoListener.enable();
+
+    final int intervalMinutes = mSharedPreferences.getInt(
+        getString(R.string.pref_update_interval),
+        getResources().getInteger(R.integer.default_update_interval_minutes)
+    );
+    UpdateBatteryInfoJob.startJob(TimeUnit.MINUTES.toMillis(intervalMinutes));
 
     mGoogleMapService.setLifecycleOwner(this);
 

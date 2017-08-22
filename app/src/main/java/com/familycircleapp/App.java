@@ -2,11 +2,17 @@ package com.familycircleapp;
 
 import android.support.multidex.MultiDexApplication;
 
+import com.evernote.android.job.JobManager;
+
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 public class App extends MultiDexApplication {
 
   private static Component sAppComponent;
+
+  @Inject JobManager mJobManager;
 
   public static Component getComponent() {
     if (sAppComponent == null) {
@@ -25,6 +31,8 @@ public class App extends MultiDexApplication {
     }
 
     sAppComponent = buildAppComponent();
+
+    getComponent().inject(this);
   }
 
   public Component buildAppComponent() {

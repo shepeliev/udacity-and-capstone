@@ -9,9 +9,12 @@ import android.support.v7.preference.Preference;
 
 import com.familycircleapp.App;
 import com.familycircleapp.R;
+import com.familycircleapp.battery.UpdateBatteryInfoJob;
 import com.familycircleapp.location.LocationUpdatesManager;
 import com.firebase.ui.auth.AuthUI;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -76,9 +79,15 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
   @Override
   public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
-    if (getString(R.string.pref_update_interval).equals(key)){
+    if (getString(R.string.pref_update_interval).equals(key)) {
       mLocationUpdatesManager.startLocationUpdates(getActivity());
-      // TODO restart update battery info job
+      UpdateBatteryInfoJob.cancelJob();
+
+      final int intervalMinutes = mSharedPreferences.getInt(
+          getString(R.string.pref_update_interval),
+          getResources().getInteger(R.integer.default_update_interval_minutes)
+      );
+      UpdateBatteryInfoJob.startJob(TimeUnit.MINUTES.toMillis(intervalMinutes));
     }
   }
 }
