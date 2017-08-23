@@ -7,6 +7,7 @@ import com.familycircleapp.ui.JoinCircleActivity;
 import com.familycircleapp.ui.NewCircleActivity;
 import com.familycircleapp.ui.NewUserActivity;
 import com.familycircleapp.ui.SwitchCircleDialog;
+import com.familycircleapp.ui.details.UserDetailsActivity;
 import com.familycircleapp.ui.invite.InviteActivity;
 import com.familycircleapp.ui.main.MainActivity;
 import com.familycircleapp.ui.settings.DeleteAccountDialog;
@@ -40,4 +41,6 @@ public interface Component {
   void inject(UsernamePreference target);
 
   void inject(App target);
+
+  void inject(UserDetailsActivity target);
 }

@@ -3,10 +3,11 @@ package com.familycircleapp.repository;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.familycircleapp.utils.Rx;
+
+import io.reactivex.Observable;
 
 class LastKnownLocationRepositoryImpl implements LastKnownLocationRepository {
 
@@ -18,10 +19,10 @@ class LastKnownLocationRepositoryImpl implements LastKnownLocationRepository {
   }
 
   @Override
-  public LiveData<DeviceLocation> gtLastLocation(@NonNull final String userId) {
+  public Observable<DeviceLocation> observeLastLocation(@NonNull final String userId) {
     final DatabaseReference reference = mUsersReference
         .child(userId)
         .child(LAST_KNOWN_LOCATION_KEY);
-    return Rx.liveData(reference, DeviceLocation.class);
+    return Rx.observable(reference, DeviceLocation.class);
   }
 }

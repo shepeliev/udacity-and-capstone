@@ -1,9 +1,10 @@
 package com.familycircleapp.repository;
 
-import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
+
+import io.reactivex.Observable;
 
 public interface LastKnownLocationRepository {
 
-  LiveData<DeviceLocation> gtLastLocation(@NonNull final String userId);
+  Observable<DeviceLocation> observeLastLocation(@NonNull final String userId);
 }

@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import com.familycircleapp.repository.DeviceLocation;
 import com.familycircleapp.repository.LastKnownLocationRepository;
 import com.familycircleapp.utils.F;
+import com.familycircleapp.utils.Rx;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -52,7 +53,10 @@ final class GoogleMapServiceImpl implements GoogleMapService {
     F.foreach(idsForDeleting, this::removeUserMarker);
 
     final List<String> newIds = F.filter(userIds, id -> !mLocations.containsKey(id));
-    F.foreach(newIds, id -> putUserOnMap(id, mLastKnownLocationRepository.gtLastLocation(id)));
+    F.foreach(
+        newIds,
+        id -> putUserOnMap(id, Rx.liveData(mLastKnownLocationRepository.observeLastLocation(id)))
+    );
   }
 
   @Override

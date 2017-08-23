@@ -13,17 +13,26 @@ import android.widget.TextView;
 
 import com.familycircleapp.R;
 import com.familycircleapp.ui.BindingAdapters;
+import com.familycircleapp.ui.details.UserDetailsActivity;
 import com.familycircleapp.ui.main.CircleUser;
 import com.familycircleapp.ui.main.CircleUserViewModel;
+import com.familycircleapp.utils.Ctx;
+import com.jakewharton.rxbinding2.view.RxView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 public final class CircleUserViewHolder extends RecyclerView.ViewHolder {
 
   private final LifecycleOwner mLifecycleOwner;
   private final CircleUserViewModel mCircleUserViewModel;
 
+  @BindView(R.id.user_list_item) View mUserListItem;
   @BindView(R.id.iw_avatar) ImageView mAvatar;
   @BindView(R.id.tw_user_displayed_name) TextView mDisplayName;
   @BindView(R.id.tw_user_status) TextView mUserStatus;
@@ -31,6 +40,7 @@ public final class CircleUserViewHolder extends RecyclerView.ViewHolder {
   @BindView(R.id.tw_battery_level) TextView mBatteryLevel;
 
   private LiveData<CircleUser> mUserLiveData;
+  private Disposable mDisposable;
 
   public CircleUserViewHolder(
       @NonNull final ViewGroup parent,
@@ -68,10 +78,25 @@ public final class CircleUserViewHolder extends RecyclerView.ViewHolder {
         context.getString(R.string.battery_level, circleUser.getBatteryLevel())
     );
     mBatteryLevel.setVisibility(circleUser.getBatteryLevel() > -1 ? View.VISIBLE : View.GONE);
+
+    final Map<String, String> args = new HashMap<String, String>() {{
+      put(UserDetailsActivity.EXTRA_USER_ID, circleUser.getId());
+    }};
+    mDisposable = RxView.clicks(mUserListItem).subscribe(aVoid -> {
+          Timber.d("Click on user ID: %s", circleUser.getId());
+          Ctx.startActivity(context, args, UserDetailsActivity.class);
+        }
+    );
   }
 
   public void onRecycled() {
-    mUserLiveData.removeObservers(mLifecycleOwner);
-    mUserLiveData = null;
+    if (mUserLiveData != null) {
+      mUserLiveData.removeObservers(mLifecycleOwner);
+      mUserLiveData = null;
+    }
+    if (mDisposable != null) {
+      mDisposable.dispose();
+      mDisposable = null;
+    }
   }
 }

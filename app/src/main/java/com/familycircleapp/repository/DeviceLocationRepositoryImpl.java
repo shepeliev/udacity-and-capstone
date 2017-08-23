@@ -2,12 +2,19 @@ package com.familycircleapp.repository;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 
 import android.support.annotation.NonNull;
 
 import com.familycircleapp.utils.Db;
+import com.familycircleapp.utils.Rx;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import io.reactivex.Single;
 
 final class DeviceLocationRepositoryImpl implements DeviceLocationRepository {
 
@@ -32,5 +39,15 @@ final class DeviceLocationRepositoryImpl implements DeviceLocationRepository {
     }};
 
     Db.updateChildren(mDatabaseReference, update).subscribe();
+  }
+
+  @Override
+  public Single<List<DeviceLocation>> getAllLocations(@NonNull final String userId) {
+    final GenericTypeIndicator<Map<String, DeviceLocation>> typeIndicator =
+        new GenericTypeIndicator<Map<String, DeviceLocation>>() {
+        };
+    return Rx.single(mLocationsReference.child(userId), typeIndicator)
+        .map(Map::values)
+        .map(ArrayList::new);
   }
 }

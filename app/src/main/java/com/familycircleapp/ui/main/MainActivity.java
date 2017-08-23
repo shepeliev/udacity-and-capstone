@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -95,32 +96,30 @@ public final class MainActivity extends AppCompatLifecycleActivity {
         () -> mLocationUpdatesManager.startLocationUpdates(this)
     );
 
-    mGoogleMapService.setLifecycleOwner(this);
-    getLifecycle().addObserver(mBatteryInfoListener);
-    getLifecycle().addObserver(mGoogleMapService);
-
-    final int intervalMinutes = mSharedPreferences.getInt(
-        getString(R.string.pref_update_interval),
-        getResources().getInteger(R.integer.default_update_interval_minutes)
-    );
-    UpdateBatteryInfoJob.startJob(TimeUnit.MINUTES.toMillis(intervalMinutes));
-
-    ((SupportMapFragment) getSupportFragmentManager()
-        .findFragmentById(R.id.map))
-        .getMapAsync(mGoogleMapService);
-
     final ViewModelProvider viewModelProvider = ViewModelProviders.of(this, mViewModelFactory);
-    mCircleUserAdapter = new CircleUserAdapter(
-        this,
-        viewModelProvider.get(CircleUserViewModel.class)
-    );
-    mRecyclerView.setAdapter(mCircleUserAdapter);
+    initMap();
+    initBatteryInfoObserving();
+    initRecyclerView(viewModelProvider);
+    initCurrentCircleUserIdsViewModel(viewModelProvider);
+    initCurrentCircleNameViewModel(viewModelProvider);
+    initCircleListViewModel(viewModelProvider);
+    observeInviteButtonClicks();
+  }
 
+  private void observeInviteButtonClicks() {
+    mDisposable = RxView
+        .clicks(mInviteButton)
+        .subscribe(o -> Ctx.startActivity(this, InviteActivity.class));
+  }
+
+  private void initCircleListViewModel(final ViewModelProvider viewModelProvider) {
     viewModelProvider
-        .get(CurrentCircleUserIdsViewModel.class)
-        .getUserIds()
-        .observe(this, this::onUserIdsLoaded);
+        .get(CircleListViewModel.class)
+        .getCircles()
+        .observe(this, circles -> mCurrentUserCircles = circles);
+  }
 
+  private void initCurrentCircleNameViewModel(final ViewModelProvider viewModelProvider) {
     viewModelProvider
         .get(CurrentCircleNameViewModel.class)
         .getCircle()
@@ -130,15 +129,41 @@ public final class MainActivity extends AppCompatLifecycleActivity {
             setTitle(circle.getName());
           }
         });
+  }
 
+  private void initCurrentCircleUserIdsViewModel(final ViewModelProvider viewModelProvider) {
     viewModelProvider
-        .get(CircleListViewModel.class)
-        .getCircles()
-        .observe(this, circles -> mCurrentUserCircles = circles);
+        .get(CurrentCircleUserIdsViewModel.class)
+        .getUserIds()
+        .observe(this, this::onUserIdsLoaded);
+  }
 
-    mDisposable = RxView
-        .clicks(mInviteButton)
-        .subscribe(o -> Ctx.startActivity(this, InviteActivity.class));
+  private void initRecyclerView(final ViewModelProvider viewModelProvider) {
+    mCircleUserAdapter = new CircleUserAdapter(
+        this,
+        viewModelProvider.get(CircleUserViewModel.class)
+    );
+    mRecyclerView.setAdapter(mCircleUserAdapter);
+    final RecyclerView.ItemDecoration itemDecoration =
+        new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+    mRecyclerView.addItemDecoration(itemDecoration);
+  }
+
+  private void initBatteryInfoObserving() {
+    getLifecycle().addObserver(mBatteryInfoListener);
+    final int intervalMinutes = mSharedPreferences.getInt(
+        getString(R.string.pref_update_interval),
+        getResources().getInteger(R.integer.default_update_interval_minutes)
+    );
+    UpdateBatteryInfoJob.startJob(TimeUnit.MINUTES.toMillis(intervalMinutes));
+  }
+
+  private void initMap() {
+    mGoogleMapService.setLifecycleOwner(this);
+    getLifecycle().addObserver(mGoogleMapService);
+    ((SupportMapFragment) getSupportFragmentManager()
+        .findFragmentById(R.id.map))
+        .getMapAsync(mGoogleMapService);
   }
 
   @Override

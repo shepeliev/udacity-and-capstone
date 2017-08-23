@@ -7,7 +7,9 @@ import android.content.Context;
 import com.familycircleapp.repository.CircleRepository;
 import com.familycircleapp.repository.CurrentCircleRepository;
 import com.familycircleapp.repository.CurrentUser;
+import com.familycircleapp.repository.DeviceLocationRepository;
 import com.familycircleapp.repository.InviteRepository;
+import com.familycircleapp.repository.LastKnownLocationRepository;
 import com.familycircleapp.repository.UserRepository;
 import com.familycircleapp.ui.common.CreateCircleErrorTextResolver;
 import com.familycircleapp.ui.common.CreateCircleViewModel;
@@ -15,6 +17,8 @@ import com.familycircleapp.ui.common.CurrentCircleNameViewModel;
 import com.familycircleapp.ui.common.CurrentUserViewModel;
 import com.familycircleapp.ui.common.JoinCircleErrorTextResolver;
 import com.familycircleapp.ui.common.JoinCircleViewModel;
+import com.familycircleapp.ui.details.LastLocationViewModel;
+import com.familycircleapp.ui.details.LocationHistoryViewModel;
 import com.familycircleapp.ui.invite.InviteViewModel;
 import com.familycircleapp.ui.main.CircleListViewModel;
 import com.familycircleapp.ui.main.CircleUserViewModel;
@@ -95,7 +99,9 @@ public final class ViewModelModule {
   @Provides
   @IntoMap
   @ClassKey(CurrentCircleNameViewModel.class)
-  ViewModel provideCurrentCircleNameViewModel(final CurrentCircleRepository currentCircleRepository) {
+  ViewModel provideCurrentCircleNameViewModel(
+      final CurrentCircleRepository currentCircleRepository
+  ) {
     return new CurrentCircleNameViewModel(currentCircleRepository);
   }
 
@@ -126,5 +132,23 @@ public final class ViewModelModule {
       final CircleRepository circleRepository
   ) {
     return new CircleListViewModel(currentUser, circleRepository);
+  }
+
+  @Provides
+  @IntoMap
+  @ClassKey(LastLocationViewModel.class)
+  ViewModel provideLastLocationViewModel(
+      final LastKnownLocationRepository lastKnownLocationrepository
+  ) {
+    return new LastLocationViewModel(lastKnownLocationrepository);
+  }
+
+  @Provides
+  @IntoMap
+  @ClassKey(LocationHistoryViewModel.class)
+  ViewModel provideLocationHistoryViewModel(
+      final DeviceLocationRepository deviceLocationRepository
+  ) {
+    return new LocationHistoryViewModel(deviceLocationRepository);
   }
 }

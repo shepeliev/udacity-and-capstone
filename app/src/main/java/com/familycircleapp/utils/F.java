@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -80,5 +81,24 @@ public final class F {
     });
 
     return resultList;
+  }
+
+  @NonNull
+  public static <K, T> Map<K, List<T>> groupBy(
+      @NonNull final Iterable<T> collection, @NonNull final Function<T, K> keySelector
+  ) {
+    final LinkedHashMap<K, List<T>> map = new LinkedHashMap<>();
+    for(final T el : collection) {
+      K key = keySelector.apply(el);
+      if (map.containsKey(key)) {
+        map.get(key).add(el);
+      } else {
+        final ArrayList<T> list = new ArrayList<>();
+        list.add(el);
+        map.put(key, list);
+      }
+    }
+
+    return map;
   }
 }

@@ -5,6 +5,7 @@ import com.familycircleapp.repository.User;
 
 public final class CircleUser {
 
+  private final String mId;
   private final String mDisplayName;
   private final int mBatteryLevel;
   private final String mBatteryStatus;
@@ -12,27 +13,34 @@ public final class CircleUser {
   private final String mStatusText;
 
   public CircleUser(
+      final String id,
       final String displayName,
       final int batteryLevel,
       final String batteryStatus,
       final int statusTemplate,
       final String statusText
   ) {
-    this.mDisplayName = displayName;
-    this.mBatteryLevel = batteryLevel;
-    this.mBatteryStatus = batteryStatus;
-    this.mStatusTemplate = statusTemplate;
-    this.mStatusText = statusText;
+    mId = id;
+    mDisplayName = displayName;
+    mBatteryLevel = batteryLevel;
+    mBatteryStatus = batteryStatus;
+    mStatusTemplate = statusTemplate;
+    mStatusText = statusText;
   }
 
   public static CircleUser fromUser(final User user) {
     return new CircleUser(
+        user.getId(),
         user.getDisplayName(),
         (int) (user.getBatteryLevel() * 1000 / 10),
         user.getBatteryStatus(),
         R.string.user_status_near,
         user.getCurrentAddress()
     );
+  }
+
+  public String getId() {
+    return mId;
   }
 
   public String getDisplayName() {
@@ -56,6 +64,19 @@ public final class CircleUser {
   }
 
   @Override
+  public String toString() {
+    final StringBuffer sb = new StringBuffer("CircleUser{");
+    sb.append("mId='").append(mId).append('\'');
+    sb.append(", mDisplayName='").append(mDisplayName).append('\'');
+    sb.append(", mBatteryLevel=").append(mBatteryLevel);
+    sb.append(", mBatteryStatus='").append(mBatteryStatus).append('\'');
+    sb.append(", mStatusTemplate=").append(mStatusTemplate);
+    sb.append(", mStatusText='").append(mStatusText).append('\'');
+    sb.append('}');
+    return sb.toString();
+  }
+
+  @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
@@ -64,6 +85,7 @@ public final class CircleUser {
 
     if (mBatteryLevel != that.mBatteryLevel) return false;
     if (mStatusTemplate != that.mStatusTemplate) return false;
+    if (mId != null ? !mId.equals(that.mId) : that.mId != null) return false;
     if (mDisplayName != null ? !mDisplayName.equals(that.mDisplayName) : that.mDisplayName != null)
       return false;
     if (mBatteryStatus != null ? !mBatteryStatus.equals(that.mBatteryStatus) : that.mBatteryStatus != null)
@@ -73,7 +95,8 @@ public final class CircleUser {
 
   @Override
   public int hashCode() {
-    int result = mDisplayName != null ? mDisplayName.hashCode() : 0;
+    int result = mId != null ? mId.hashCode() : 0;
+    result = 31 * result + (mDisplayName != null ? mDisplayName.hashCode() : 0);
     result = 31 * result + mBatteryLevel;
     result = 31 * result + (mBatteryStatus != null ? mBatteryStatus.hashCode() : 0);
     result = 31 * result + mStatusTemplate;
@@ -81,16 +104,4 @@ public final class CircleUser {
     return result;
   }
 
-  @Override
-  public String
-  toString() {
-    final StringBuffer sb = new StringBuffer("UserViewModel{");
-    sb.append("mDisplayName='").append(mDisplayName).append('\'');
-    sb.append(", mBatteryLevel=").append(mBatteryLevel);
-    sb.append(", mBatteryStatus='").append(mBatteryStatus).append('\'');
-    sb.append(", mStatusTemplate=").append(mStatusTemplate);
-    sb.append(", mStatusText='").append(mStatusText).append('\'');
-    sb.append('}');
-    return sb.toString();
-  }
 }

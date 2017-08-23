@@ -43,6 +43,9 @@
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:parentActivityName=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.details.UserDetailsActivity"
+            android:parentActivityName=".ui.main.MainActivity"/>
 
         <service
             android:name=".location.UpdatedLocationIntentService"
