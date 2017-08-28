@@ -25,6 +25,7 @@ class CurrentCircleRepositoryImpl implements CurrentCircleRepository {
 
   @Override
   @NonNull
+  @Deprecated
   public LiveData<Circle> getCurrentCircleLiveData(final @NonNull String userId) {
     return Transformations.switchMap(
         mUserRepository.getCurrentCircleIdLiveData(userId),

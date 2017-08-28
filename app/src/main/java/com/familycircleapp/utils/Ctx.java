@@ -37,4 +37,8 @@ public final class Ctx {
   public static void toast(@NonNull final Context context, @NonNull final String text) {
     Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
   }
+
+  public static int dip(@NonNull final Context context, final int value) {
+    return (int) (value * context.getResources().getDisplayMetrics().density);
+  }
 }

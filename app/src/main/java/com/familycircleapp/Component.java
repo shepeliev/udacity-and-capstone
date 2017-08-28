@@ -13,6 +13,8 @@ import com.familycircleapp.ui.main.MainActivity;
 import com.familycircleapp.ui.settings.DeleteAccountDialog;
 import com.familycircleapp.ui.settings.SettingsFragment;
 import com.familycircleapp.ui.settings.UsernamePreference;
+import com.familycircleapp.widget.WidgetProvider;
+import com.familycircleapp.widget.WidgetService;
 
 public interface Component {
 
@@ -43,4 +45,8 @@ public interface Component {
   void inject(App target);
 
   void inject(UserDetailsActivity target);
+
+  void inject(WidgetProvider target);
+
+  void inject(WidgetService target);
 }
