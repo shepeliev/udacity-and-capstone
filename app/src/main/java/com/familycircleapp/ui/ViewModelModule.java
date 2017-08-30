@@ -19,6 +19,7 @@ import com.familycircleapp.ui.common.JoinCircleErrorTextResolver;
 import com.familycircleapp.ui.common.JoinCircleViewModel;
 import com.familycircleapp.ui.details.LastLocationViewModel;
 import com.familycircleapp.ui.details.LocationHistoryViewModel;
+import com.familycircleapp.ui.details.UserViewModel;
 import com.familycircleapp.ui.invite.InviteViewModel;
 import com.familycircleapp.ui.main.CircleListViewModel;
 import com.familycircleapp.ui.main.CircleUserViewModel;
@@ -62,9 +63,10 @@ public final class ViewModelModule {
   @ClassKey(CurrentCircleUserIdsViewModel.class)
   ViewModel provideCurrentCircleUserIdsViewModel(
       final CurrentUser currentUser,
-      final CurrentCircleRepository currentCircleRepository
+      final CurrentCircleRepository currentCircleRepository,
+      final UserRepository userRepository
   ) {
-    return new CurrentCircleUserIdsViewModel(currentUser, currentCircleRepository);
+    return new CurrentCircleUserIdsViewModel(currentUser, currentCircleRepository, userRepository);
   }
 
   @Provides
@@ -150,5 +152,12 @@ public final class ViewModelModule {
       final DeviceLocationRepository deviceLocationRepository
   ) {
     return new LocationHistoryViewModel(deviceLocationRepository);
+  }
+
+  @Provides
+  @IntoMap
+  @ClassKey(UserViewModel.class)
+  ViewModel provideUserViewModel(final UserRepository userRepository) {
+    return new UserViewModel(userRepository);
   }
 }

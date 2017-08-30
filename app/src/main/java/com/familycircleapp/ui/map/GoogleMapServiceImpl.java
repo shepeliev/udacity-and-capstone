@@ -3,18 +3,24 @@ package com.familycircleapp.ui.map;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.ui.IconGenerator;
 
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.OnLifecycleEvent;
+import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.familycircleapp.R;
 import com.familycircleapp.repository.DeviceLocation;
 import com.familycircleapp.repository.LastKnownLocationRepository;
 import com.familycircleapp.utils.F;
@@ -27,10 +33,11 @@ import java.util.Map;
 
 final class GoogleMapServiceImpl implements GoogleMapService {
 
-  private final Map<String, LiveData<DeviceLocation>> mLocations = new HashMap<>();
-  private final Map<String, Marker> mMarkers = new HashMap<>();
-  private final Map<String, Circle> mCircles = new HashMap<>();
+  private final Map<UserModel, LiveData<DeviceLocation>> mLocations = new HashMap<>();
+  private final Map<UserModel, Marker> mMarkers = new HashMap<>();
+  private final Map<UserModel, Circle> mCircles = new HashMap<>();
 
+  private final Context mContext;
   private final LastKnownLocationRepository mLastKnownLocationRepository;
 
   private LifecycleOwner mLifecycleOwner;
@@ -38,7 +45,11 @@ final class GoogleMapServiceImpl implements GoogleMapService {
   private boolean mEnabled = false;
   private SingleShotContainer<UserCameraZoom> mUserCameraZoomCache = new SingleShotContainer<>(null);
 
-  GoogleMapServiceImpl(final LastKnownLocationRepository lastKnownLocationRepository) {
+  GoogleMapServiceImpl(
+      @NonNull final Context context,
+      @NonNull final LastKnownLocationRepository lastKnownLocationRepository
+  ) {
+    mContext = context;
     mLastKnownLocationRepository = lastKnownLocationRepository;
   }
 
@@ -48,24 +59,28 @@ final class GoogleMapServiceImpl implements GoogleMapService {
   }
 
   @Override
-  public void putUsersOnMap(@NonNull final List<String> userIds) {
-    final List<String> idsForDeleting = F.filter(mLocations.keySet(), id -> !userIds.contains(id));
+  public void putUsersOnMap(@NonNull final List<UserModel> users) {
+    final List<UserModel> idsForDeleting = F.filter(
+        mLocations.keySet(), user -> !users.contains(user)
+    );
     F.foreach(idsForDeleting, this::removeUserMarker);
 
-    final List<String> newIds = F.filter(userIds, id -> !mLocations.containsKey(id));
+    final List<UserModel> newUsers = F.filter(users, id -> !mLocations.containsKey(id));
     F.foreach(
-        newIds,
-        id -> putUserOnMap(id, Rx.liveData(mLastKnownLocationRepository.observeLastLocation(id)))
+        newUsers,
+        user -> putUserOnMap(
+            user, Rx.liveData(mLastKnownLocationRepository.observeLastLocation(user.getId()))
+        )
     );
   }
 
   @Override
-  public void moveCameraToUser(@NonNull final String userId, final float zoom) {
-    final Marker marker = mMarkers.get(userId);
+  public void moveCameraToUser(@NonNull final UserModel user, final float zoom) {
+    final Marker marker = mMarkers.get(user);
     if (marker == null) {
-      mUserCameraZoomCache = new SingleShotContainer<>(new UserCameraZoom(userId, zoom));
+      mUserCameraZoomCache = new SingleShotContainer<>(new UserCameraZoom(user, zoom));
     } else {
-      moveCamera(new UserCameraZoom(userId, zoom));
+      moveCamera(new UserCameraZoom(user, zoom));
     }
   }
 
@@ -107,72 +122,72 @@ final class GoogleMapServiceImpl implements GoogleMapService {
     mCircles.clear();
   }
 
-  private void startObserveDeviceLocation(final Map.Entry<String, LiveData<DeviceLocation>> entry) {
-    final String id = entry.getKey();
+  private void startObserveDeviceLocation(final Map.Entry<UserModel, LiveData<DeviceLocation>> entry) {
+    final UserModel user = entry.getKey();
     final LiveData<DeviceLocation> liveData = entry.getValue();
-    liveData.observe(mLifecycleOwner, deviceLocation -> updateUserMarker(id, deviceLocation));
+    liveData.observe(mLifecycleOwner, deviceLocation -> updateUserMarker(user, deviceLocation));
   }
 
   private void stopObserveDeviceLocation(final LiveData<DeviceLocation> liveData) {
     liveData.removeObservers(mLifecycleOwner);
   }
 
-  private void putUserOnMap(final String userId, final LiveData<DeviceLocation> deviceLocation) {
-    if (mLocations.containsKey(userId)) {
+  private void putUserOnMap(final UserModel user, final LiveData<DeviceLocation> deviceLocation) {
+    if (mLocations.containsKey(user)) {
       throw new IllegalStateException("Device location for user ID: " +
-          userId + " is already on map");
+          user + " is already on map");
     }
 
-    mLocations.put(userId, deviceLocation);
+    mLocations.put(user, deviceLocation);
 
     if (mEnabled &&
         mLifecycleOwner
             .getLifecycle()
             .getCurrentState()
             .isAtLeast(Lifecycle.State.STARTED)) {
-      startObserveDeviceLocation(new AbstractMap.SimpleEntry<>(userId, deviceLocation));
+      startObserveDeviceLocation(new AbstractMap.SimpleEntry<>(user, deviceLocation));
     }
   }
 
-  private void removeUserMarker(final String userId) {
-    if (mLocations.containsKey(userId)) {
-      stopObserveDeviceLocation(mLocations.get(userId));
-      mLocations.remove(userId);
+  private void removeUserMarker(final UserModel user) {
+    if (mLocations.containsKey(user)) {
+      mLocations.get(user).removeObservers(mLifecycleOwner);
+      mLocations.remove(user);
     }
 
-    if (mMarkers.containsKey(userId)) {
-      mMarkers.get(userId).remove();
-      mMarkers.remove(userId);
+    if (mMarkers.containsKey(user)) {
+      mMarkers.get(user).remove();
+      mMarkers.remove(user);
     }
 
-    if (mCircles.containsKey(userId)) {
-      mCircles.get(userId).remove();
-      mCircles.remove(userId);
+    if (mCircles.containsKey(user)) {
+      mCircles.get(user).remove();
+      mCircles.remove(user);
     }
   }
 
-  private void updateUserMarker(final String userId, final DeviceLocation deviceLocation) {
-    if (mMarkers.containsKey(userId)) {
-      moveMarker(mMarkers.get(userId), deviceLocation);
+  private void updateUserMarker(final UserModel user, final DeviceLocation deviceLocation) {
+    if (mMarkers.containsKey(user)) {
+      moveMarker(mMarkers.get(user), deviceLocation);
     } else {
-      mMarkers.put(userId, createMarker(deviceLocation));
+      mMarkers.put(user, createMarker(deviceLocation, user));
     }
 
-    if (mCircles.containsKey(userId)) {
-      moveCircle(mCircles.get(userId), deviceLocation);
+    if (mCircles.containsKey(user)) {
+      moveCircle(mCircles.get(user), deviceLocation);
     } else {
-      mCircles.put(userId, createCircle(deviceLocation));
+      mCircles.put(user, createCircle(deviceLocation));
     }
 
     final UserCameraZoom userCameraZoom = mUserCameraZoomCache.getValue();
-    if (userCameraZoom != null && userId.equals(userCameraZoom.mUserId)) {
+    if (userCameraZoom != null && user.equals(userCameraZoom.mUser)) {
       moveCamera(userCameraZoom);
     }
   }
 
   private void moveCamera(final UserCameraZoom userCameraZoom) {
     final CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
-        mMarkers.get(userCameraZoom.mUserId).getPosition(), userCameraZoom.zoom
+        mMarkers.get(userCameraZoom.mUser).getPosition(), userCameraZoom.mZoom
     );
     mGoogleMap.moveCamera(cameraUpdate);
   }
@@ -187,23 +202,39 @@ final class GoogleMapServiceImpl implements GoogleMapService {
   }
 
   private Circle createCircle(final DeviceLocation deviceLocation) {
+    final int color = mContext.getResources().getColor(R.color.accuracyCircleColor);
     final CircleOptions options = new CircleOptions()
+        .fillColor(color)
+        .strokeWidth(0)
         .center(new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude()))
         .radius(deviceLocation.getAccuracy());
     return mGoogleMap.addCircle(options);
   }
 
-  private Marker createMarker(final DeviceLocation deviceLocation) {
+  private Marker createMarker(final DeviceLocation deviceLocation, final UserModel user) {
     final MarkerOptions options = new MarkerOptions()
-        .position(new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude()));
+        .position(new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude()))
+        .icon(getAvatarIcon(user));
     return mGoogleMap.addMarker(options);
+  }
+
+  private BitmapDescriptor getAvatarIcon(final UserModel user) {
+    final ColorGenerator colorGenerator = ColorGenerator.MATERIAL;
+    final IconGenerator iconGenerator = new IconGenerator(mContext);
+    final int color = colorGenerator.getColor(user.getDisplayName());
+    iconGenerator.setColor(color);
+    iconGenerator.setTextAppearance(
+        android.support.v7.appcompat.R.style.TextAppearance_AppCompat_Subhead_Inverse
+    );
+
+    return BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon(user.getDisplayName()));
   }
 
   private static class SingleShotContainer<T> {
 
     private T mValue;
 
-    public SingleShotContainer(final T value) {
+    SingleShotContainer(final T value) {
       mValue = value;
     }
 
@@ -216,12 +247,13 @@ final class GoogleMapServiceImpl implements GoogleMapService {
 
   private static class UserCameraZoom {
 
-    private final String mUserId;
-    private final float zoom;
+    private final UserModel mUser;
+    private final float mZoom;
 
-    private UserCameraZoom(final String userId, final float zoom) {
-      mUserId = userId;
-      this.zoom = zoom;
+    private UserCameraZoom(final UserModel user, final float zoom) {
+      mUser = user;
+      mZoom = zoom;
     }
   }
+
 }

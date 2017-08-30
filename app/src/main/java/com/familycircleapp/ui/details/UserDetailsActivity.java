@@ -2,6 +2,7 @@ package com.familycircleapp.ui.details;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
+import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.familycircleapp.R;
 import com.familycircleapp.ui.AppCompatLifecycleActivity;
 import com.familycircleapp.ui.details.adapter.LocationHistoryRecyclerViewAdapter;
 import com.familycircleapp.ui.map.GoogleMapService;
+import com.familycircleapp.ui.map.UserModel;
 
 import java.util.Collections;
 
@@ -51,11 +53,18 @@ public final class UserDetailsActivity extends AppCompatLifecycleActivity {
     initMap();
 
     final String userId = getUserId();
-    showUserOnMap(userId);
-
     final ViewModelProvider modelProvider = ViewModelProviders.of(this, mViewModelFactory);
+    initUserModel(modelProvider, userId);
     initLastLocationModel(modelProvider, userId);
     initLocationHistoryViewModel(modelProvider, userId);
+  }
+
+  private void initUserModel(final ViewModelProvider modelProvider, final String userId) {
+    Transformations.map(
+        modelProvider.get(UserViewModel.class).getUser(userId),
+        user -> new UserModel(userId, user.getDisplayName())
+    )
+        .observe(this, this::showUserOnMap);
   }
 
   private void initLocationHistoryViewModel(
@@ -80,10 +89,10 @@ public final class UserDetailsActivity extends AppCompatLifecycleActivity {
     mRecyclerView.addItemDecoration(decoration);
   }
 
-  private void showUserOnMap(final String userId) {
-    mGoogleMapService.putUsersOnMap(Collections.singletonList(userId));
+  private void showUserOnMap(final UserModel user) {
+    mGoogleMapService.putUsersOnMap(Collections.singletonList(user));
     final float zoom = getResources().getInteger(R.integer.initial_map_zoom);
-    mGoogleMapService.moveCameraToUser(userId, zoom);
+    mGoogleMapService.moveCameraToUser(user, zoom);
   }
 
   private void initMap() {
@@ -121,18 +130,6 @@ public final class UserDetailsActivity extends AppCompatLifecycleActivity {
                 getResources().getDimension(R.dimen.recycler_view_visible_top);
             mAppBarLayout.getLayoutParams().height = (int) height;
             mRootLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-//            final Map<Long, List<LocationHistoryItem>> history = new LinkedHashMap<Long, List<LocationHistoryItem>>() {{
-//              put(System.currentTimeMillis(), Collections.singletonList(new LocationHistoryItem(
-//                  "address",
-//                  0,
-//                  0,
-//                  0,
-//                  System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS,
-//                  System.currentTimeMillis()
-//              )));
-//            }};
-//            mRecyclerViewAdapter.setLocationHistory(history);
           }
         }
     );
