@@ -2,4 +2,5 @@
 <resources>
     <integer name="initial_map_zoom">17</integer>
     <integer name="default_update_interval_minutes">15</integer>
+    <integer name="invite_code_length">8</integer>
 </resources>
