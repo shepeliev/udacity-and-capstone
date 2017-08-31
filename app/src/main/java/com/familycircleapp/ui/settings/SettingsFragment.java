@@ -18,6 +18,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import butterknife.BindString;
+import butterknife.ButterKnife;
+
 public class SettingsFragment extends PreferenceFragmentCompat
     implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -26,12 +29,15 @@ public class SettingsFragment extends PreferenceFragmentCompat
   @Inject LocationUpdatesManager mLocationUpdatesManager;
   @Inject SharedPreferences mSharedPreferences;
 
+  @BindString(R.string.pref_update_interval) String mUpdateIntervalPrefKey;
+
   @Override
   public void onCreatePreferencesFix(
       @Nullable final Bundle savedInstanceState, final String rootKey
   ) {
     App.getComponent().inject(this);
     setPreferencesFromResource(R.xml.preferences, rootKey);
+    ButterKnife.bind(this, getActivity());
 
     findPreference(getString(R.string.pref_logout)).setOnPreferenceClickListener(
         preference -> {
@@ -79,7 +85,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
   @Override
   public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
-    if (getString(R.string.pref_update_interval).equals(key)) {
+    if (mUpdateIntervalPrefKey.equals(key)) {
       mLocationUpdatesManager.startLocationUpdates(getActivity());
       UpdateBatteryInfoJob.cancelJob();
 
