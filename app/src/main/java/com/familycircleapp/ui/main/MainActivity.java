@@ -1,8 +1,7 @@
 package com.familycircleapp.ui.main;
 
-import com.google.android.gms.maps.SupportMapFragment;
-
 import android.Manifest;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -41,6 +40,7 @@ import com.familycircleapp.ui.map.UserModel;
 import com.familycircleapp.ui.settings.SettingsActivity;
 import com.familycircleapp.utils.Ctx;
 import com.familycircleapp.utils.F;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.jakewharton.rxbinding2.view.RxView;
 
 import java.util.List;
@@ -134,16 +134,11 @@ public final class MainActivity extends AppCompatLifecycleActivity {
   }
 
   private void initCurrentCircleUserIdsViewModel(final ViewModelProvider viewModelProvider) {
-    Transformations.map(
-        viewModelProvider.get(CurrentCircleUserIdsViewModel.class).getUserIds(),
-        users -> F.map(users, user -> new UserModel(user.getId(), user.getDisplayName()))
-    )
-        .observe(this, this::onUsersLoaded);
-
-//    viewModelProvider
-//        .get(CurrentCircleUserIdsViewModel.class)
-//        .getUserIds()
-//        .observe(this, this::onUsersLoaded);
+    final LiveData<List<UserModel>> liveData = Transformations.map(
+            viewModelProvider.get(CurrentCircleUserIdsViewModel.class).getUserIds(),
+            users -> F.map(users, user -> new UserModel(user.getId(), user.getDisplayName()))
+    );
+    liveData.observe(this, this::onUsersLoaded);
   }
 
   private void initRecyclerView(final ViewModelProvider viewModelProvider) {

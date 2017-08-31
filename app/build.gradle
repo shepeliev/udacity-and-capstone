@@ -11,6 +11,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        jackOptions.enabled true
     }
     signingConfigs {
         release {
@@ -48,7 +49,6 @@ dependencies {
     // Dagger
     compile 'com.google.dagger:dagger:2.11'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
-    androidTestAnnotationProcessor 'com.google.dagger:dagger-compiler:2.11'
 
     // Logging
     compile 'com.jakewharton.timber:timber:4.5.1'

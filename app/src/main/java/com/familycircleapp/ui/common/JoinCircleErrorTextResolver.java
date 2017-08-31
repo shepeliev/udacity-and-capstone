@@ -1,12 +1,11 @@
 package com.familycircleapp.ui.common;
 
-import com.google.firebase.database.DatabaseException;
-
 import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.familycircleapp.R;
 import com.familycircleapp.repository.NotFoundException;
+import com.google.firebase.database.DatabaseException;
 
 import timber.log.Timber;
 
@@ -28,7 +27,7 @@ public final class JoinCircleErrorTextResolver
     } else if (error instanceof DatabaseException) {
       return mContext.getString(R.string.error_database, error.getLocalizedMessage());
     } else {
-      Timber.wtf("Unexpected error here", error);
+      Timber.wtf("Unexpected error here %s", error);
       return error.getLocalizedMessage();
     }
   }

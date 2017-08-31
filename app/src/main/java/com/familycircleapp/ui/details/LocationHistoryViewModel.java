@@ -44,7 +44,7 @@ public class LocationHistoryViewModel extends ViewModel {
 
   private Map<Long, List<LocationHistoryItem>> mapToHistory(final List<DeviceLocation> locations) {
     final List<DeviceLocation> sortedLocations = new ArrayList<>(locations);
-    Collections.sort(sortedLocations, (o1, o2) -> Long.compare(o1.getTime(), o2.getTime()));
+    Collections.sort(sortedLocations, (o1, o2) -> Long.valueOf(o1.getTime()).compareTo(o2.getTime()));
 
     final List<LocationHistoryItem> history = F.fold(
         sortedLocations, new ArrayList<>(), this::locationReducer
@@ -66,7 +66,7 @@ public class LocationHistoryViewModel extends ViewModel {
         sortedKeys,
         key -> Collections.sort(
             groupedHistory.get(key),
-            (o1, o2) -> Long.compare(o2.getEndTime(), o1.getEndTime()))
+            (o1, o2) -> Long.valueOf(o2.getEndTime()).compareTo(o1.getEndTime()))
     );
 
     final LinkedHashMap<Long, List<LocationHistoryItem>> sortedHistory = new LinkedHashMap<>();

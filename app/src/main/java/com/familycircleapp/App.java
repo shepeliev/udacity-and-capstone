@@ -10,11 +10,11 @@ import timber.log.Timber;
 
 public class App extends MultiDexApplication {
 
-  private static Component sAppComponent;
+  private static AppComponent sAppComponent;
 
   @Inject JobManager mJobManager;
 
-  public static Component getComponent() {
+  public static AppComponent getComponent() {
     if (sAppComponent == null) {
       throw new IllegalStateException("The application has not been created yet.");
     }
@@ -35,7 +35,7 @@ public class App extends MultiDexApplication {
     getComponent().inject(this);
   }
 
-  public Component buildAppComponent() {
+  public AppComponent buildAppComponent() {
     return DaggerAppComponent
         .builder()
         .androidModule(new AndroidModule(this))
