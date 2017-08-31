@@ -5,7 +5,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import android.support.annotation.NonNull;
 
-import com.familycircleapp.utils.Consumer;
 import com.familycircleapp.utils.Db;
 import com.familycircleapp.utils.Rx;
 
@@ -26,11 +25,6 @@ class InviteRepositoryImpl implements InviteRepository {
   InviteRepositoryImpl(final FirebaseDatabase firebaseDatabase) {
     mDatabaseReference = firebaseDatabase.getReference();
     mInvitesReference = firebaseDatabase.getReference(InviteRepository.NAME);
-  }
-
-  @Override
-  public void get(@NonNull final String id, @NonNull final Consumer<Invite> onResult) {
-    throw new UnsupportedOperationException("not implemented yet");
   }
 
   @Override

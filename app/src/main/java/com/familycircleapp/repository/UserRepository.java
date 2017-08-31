@@ -16,9 +16,6 @@ public interface UserRepository {
 
   Single<User> getUser(final @NonNull String id);
 
-  @Deprecated
-  LiveData<String> getCurrentCircleIdLiveData(final @NonNull String userId);
-
   Observable<String> observeCurrentCircleId(@NonNull final String userId);
 
   void saveBatteryInfo(final @NonNull String userId, final @NonNull BatteryInfo batteryInfo);

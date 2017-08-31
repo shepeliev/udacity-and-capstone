@@ -1,7 +1,5 @@
 package com.familycircleapp.repository;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 
 import io.reactivex.Observable;
@@ -21,16 +19,6 @@ class CurrentCircleRepositoryImpl implements CurrentCircleRepository {
     mCurrentUser = currentUser;
     mUserRepository = userRepository;
     mCircleRepository = circleRepository;
-  }
-
-  @Override
-  @NonNull
-  @Deprecated
-  public LiveData<Circle> getCurrentCircleLiveData(final @NonNull String userId) {
-    return Transformations.switchMap(
-        mUserRepository.getCurrentCircleIdLiveData(userId),
-        mCircleRepository::getCircleLiveData
-    );
   }
 
   @NonNull

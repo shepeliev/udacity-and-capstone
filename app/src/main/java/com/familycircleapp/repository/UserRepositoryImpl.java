@@ -35,14 +35,6 @@ final class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public LiveData<String> getCurrentCircleIdLiveData(@NonNull final String userId) {
-    return Rx.liveData(
-        mUsersReference.child(userId).child(CURRENT_CIRCLE_KEY),
-        String.class
-    );
-  }
-
-  @Override
   public Observable<String> observeCurrentCircleId(@NonNull final String userId) {
     return Rx.observable(mUsersReference.child(userId).child(CURRENT_CIRCLE_KEY), String.class);
   }

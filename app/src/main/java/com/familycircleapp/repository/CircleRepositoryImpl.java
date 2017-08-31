@@ -3,7 +3,6 @@ package com.familycircleapp.repository;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.familycircleapp.utils.Db;
@@ -28,13 +27,6 @@ final class CircleRepositoryImpl implements CircleRepository {
   CircleRepositoryImpl(final FirebaseDatabase firebaseDatabase) {
     mCirclesReference = firebaseDatabase.getReference(CircleRepository.NAME);
     mDatabaseReference = firebaseDatabase.getReference();
-  }
-
-  @Override
-  @NonNull
-  public LiveData<Circle> getCircleLiveData(final @NonNull String id) {
-    final DatabaseReference reference = mCirclesReference.child(id);
-    return Rx.liveData(reference, Circle.class);
   }
 
   @Override
