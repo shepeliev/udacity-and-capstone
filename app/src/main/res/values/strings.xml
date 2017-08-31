@@ -75,4 +75,5 @@
     <string name="content_description_avatar">Avatar</string>
     <string name="content_description_battery_status">Battery is <xliff:g example="discharging" id="status">%1$s</xliff:g></string>
     <string name="content_description_invite_button">Invite user into circle</string>
+    <string name="content_description_loading">Data is loading</string>
 </resources>

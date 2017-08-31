@@ -46,17 +46,6 @@
         android:contentDescription="@string/content_description_invite_button"
         android:src="@drawable/ic_person_add_black_24px" />
 
-    <FrameLayout
-        android:id="@+id/loader_screen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ProgressBar
-            android:id="@+id/loader_progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-
-    </FrameLayout>
+    <include layout="@layout/part_load_screen"/>
 
 </android.support.design.widget.CoordinatorLayout>
